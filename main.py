@@ -1,3 +1,4 @@
+import json
 import random
 
 
@@ -12,25 +13,32 @@ class Bracket:
         self.teams = []
         self.rounds = []
 
-    def input_teams(self, team_list):
-        self.teams = [Team(name, seed) for name, seed in team_list]
+    def load_data(self, file_path):
+        with open(file_path, "r") as file:
+            data = json.load(file)
+            for matchup in data["round_of_64"]:
+                team1 = Team(matchup["team1"]["name"], matchup["team1"]["seed"])
+                team2 = Team(matchup["team2"]["name"], matchup["team2"]["seed"])
+                self.teams.append((team1, team2))
 
-    def simulate_round(self):
-        num_teams = len(self.teams)
+    def decide_winner(self, team1, team2, decision_function):
+        return decision_function(team1, team2)
+
+    def simulate_round(self, decision_function):
         winners = []
         round_results = []
-        for i in range(0, num_teams, 2):
-            team1, team2 = self.teams[i], self.teams[i + 1]
-            winner = random.choice([team1, team2])
+        for matchup in self.teams:
+            team1, team2 = matchup
+            winner = self.decide_winner(team1, team2, decision_function)
             winners.append(winner)
             round_results.append((team1, team2, winner))
-        self.teams = winners
+        self.teams = [(winners[i], winners[i + 1]) for i in range(0, len(winners), 2)]
         self.rounds.append(round_results)
 
-    def simulate_tournament(self):
+    def simulate_tournament(self, decision_function):
         while len(self.teams) > 1:
-            self.simulate_round()
-        return self.teams[0]
+            self.simulate_round(decision_function)
+        return self.teams[0][0]
 
     def print_results(self):
         for i, round_results in enumerate(self.rounds):
@@ -41,21 +49,24 @@ class Bracket:
             print()
 
 
+# Example Decision Functions
+def random_choice(team1, team2):
+    return random.choice([team1, team2])
+
+
+def highest_seed(team1, team2):
+    return team1 if team1.seed < team2.seed else team2
+
+
+def longest_name(team1, team2):
+    return team1 if len(team1.name) > len(team2.name) else team2
+
+
 def main():
     bracket = Bracket()
-    team_list = [
-        ("Team A", 1),
-        ("Team B", 16),
-        ("Team C", 8),
-        ("Team D", 9),
-        ("Team E", 5),
-        ("Team F", 12),
-        ("Team G", 4),
-        ("Team H", 13),
-        # ... input the remaining teams and seeds
-    ]
-    bracket.input_teams(team_list)
-    winner = bracket.simulate_tournament()
+    bracket.load_data("bracket_data.json")
+    # Choose the decision function here. For example, highest_seed
+    winner = bracket.simulate_tournament(highest_seed)
     print("Tournament Results:")
     bracket.print_results()
     print("Tournament Winner:")
