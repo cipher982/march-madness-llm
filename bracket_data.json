@@ -1,0 +1,324 @@
+{
+    "round_of_64": [
+        {
+            "team1": {
+                "name": "Mississippi State",
+                "seed": 8
+            },
+            "team2": {
+                "name": "Michigan State",
+                "seed": 9
+            }
+        },
+        {
+            "team1": {
+                "name": "BYU",
+                "seed": 6
+            },
+            "team2": {
+                "name": "Duquesne",
+                "seed": 11
+            }
+        },
+        {
+            "team1": {
+                "name": "Creighton",
+                "seed": 3
+            },
+            "team2": {
+                "name": "Akron",
+                "seed": 14
+            }
+        },
+        {
+            "team1": {
+                "name": "Arizona",
+                "seed": 2
+            },
+            "team2": {
+                "name": "Long Beach State",
+                "seed": 15
+            }
+        },
+        {
+            "team1": {
+                "name": "North Carolina",
+                "seed": 1
+            },
+            "team2": {
+                "name": "Wagner",
+                "seed": 16
+            }
+        },
+        {
+            "team1": {
+                "name": "Illinois",
+                "seed": 3
+            },
+            "team2": {
+                "name": "Morehead State",
+                "seed": 14
+            }
+        },
+        {
+            "team1": {
+                "name": "South Carolina",
+                "seed": 6
+            },
+            "team2": {
+                "name": "Oregon",
+                "seed": 11
+            }
+        },
+        {
+            "team1": {
+                "name": "Dayton",
+                "seed": 7
+            },
+            "team2": {
+                "name": "Nevada",
+                "seed": 10
+            }
+        },
+        {
+            "team1": {
+                "name": "Texas",
+                "seed": 7
+            },
+            "team2": {
+                "name": "Colorado State",
+                "seed": 10
+            }
+        },
+        {
+            "team1": {
+                "name": "Kentucky",
+                "seed": 3
+            },
+            "team2": {
+                "name": "Oakland",
+                "seed": 14
+            }
+        },
+        {
+            "team1": {
+                "name": "Gonzaga",
+                "seed": 5
+            },
+            "team2": {
+                "name": "McNeese",
+                "seed": 12
+            }
+        },
+        {
+            "team1": {
+                "name": "Iowa State",
+                "seed": 2
+            },
+            "team2": {
+                "name": "South Dakota State",
+                "seed": 15
+            }
+        },
+        {
+            "team1": {
+                "name": "Tennessee",
+                "seed": 2
+            },
+            "team2": {
+                "name": "Saint Peter's",
+                "seed": 15
+            }
+        },
+        {
+            "team1": {
+                "name": "Texas Tech",
+                "seed": 6
+            },
+            "team2": {
+                "name": "NC State",
+                "seed": 11
+            }
+        },
+        {
+            "team1": {
+                "name": "Kansas",
+                "seed": 4
+            },
+            "team2": {
+                "name": "Samford",
+                "seed": 13
+            }
+        },
+        {
+            "team1": {
+                "name": "Washington State",
+                "seed": 7
+            },
+            "team2": {
+                "name": "Drake",
+                "seed": 10
+            }
+        },
+        {
+            "team1": {
+                "name": "Florida Atlantic",
+                "seed": 8
+            },
+            "team2": {
+                "name": "Northwestern",
+                "seed": 9
+            }
+        },
+        {
+            "team1": {
+                "name": "Baylor",
+                "seed": 3
+            },
+            "team2": {
+                "name": "Colgate",
+                "seed": 14
+            }
+        },
+        {
+            "team1": {
+                "name": "San Diego State",
+                "seed": 5
+            },
+            "team2": {
+                "name": "UAB",
+                "seed": 12
+            }
+        },
+        {
+            "team1": {
+                "name": "Marquette",
+                "seed": 2
+            },
+            "team2": {
+                "name": "Western Kentucky",
+                "seed": 15
+            }
+        },
+        {
+            "team1": {
+                "name": "UConn",
+                "seed": 1
+            },
+            "team2": {
+                "name": "Stetson",
+                "seed": 16
+            }
+        },
+        {
+            "team1": {
+                "name": "Clemson",
+                "seed": 6
+            },
+            "team2": {
+                "name": "New Mexico",
+                "seed": 11
+            }
+        },
+        {
+            "team1": {
+                "name": "Auburn",
+                "seed": 4
+            },
+            "team2": {
+                "name": "Yale",
+                "seed": 13
+            }
+        },
+        {
+            "team1": {
+                "name": "Florida",
+                "seed": 7
+            },
+            "team2": {
+                "name": "Colorado",
+                "seed": 10
+            }
+        },
+        {
+            "team1": {
+                "name": "Nebraska",
+                "seed": 8
+            },
+            "team2": {
+                "name": "Texas A&M",
+                "seed": 9
+            }
+        },
+        {
+            "team1": {
+                "name": "Duke",
+                "seed": 4
+            },
+            "team2": {
+                "name": "Vermont",
+                "seed": 13
+            }
+        },
+        {
+            "team1": {
+                "name": "Purdue",
+                "seed": 1
+            },
+            "team2": {
+                "name": "Grambling",
+                "seed": 16
+            }
+        },
+        {
+            "team1": {
+                "name": "Alabama",
+                "seed": 4
+            },
+            "team2": {
+                "name": "College of Charleston",
+                "seed": 13
+            }
+        },
+        {
+            "team1": {
+                "name": "Houston",
+                "seed": 1
+            },
+            "team2": {
+                "name": "Longwood",
+                "seed": 16
+            }
+        },
+        {
+            "team1": {
+                "name": "Wisconsin",
+                "seed": 5
+            },
+            "team2": {
+                "name": "James Madison",
+                "seed": 12
+            }
+        },
+        {
+            "team1": {
+                "name": "Utah State",
+                "seed": 8
+            },
+            "team2": {
+                "name": "TCU",
+                "seed": 9
+            }
+        },
+        {
+            "team1": {
+                "name": "Saint Mary's",
+                "seed": 5
+            },
+            "team2": {
+                "name": "Grand Canyon",
+                "seed": 12
+            }
+        }
+    ]
+}

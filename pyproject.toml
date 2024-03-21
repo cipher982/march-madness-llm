@@ -1,0 +1,12 @@
+[tool.poetry]
+name = "march-madness-llm"
+version = "0.1.0"
+description = "for fun"
+authors = ["David Rose <david@drose.io>"]
+readme = "README.md"
+
+[tool.black]
+line-length = 120
+
+[tool.flake8]
+max-line-length = 120
