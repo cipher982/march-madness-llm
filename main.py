@@ -17,9 +17,8 @@ Team 1, named '{team1.name}', is seeded {team1.seed}.
 Team 2, named '{team2.name}', is seeded {team2.seed}.
 
 Taking into account factors such as likely team performance, seed ranking, \
-historical success in tournaments, and any other relevant information, \
-which team would be more likely to win this matchup? Please provide your \
-reasoning along with your choice. Choose one.
+historical success in tournaments, or anything else helpful.
+Choose one.
 """
 
 
@@ -46,6 +45,7 @@ class Bracket:
         return decision_function(team1, team2)
 
     def simulate_round(self, decision_function):
+        self.print_round_name(len(self.teams) * 2)
         winners = []
         round_results = []
         for matchup in self.teams:
@@ -60,6 +60,19 @@ class Bracket:
         while len(self.teams) > 1:
             self.simulate_round(decision_function)
         return self.teams[0][0]
+
+    def print_round_name(self, num_teams):
+        round_names = {
+            64: "Round of 64",
+            32: "Round of 32",
+            16: "Sweet 16",
+            8: "Elite Eight",
+            4: "Final Four",
+            2: "Championship",
+            1: "Tournament Winner",
+        }
+        round_name = round_names.get(num_teams, "Starting Rounds")
+        print(f"\n{round_name} Matchups:\n")
 
     def print_results(self):
         for i, round_results in enumerate(self.rounds):
@@ -118,7 +131,8 @@ def use_ai(team1, team2):
             }
         ]
         completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            # model="gpt-3.5-turbo",
+            model="gpt-4-0125-preview",
             messages=messages,  # type: ignore
             tools=tools,  # type: ignore
             tool_choice="auto",
