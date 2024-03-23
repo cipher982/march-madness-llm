@@ -1,13 +1,13 @@
 import random
 import json
 import os
-from openai import OpenAI
+from openai import AsyncOpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=api_key)
+client = AsyncOpenAI(api_key=api_key)
 
 
 class Team:
@@ -75,7 +75,7 @@ async def ai_wizard(team1, team2):
         ]
         messages = [{"role": "user", "content": PROMPT.format(team1=team1, team2=team2)}]
 
-        completion = client.chat.completions.create(
+        response = await client.chat.completions.create(
             # model="gpt-4-0125-preview",
             model="gpt-3.5-turbo-0125",
             messages=messages,  # type: ignore
@@ -83,10 +83,11 @@ async def ai_wizard(team1, team2):
             tool_choice="auto",
         )
 
-        choice = completion.choices[0]
+        choice = response.choices[0]
         if choice.message and choice.message.tool_calls:
             arguments = json.loads(choice.message.tool_calls[0].function.arguments)
-            winner = Team(arguments["winner"], getattr(team1 if arguments["winner"] == team1.name else team2, "seed"))
+            winner_team = team1 if arguments["winner"] == team1.name else team2
+            winner = Team(arguments["winner"], winner_team.seed)
         else:
             raise Exception("No decision made by AI")
         return winner
