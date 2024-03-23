@@ -1,185 +1,5 @@
 {
   "regions": {
-    "midwest": [
-      {
-        "id": "M1",
-        "t1": [
-          "Purdue",
-          1
-        ],
-        "t2": [
-          "Grambling St",
-          16
-        ]
-      },
-      {
-        "id": "M2",
-        "t1": [
-          "Texas",
-          8
-        ],
-        "t2": [
-          "Dayton",
-          9
-        ]
-      },
-      {
-        "id": "M3",
-        "t1": [
-          "Gonzaga",
-          7
-        ],
-        "t2": [
-          "Fla. Atlantic",
-          10
-        ]
-      },
-      {
-        "id": "M4",
-        "t1": [
-          "Kentucky",
-          4
-        ],
-        "t2": [
-          "Vermont",
-          13
-        ]
-      },
-      {
-        "id": "M5",
-        "t1": [
-          "Texas Tech",
-          5
-        ],
-        "t2": [
-          "UAB",
-          12
-        ]
-      },
-      {
-        "id": "M6",
-        "t1": [
-          "Creighton",
-          3
-        ],
-        "t2": [
-          "Morehead St.",
-          14
-        ]
-      },
-      {
-        "id": "M7",
-        "t1": [
-          "Florida",
-          6
-        ],
-        "t2": [
-          "Drake",
-          11
-        ]
-      },
-      {
-        "id": "M8",
-        "t1": [
-          "Iowa St.",
-          2
-        ],
-        "t2": [
-          "S. Dak. St.",
-          15
-        ]
-      }
-    ],
-    "south": [
-      {
-        "id": "S1",
-        "t1": [
-          "Houston",
-          1
-        ],
-        "t2": [
-          "Stetson",
-          16
-        ]
-      },
-      {
-        "id": "S2",
-        "t1": [
-          "Boise St.",
-          8
-        ],
-        "t2": [
-          "Texas A&M",
-          9
-        ]
-      },
-      {
-        "id": "S3",
-        "t1": [
-          "Wisconsin",
-          5
-        ],
-        "t2": [
-          "Samford",
-          12
-        ]
-      },
-      {
-        "id": "S4",
-        "t1": [
-          "Alabama",
-          4
-        ],
-        "t2": [
-          "Duquesne",
-          13
-        ]
-      },
-      {
-        "id": "S5",
-        "t1": [
-          "Washington St.",
-          6
-        ],
-        "t2": [
-          "N.C. State",
-          11
-        ]
-      },
-      {
-        "id": "S6",
-        "t1": [
-          "Illinois",
-          3
-        ],
-        "t2": [
-          "Akron",
-          14
-        ]
-      },
-      {
-        "id": "S7",
-        "t1": [
-          "Utah State",
-          7
-        ],
-        "t2": [
-          "Mississippi St.",
-          10
-        ]
-      },
-      {
-        "id": "S8",
-        "t1": [
-          "Marquette",
-          2
-        ],
-        "t2": [
-          "Western Kentucky",
-          15
-        ]
-      }
-    ],
     "east": [
       {
         "id": "E1",
@@ -188,18 +8,18 @@
           1
         ],
         "t2": [
-          "Saint Peter's",
+          "Stetson",
           16
         ]
       },
       {
         "id": "E2",
         "t1": [
-          "Northwestern",
+          "FAU",
           8
         ],
         "t2": [
-          "Colorado St.",
+          "Northwestern",
           9
         ]
       },
@@ -207,17 +27,17 @@
         "id": "E3",
         "t1": [
           "San Diego St.",
-          6
+          5
         ],
         "t2": [
-          "Oregon",
-          11
+          "UAB",
+          12
         ]
       },
       {
         "id": "E4",
         "t1": [
-          "Duke",
+          "Auburn",
           4
         ],
         "t2": [
@@ -228,44 +48,44 @@
       {
         "id": "E5",
         "t1": [
-          "South Carolina",
-          5
+          "BYU",
+          6
         ],
         "t2": [
-          "McNeese",
-          12
+          "Duquesne",
+          11
         ]
       },
       {
         "id": "E6",
         "t1": [
-          "Baylor",
+          "Illinois",
           3
         ],
         "t2": [
-          "Oakland",
+          "Morehead St.",
           14
         ]
       },
       {
         "id": "E7",
         "t1": [
-          "Clemson",
+          "Wash. St.",
           7
         ],
         "t2": [
-          "Michigan St.",
+          "Drake",
           10
         ]
       },
       {
         "id": "E8",
         "t1": [
-          "Tennessee",
+          "Iowa St.",
           2
         ],
         "t2": [
-          "Longwood",
+          "S. Dak. St.",
           15
         ]
       }
@@ -285,11 +105,11 @@
       {
         "id": "W2",
         "t1": [
-          "Nebraska",
+          "Miss. St.",
           8
         ],
         "t2": [
-          "New Mexico",
+          "Michigan St.",
           9
         ]
       },
@@ -297,17 +117,17 @@
         "id": "W3",
         "t1": [
           "Saint Mary's",
-          6
+          5
         ],
         "t2": [
-          "James Madison",
-          11
+          "Grand Canyon",
+          12
         ]
       },
       {
         "id": "W4",
         "t1": [
-          "Kansas",
+          "Alabama",
           4
         ],
         "t2": [
@@ -318,18 +138,18 @@
       {
         "id": "W5",
         "t1": [
-          "BYU",
-          5
+          "Clemson",
+          6
         ],
         "t2": [
-          "Grand Canyon",
-          12
+          "New Mexico",
+          11
         ]
       },
       {
         "id": "W6",
         "t1": [
-          "Auburn",
+          "Baylor",
           3
         ],
         "t2": [
@@ -340,11 +160,11 @@
       {
         "id": "W7",
         "t1": [
-          "Nevada",
+          "Dayton",
           7
         ],
         "t2": [
-          "TCU",
+          "Nevada",
           10
         ]
       },
@@ -355,7 +175,187 @@
           2
         ],
         "t2": [
-          "Long Beach St.",
+          "LBSU",
+          15
+        ]
+      }
+    ],
+    "south": [
+      {
+        "id": "S1",
+        "t1": [
+          "Houston",
+          1
+        ],
+        "t2": [
+          "Longwood",
+          16
+        ]
+      },
+      {
+        "id": "S2",
+        "t1": [
+          "Nebraska",
+          8
+        ],
+        "t2": [
+          "Texas A&M",
+          9
+        ]
+      },
+      {
+        "id": "S3",
+        "t1": [
+          "Wisconsin",
+          5
+        ],
+        "t2": [
+          "James Madison",
+          12
+        ]
+      },
+      {
+        "id": "S4",
+        "t1": [
+          "Duke",
+          4
+        ],
+        "t2": [
+          "Vermont",
+          13
+        ]
+      },
+      {
+        "id": "S5",
+        "t1": [
+          "Texas Tech",
+          6
+        ],
+        "t2": [
+          "NC State",
+          11
+        ]
+      },
+      {
+        "id": "S6",
+        "t1": [
+          "Kentucky",
+          3
+        ],
+        "t2": [
+          "Oakland",
+          14
+        ]
+      },
+      {
+        "id": "S7",
+        "t1": [
+          "Florida",
+          7
+        ],
+        "t2": [
+          "Colorado",
+          10
+        ]
+      },
+      {
+        "id": "S8",
+        "t1": [
+          "Marquette",
+          2
+        ],
+        "t2": [
+          "Western Kentucky",
+          15
+        ]
+      }
+    ],
+    "midwest": [
+      {
+        "id": "M1",
+        "t1": [
+          "Purdue",
+          1
+        ],
+        "t2": [
+          "Grambling St",
+          16
+        ]
+      },
+      {
+        "id": "M2",
+        "t1": [
+          "Utah St",
+          8
+        ],
+        "t2": [
+          "TCU",
+          9
+        ]
+      },
+      {
+        "id": "M3",
+        "t1": [
+          "Gonzaga",
+          5
+        ],
+        "t2": [
+          "McNeese",
+          12
+        ]
+      },
+      {
+        "id": "M4",
+        "t1": [
+          "Kansas",
+          4
+        ],
+        "t2": [
+          "Samford",
+          13
+        ]
+      },
+      {
+        "id": "M5",
+        "t1": [
+          "South Carolina",
+          6
+        ],
+        "t2": [
+          "Oregon",
+          11
+        ]
+      },
+      {
+        "id": "M6",
+        "t1": [
+          "Creighton",
+          3
+        ],
+        "t2": [
+          "Akron",
+          14
+        ]
+      },
+      {
+        "id": "M7",
+        "t1": [
+          "Texas",
+          7
+        ],
+        "t2": [
+          "Colorado St",
+          10
+        ]
+      },
+      {
+        "id": "M8",
+        "t1": [
+          "Tennessee",
+          2
+        ],
+        "t2": [
+          "Saint Peter's",
           15
         ]
       }
