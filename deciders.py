@@ -19,8 +19,10 @@ class Team:
 async def best_seed(team1, team2):
     if team1.seed < team2.seed:
         return team1
-    else:
+    elif team1.seed > team2.seed:
         return team2
+    else:
+        return random.choice([team1, team2])
 
 
 async def random_winner(team1, team2):
