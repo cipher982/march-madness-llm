@@ -1,8 +1,18 @@
 import argparse
 import asyncio
 import json
+import math
 from deciders import ai_wizard, best_seed, random_winner
 from termcolor import colored
+
+ROUND_NAMES = {
+    1: "Round of 64",
+    2: "Round of 32",
+    3: "Sweet 16",
+    4: "Elite Eight",
+    5: "Final Four",
+    6: "NCAA Championship Game",
+}
 
 
 class Team:
@@ -50,29 +60,47 @@ class Bracket:
     async def simulate_region(self, decision_function, region_name):
         self.current_region = region_name
         while len(self.teams[self.current_region]) > 1:
+            round_number = int(math.log2(len(self.teams[self.current_region])))
+            round_name = ROUND_NAMES.get(round_number, f"Round of {len(self.teams[self.current_region])}")
+            print(colored(f"{round_name}:", "yellow"))
             await self.simulate_round(decision_function)
         return self.teams[self.current_region][0]
 
     async def simulate_tournament(self, decision_function):
+        print(colored("Starting NCAA March Madness Bracket Simulation...\n\n", "yellow"))
+
         region_coroutines = [self.simulate_region(decision_function, region) for region in self.teams]
         region_winners = await asyncio.gather(*region_coroutines)
 
-        print(colored("\nFinal Four Matchups:", "yellow"))
+        print(colored(f"\n{ROUND_NAMES[5]} Matchups:", "yellow"))  # Final Four
         final_four = self.get_next_round_matchups(region_winners)
-        for team1, team2 in final_four:
-            print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})", "cyan"))
-
         final_four_coroutines = [
             self.simulate_game(matchup[0], matchup[1], decision_function) for matchup in final_four
         ]
-        finalists = await asyncio.gather(*final_four_coroutines)
+        final_four_winners = await asyncio.gather(*final_four_coroutines)
 
-        print(colored("\nChampionship Game:", "yellow"))
+        print(colored(f"\n{ROUND_NAMES[5]} Results:", "yellow"))  # Final Four
+        for i in range(len(final_four)):
+            team1, team2 = final_four[i]
+            winner = final_four_winners[i]
+            print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})", "cyan"))
+            print(colored(f"Winner: {winner.name} ({winner.seed})\n", "green"))
+
+        print(colored(f"{ROUND_NAMES[6]}:", "yellow"))  # NCAA Championship Game
         print(
-            colored(f"{finalists[0].name} ({finalists[0].seed}) vs {finalists[1].name} ({finalists[1].seed})", "cyan")
+            colored(
+                f"{final_four_winners[0].name} ({final_four_winners[0].seed})"
+                " vs "
+                f"{final_four_winners[1].name} ({final_four_winners[1].seed})",
+                "cyan",
+            )
         )
 
-        champion = await self.simulate_game(finalists[0], finalists[1], decision_function)
+        champion = await self.simulate_game(
+            final_four_winners[0],
+            final_four_winners[1],
+            decision_function,
+        )
         print(colored(f"\n🏆 Tournament Winner: {champion.name} ({champion.seed}) 🏆", "magenta"))
         return champion
 

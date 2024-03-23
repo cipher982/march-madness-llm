@@ -41,7 +41,7 @@ Choose one.
 """
 
 
-def ai_wizard(team1, team2):
+async def ai_wizard(team1, team2):
     try:
         tools = [
             {
