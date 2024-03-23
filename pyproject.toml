@@ -5,6 +5,11 @@ description = "for fun"
 authors = ["David Rose <david@drose.io>"]
 readme = "README.md"
 
+[tool.poetry.dependencies]
+python = "^3.8"
+termcolor = "^2.4.0"
+openai = "^1.14.2"
+
 [tool.black]
 line-length = 120
 
