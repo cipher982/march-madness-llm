@@ -1,6 +1,7 @@
+import argparse
+import asyncio
 import json
 from deciders import ai_wizard, best_seed, random_winner
-import argparse
 from termcolor import colored
 
 
@@ -31,60 +32,53 @@ class Bracket:
     def get_next_round_matchups(self, winners):
         return [winners[i : i + 2] for i in range(0, len(winners), 2)]  # noqa
 
-    def simulate_game(self, team1, team2, decision_function):
-        winner = decision_function(team1, team2)
-        print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})", "cyan"))
-        print(colored(f"Winner: {winner.name}\n", "green"))
+    async def simulate_game(self, team1, team2, decision_function):
+        winner = await decision_function(team1, team2)
         return winner
 
-    def simulate_round(self, decision_function):
+    async def simulate_round(self, decision_function):
         region_teams = self.teams[self.current_region]
-        self.print_round_name(len(region_teams), self.current_region)
-        winners = []
         round_results = []
         for i in range(0, len(region_teams), 2):
             team1, team2 = region_teams[i], region_teams[i + 1]
-            winner = self.simulate_game(team1, team2, decision_function)
-            winners.append(winner)
+            winner = await self.simulate_game(team1, team2, decision_function)
             round_results.append((team1, team2, winner))
+            self.print_game_summary(team1, team2, winner)
         self.rounds.append(round_results)
-        self.teams[self.current_region] = winners
-        self.print_round_summary(round_results)
+        self.teams[self.current_region] = [result[2] for result in round_results]
 
-    def simulate_region(self, decision_function, region_name):
+    async def simulate_region(self, decision_function, region_name):
         self.current_region = region_name
         while len(self.teams[self.current_region]) > 1:
-            self.simulate_round(decision_function)
+            await self.simulate_round(decision_function)
         return self.teams[self.current_region][0]
 
-    def simulate_tournament(self, decision_function):
-        region_winners = [self.simulate_region(decision_function, region) for region in self.teams]
+    async def simulate_tournament(self, decision_function):
+        region_coroutines = [self.simulate_region(decision_function, region) for region in self.teams]
+        region_winners = await asyncio.gather(*region_coroutines)
+
         print(colored("\nFinal Four Matchups:", "yellow"))
         final_four = self.get_next_round_matchups(region_winners)
         for team1, team2 in final_four:
             print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})", "cyan"))
-        finalists = [self.simulate_game(matchup[0], matchup[1], decision_function) for matchup in final_four]
+
+        final_four_coroutines = [
+            self.simulate_game(matchup[0], matchup[1], decision_function) for matchup in final_four
+        ]
+        finalists = await asyncio.gather(*final_four_coroutines)
+
         print(colored("\nChampionship Game:", "yellow"))
         print(
             colored(f"{finalists[0].name} ({finalists[0].seed}) vs {finalists[1].name} ({finalists[1].seed})", "cyan")
         )
-        champion = self.simulate_game(finalists[0], finalists[1], decision_function)
-        # Updated print statement for the tournament winner with emojis
+
+        champion = await self.simulate_game(finalists[0], finalists[1], decision_function)
         print(colored(f"\n🏆 Tournament Winner: {champion.name} ({champion.seed}) 🏆", "magenta"))
         return champion
 
-    def print_round_name(self, num_teams, region_name):
-        round_names = {
-            64: "Round of 64",
-            32: "Round of 32",
-            16: "Sweet 16",
-            8: "Elite Eight",
-            4: "Final Four",
-            2: "Championship",
-            1: "Tournament Winner",
-        }
-        round_name = round_names.get(num_teams, "Starting Rounds")
-        print(colored(f"\n{region_name} {round_name} Matchups:\n", "yellow"))
+    def print_game_summary(self, team1, team2, winner):
+        print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})", "cyan"))
+        print(colored(f"Winner: {winner.name}\n", "green"))
 
     def print_round_summary(self, round_results):
         print(colored("\nRound Summary:", "yellow"))
@@ -115,7 +109,15 @@ def main():
 
     bracket = Bracket()
     bracket.load_data("bracket_2024.json")
-    _ = bracket.simulate_tournament(decision_functions[args.decider])
+
+    # Create an event loop
+    loop = asyncio.get_event_loop()
+
+    # Run the simulate_tournament coroutine within the event loop
+    _ = loop.run_until_complete(bracket.simulate_tournament(decision_functions[args.decider]))
+
+    # Close the event loop
+    loop.close()
 
 
 if __name__ == "__main__":

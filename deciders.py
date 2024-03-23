@@ -16,15 +16,16 @@ class Team:
         self.seed = seed
 
 
-def best_seed(team1, team2):
+async def best_seed(team1, team2):
     if team1.seed < team2.seed:
         return team1
     else:
         return team2
 
 
-def random_winner(team1, team2):
-    return random.choice([team1, team2])
+async def random_winner(team1, team2):
+    winner = random.choice([team1, team2])
+    return winner
 
 
 PROMPT = """
@@ -73,7 +74,8 @@ def ai_wizard(team1, team2):
         messages = [{"role": "user", "content": PROMPT.format(team1=team1, team2=team2)}]
 
         completion = client.chat.completions.create(
-            model="gpt-4-0125-preview",
+            # model="gpt-4-0125-preview",
+            model="gpt-3.5-turbo-0125",
             messages=messages,  # type: ignore
             tools=tools,  # type: ignore
             tool_choice="auto",
