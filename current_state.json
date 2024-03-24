@@ -1,0 +1,52 @@
+{
+    "regions": {
+        "east": {
+            "E1": "UConn",
+            "E2": "FAU",
+            "E3": null,
+            "E4": null,
+            "E5": null,
+            "E6": null,
+            "E7": null,
+            "E8": null
+        },
+        "west": {
+            "W1": "N. Carolina",
+            "W2": "Michigan St.",
+            "W3": null,
+            "W4": null,
+            "W5": null,
+            "W6": null,
+            "W7": null,
+            "W8": null
+        },
+        "south": {
+            "S1": null,
+            "S2": null,
+            "S3": null,
+            "S4": null,
+            "S5": null,
+            "S6": null,
+            "S7": null,
+            "S8": null
+        },
+        "midwest": {
+            "M1": null,
+            "M2": null,
+            "M3": null,
+            "M4": null,
+            "M5": null,
+            "M6": null,
+            "M7": null,
+            "M8": null
+        }
+    },
+    "region_winners": {
+        "east": null,
+        "west": null,
+        "south": null,
+        "midwest": null
+    },
+    "final_four_winners": [],
+    "championship_winner": null
+}
