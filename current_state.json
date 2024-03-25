@@ -1,52 +1,86 @@
 {
     "regions": {
         "east": {
-            "E1": "UConn",
-            "E2": "FAU",
-            "E3": null,
-            "E4": null,
-            "E5": null,
-            "E6": null,
-            "E7": null,
-            "E8": null
+            "round_of_64": {
+                "E1": "UConn",
+                "E2": "FAU",
+                "E3": "San Diego St.",
+                "E4": "Yale",
+                "E5": "Duquesne",
+                "E6": "Illinois",
+                "E7": "Washington St.",
+                "E8": "Iowa St."
+            },
+            "round_of_32": {
+                "E1": "UConn",
+                "E3": "San Diego St.",
+                "E6": "Illinois",
+                "E8": "Iowa St."
+            },
+            "sweet_16": null,
+            "elite_8": null
         },
         "west": {
-            "W1": "N. Carolina",
-            "W2": "Michigan St.",
-            "W3": null,
-            "W4": null,
-            "W5": null,
-            "W6": null,
-            "W7": null,
-            "W8": null
+            "round_of_64": {
+                "W1": "North Carolina",
+                "W2": "Michigan St.",
+                "W3": "Grand Canyon",
+                "W4": "Alabama",
+                "W5": "Clemson",
+                "W6": "Baylor",
+                "W7": "Dayton",
+                "W8": "Arizona"
+            },
+            "round_of_32": {
+                "W1": "North Carolina",
+                "W4": "Alabama",
+                "W5": "Clemson",
+                "W8": "Arizona"
+            },
+            "sweet_16": null,
+            "elite_8": null
         },
         "south": {
-            "S1": null,
-            "S2": null,
-            "S3": null,
-            "S4": null,
-            "S5": null,
-            "S6": null,
-            "S7": null,
-            "S8": null
+            "round_of_64": {
+                "S1": "Houston",
+                "S2": "Texas A&M",
+                "S3": "James Madison",
+                "S4": "Duke",
+                "S5": "NC State",
+                "S6": "Oakland",
+                "S7": "Colorado",
+                "S8": "Marquette"
+            },
+            "round_of_32": {
+                "S1": "Houston",
+                "S4": "Duke",
+                "S5": "NC State",
+                "S8": "Marquette"
+            },
+            "sweet_16": null,
+            "elite_8": null
         },
         "midwest": {
-            "M1": null,
-            "M2": null,
-            "M3": null,
-            "M4": null,
-            "M5": null,
-            "M6": null,
-            "M7": null,
-            "M8": null
+            "round_of_64": {
+                "M1": "Purdue",
+                "M2": "Utah St.",
+                "M3": "Gonzaga",
+                "M4": "Kansas",
+                "M5": "Oregon",
+                "M6": "Creighton",
+                "M7": "Texas",
+                "M8": "Tennessee"
+            },
+            "round_of_32": {
+                "M1": "Purdue",
+                "M3": "Gonzaga",
+                "M6": "Creighton",
+                "M8": "Tennessee"
+            },
+            "sweet_16": null,
+            "elite_8": null
         }
     },
-    "region_winners": {
-        "east": null,
-        "west": null,
-        "south": null,
-        "midwest": null
-    },
-    "final_four_winners": [],
-    "championship_winner": null
+    "final_four": null,
+    "championship": null
 }
