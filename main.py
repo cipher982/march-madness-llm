@@ -67,20 +67,29 @@ class Bracket:
             for winner_name in current_state.get("final_four_winners", [])
         ]
 
-    async def simulate_match(self, team1, team2, decision_function):
+    async def simulate_match(self, team1, team2, decision_function, played=False):
         winner = await decision_function(team1, team2)
-        self.print_match_summary(team1, team2, winner)
+        self.print_match_summary(team1, team2, winner, played)
         return winner
 
-    def print_match_summary(self, team1, team2, winner):
-        print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})", "cyan"))
-        print(colored(f"Winner: {winner.name}\n", "green"))
+    def print_match_summary(self, team1, team2, winner, played=False):
+        if played:
+            print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed}) - Already Played", "yellow"))
+            print(colored(f"Winner: {winner.name}\n", "green"))
+        else:
+            print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})", "cyan"))
+            print(colored(f"Winner: {winner.name}\n", "green"))
 
     async def simulate_round_for_region(self, decision_function, region_name, round_number):
         current_matchups = list(self.matchups[region_name].values())
-        round_results = await asyncio.gather(
-            *[self.simulate_match(matchup[0], matchup[1], decision_function) for matchup in current_matchups]
-        )
+        round_results = []
+        for matchup in current_matchups:
+            if len(matchup) == 2:
+                winner = await self.simulate_match(matchup[0], matchup[1], decision_function)
+                round_results.append(winner)
+            elif len(matchup) == 1:
+                round_results.append(matchup[0])
+                await self.simulate_match(matchup[0], matchup[0], decision_function, played=True)
         return round_results
 
     def print_round_summary(self, round_results):
