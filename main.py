@@ -46,8 +46,12 @@ class Bracket:
 
         return round_results
 
-    async def simulate_region(self, decision_function, region_name):
-        for round_name in ROUND_NAMES[:4]:
+    async def simulate_region(self, decision_function, region_name, starting_round=None):
+        if starting_round is None:
+            starting_round = "round_of_64"
+
+        starting_index = ROUND_NAMES.index(starting_round)
+        for round_name in ROUND_NAMES[starting_index:4]:  # Adjust to start from the determined round
             print(colored(f"\nSimulating {round_name} for {region_name} region...", "yellow"))
             round_results = await self.simulate_round(decision_function, region_name, round_name)
             print(colored(f"{region_name} {round_name} results:", "green"))
@@ -95,12 +99,30 @@ class Bracket:
         print(colored("Starting NCAA March Madness Bracket Simulation...\n", "yellow"))
 
         for region in ["east", "west", "south", "midwest"]:
-            await self.simulate_region(decision_function, region)
+            starting_round = self.determine_starting_round(region)
+            print(colored(f"Simulating {region} region...", "yellow"))
+            print(colored(f"Starting round: {starting_round}", "green"))
+            await self.simulate_region(decision_function, region, starting_round)
 
         await self.simulate_final_four(decision_function)
         await self.simulate_championship(decision_function)
 
         print(colored(f"\nTournament winner: {self.bracket_data.get_winner()}", "magenta"))
+
+    def determine_starting_round(self, region_name):
+        regional_rounds = ["round_of_64", "round_of_32", "sweet_16", "elite_8"]
+        print(f"Determining starting round for {region_name} region...")
+        for round_name in ROUND_NAMES:
+            if round_name not in regional_rounds:
+                print(f"Skipping {round_name} as it is not a regional round.")
+                continue
+            print(f"Checking if {round_name} is completed for {region_name} region...")
+            if not self.bracket_data.round_completed(region_name, round_name):
+                print(f"Found incomplete round: {round_name}")
+                return round_name
+            print(f"{round_name} is completed for {region_name} region.")
+        print(f"All regional rounds completed for {region_name} region.")
+        return None
 
 
 def main():
@@ -124,7 +146,9 @@ def main():
     bracket_data = BracketData("bracket_2024.json")
     bracket = Bracket(bracket_data)
     if args.current_state:
+        print(colored("Loading current state...", "yellow"))
         bracket_data.update_current_state(args.current_state)
+        print(colored("Current state loaded.", "green"))
     asyncio.run(bracket.simulate_tournament(decision_function))
 
 
