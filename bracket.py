@@ -52,16 +52,31 @@ class BracketData:
             current_state = json.load(file)
 
         def update_matchups(matchups, current_state, region, round_name):
-            # Ensure to navigate through the 'regionals' key to reach the specific region
             for matchup_id, winner in current_state.items():
-                if winner is not None:  # Ensure there's a winner to update
-                    # Correctly reference the path including 'regionals' to update the matchup
+                if winner is not None:
                     matchups["regionals"][region][round_name][matchup_id] = (winner,)
 
-        # Iterate through each region and round in the current state to update matchups
         for region, rounds in current_state["regions"].items():
             for round_name, winners in rounds.items():
-                if winners:  # Check if there are winners to update for this round
+                if winners:
                     update_matchups(self.matchups, winners, region, round_name)
 
         print("Current state update complete.")
+
+    def round_completed(self, region, round_name):
+        expected_matchups = {
+            "round_of_64": 8,
+            "round_of_32": 4,
+            "sweet_16": 2,
+            "elite_8": 1,
+        }
+        matchups = self.matchups["regionals"][region][round_name]
+        if len(matchups) != expected_matchups[round_name]:
+            return False
+        for matchup in matchups.values():
+            if len(matchup) != 1:
+                return False
+        return True
+
+    def get_matchups(self, region_name, round_name):
+        return self.matchups["regionals"][region_name][round_name]
