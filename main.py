@@ -18,6 +18,11 @@ class Simulator:
         self.bracket = bracket
 
     async def simulate_match(self, team1, team2, decision_function, played=False):
+        region_name, round_name, matchup_id = self.bracket.get_matchup_id(team1, team2)
+        if matchup_id is not None:
+            winner = self.bracket.get_match_winner(region_name, round_name, matchup_id)
+            if winner is not None:
+                return Team(winner[0], winner[1])
         winner = await decision_function(team1, team2)
         self.print_match_summary(team1, team2, winner, played)
         return winner
@@ -36,14 +41,16 @@ class Simulator:
 
         for matchup_id, matchup in matchups.items():
             teams = matchup.get("teams")
-            if teams[0] is not None and teams[1] is not None:
+            if teams[0] is None and teams[1] is None:
+                print(f"Skipping matchup {matchup_id} due to missing teams.")
+                continue
+            elif teams[0] is None or teams[1] is None:
+                raise Exception(f"Invalid matchup: {matchup}, team1: {teams[0]}, team2: {teams[1]}")
+            else:
                 winner = await self.simulate_match(teams[0], teams[1], decision_function)
                 round_results.append((matchup_id, winner))
                 self.bracket.update_winner(region_name, round_name, matchup_id, (winner.name, winner.seed))
-            else:
-                raise Exception(f"Invalid matchup: {matchup}, team1: {teams[0]}, team2: {teams[1]}")
 
-        # Update teams for the next round
         next_round = {
             "round_of_64": "round_of_32",
             "round_of_32": "sweet_16",
@@ -72,8 +79,12 @@ class Simulator:
                 self.bracket.update_winner(region_name, round_name, matchup_id, (winner.name, winner.seed))
 
             if round_name == "elite_8":
-                print(colored(f"\n{region_name} region winner: {round_results[0][1].name}", "magenta"))
-                return round_results[0][1]  # Return the winner of the Elite Eight round
+                if len(round_results) > 0:
+                    print(colored(f"\n{region_name} region winner: {round_results[0][1].name}", "magenta"))
+                    return round_results[0][1]
+                else:
+                    print(colored(f"\n{region_name} region winner: Not determined", "red"))
+                    return None
 
     async def simulate_final_four(self, decision_function):
         print(colored("\nSimulating Final Four...", "yellow"))
@@ -114,41 +125,24 @@ class Simulator:
 
         elite_eight_winners = []
         for region in ["east", "west", "south", "midwest"]:
-            starting_round = self.bracket.determine_starting_round(region)
+            starting_round = None
             print(colored(f"Simulating {region} region...", "yellow"))
             print(colored(f"Starting round: {starting_round}", "green"))
             winner = await self.simulate_region(decision_function, region, starting_round)
             elite_eight_winners.append(winner)
 
-        # Update Final Four matchups with Elite Eight winners
-        self.bracket.update_final_four("FF1", elite_eight_winners[0])
-        self.bracket.update_final_four("FF1", elite_eight_winners[1])
-        self.bracket.update_final_four("FF2", elite_eight_winners[2])
-        self.bracket.update_final_four("FF2", elite_eight_winners[3])
+        for i, winner in enumerate(elite_eight_winners):
+            if winner is not None:
+                self.bracket.update_final_four(f"FF{i // 2 + 1}", winner)
 
         await self.simulate_final_four(decision_function)
         await self.simulate_championship(decision_function)
 
-        winner = self.bracket.get_winner()
+        winner = self.bracket.get_tournament_winner()
         if winner is not None:
             print(colored(f"\nTournament winner: {winner[0]} ({winner[1]})", "magenta"))
         else:
             print(colored("\nTournament winner: Not determined", "red"))
-
-    def determine_starting_round(self, region_name):
-        regional_rounds = ["round_of_64", "round_of_32", "sweet_16", "elite_8"]
-        print(f"Determining starting round for {region_name} region...")
-        for round_name in ROUND_NAMES:
-            if round_name not in regional_rounds:
-                print(f"Skipping {round_name} as it is not a regional round.")
-                continue
-            print(f"Checking if {round_name} is completed for {region_name} region...")
-            if not self.bracket.round_completed(region_name, round_name):
-                print(f"Found incomplete round: {round_name}")
-                return round_name
-            print(f"{round_name} is completed for {region_name} region.")
-        print(f"All regional rounds completed for {region_name} region.")
-        return None
 
 
 def main():

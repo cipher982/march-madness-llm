@@ -149,8 +149,8 @@ class Bracket:
                     prev_matchup_ids = [matchup_id[:-1] + str(int(matchup_id[-1]) * 2 - i) for i in range(2)]
                     team1 = matchups["regionals"][region][prev_round][prev_matchup_ids[0]]["winner"]
                     team2 = matchups["regionals"][region][prev_round][prev_matchup_ids[1]]["winner"]
-                    matchup["teams"] = (team1, team2)
 
+                    matchup["teams"] = (team1, team2)
                 if winner_name is not None:
                     team1, team2 = matchup["teams"]
                     if team1 is not None and team1.name == winner_name:
@@ -186,17 +186,24 @@ class Bracket:
         else:
             matchup["teams"] = (matchup["teams"][0], Team(winner.name, winner.seed))
 
-    def determine_starting_round(self, region_name):
-        regional_rounds = ["round_of_64", "round_of_32", "sweet_16", "elite_8"]
-        print(f"Determining starting round for {region_name} region...")
-        for round_name in regional_rounds:
-            print(f"Checking if {round_name} is completed for {region_name} region...")
-            if not self.round_completed(region_name, round_name):
-                print(f"Found incomplete round: {round_name}")
-                return round_name
-            print(f"{round_name} is completed for {region_name} region.")
-        print(f"All regional rounds completed for {region_name} region.")
-        return "final_4"
+    def get_matchup_id(self, team1, team2):
+        for region, rounds in self.matchups["regionals"].items():
+            for round_name, matchups in rounds.items():
+                for matchup_id, matchup in matchups.items():
+                    if matchup["teams"] == (team1, team2) or matchup["teams"] == (team2, team1):
+                        return region, round_name, matchup_id
+        return None, None, None
+
+    def get_match_winner(self, region_name, round_name, matchup_id):
+        if (
+            region_name in self.matchups["regionals"]
+            and round_name in self.matchups["regionals"][region_name]
+            and matchup_id in self.matchups["regionals"][region_name][round_name]
+        ):
+            winner = self.matchups["regionals"][region_name][round_name][matchup_id]["winner"]
+            if winner is not None:
+                return winner.name, winner.seed
+        return None
 
     def round_completed(self, region, round_name):
         matchups = self.matchups["regionals"][region][round_name]
@@ -227,7 +234,7 @@ class Bracket:
     def update_championship(self, teams):
         self.matchups["championship"]["C1"]["teams"] = teams
 
-    def get_winner(self):
+    def get_tournament_winner(self):
         return self.matchups["championship"]["C1"]["winner"]
 
     def print_bracket(self):
