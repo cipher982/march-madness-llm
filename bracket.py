@@ -14,7 +14,7 @@ class Team:
         return f"Team(name='{self.name}', seed={self.seed})"
 
 
-class BracketData:
+class Bracket:
     def __init__(self, initial_data_file, current_state_file=None):
         self.matchups = {
             "regionals": {
@@ -166,30 +166,69 @@ class BracketData:
         for region, rounds in current_state["regions"].items():
             for round_name, winners in rounds.items():
                 print(f"Updating {region} {round_name} matchups...")
-                if round_name == "round_of_32":
-                    print("here")
                 if winners:
                     update_matchups(self.matchups, winners, region, round_name)
 
         print("Current state update complete.")
+        self.print_bracket()
+
+    def update_winner(self, region_name=None, round_name=None, matchup_id=None, winner=None):
+        if region_name is None and round_name is None and matchup_id is None:
+            # Championship round
+            self.matchups["championship"]["C1"]["winner"] = winner
+        else:
+            self.matchups["regionals"][region_name][round_name][matchup_id]["winner"] = winner
+
+    def update_teams(self, region_name, round_name, matchup_id, winner):
+        matchup = self.matchups["regionals"][region_name][round_name][matchup_id]
+        if matchup["teams"][0] is None:
+            matchup["teams"] = (Team(winner.name, winner.seed), matchup["teams"][1])
+        else:
+            matchup["teams"] = (matchup["teams"][0], Team(winner.name, winner.seed))
+
+    def determine_starting_round(self, region_name):
+        regional_rounds = ["round_of_64", "round_of_32", "sweet_16", "elite_8"]
+        print(f"Determining starting round for {region_name} region...")
+        for round_name in regional_rounds:
+            print(f"Checking if {round_name} is completed for {region_name} region...")
+            if not self.round_completed(region_name, round_name):
+                print(f"Found incomplete round: {round_name}")
+                return round_name
+            print(f"{round_name} is completed for {region_name} region.")
+        print(f"All regional rounds completed for {region_name} region.")
+        return "final_4"
 
     def round_completed(self, region, round_name):
-        expected_matchups = {
-            "round_of_64": 8,
-            "round_of_32": 4,
-            "sweet_16": 2,
-            "elite_8": 1,
-        }
         matchups = self.matchups["regionals"][region][round_name]
-        if len(matchups) != expected_matchups[round_name]:
-            return False
         for matchup in matchups.values():
-            if len(matchup) != 1:
+            if matchup["winner"] is None:
                 return False
         return True
 
     def get_matchups(self, region_name, round_name):
         return self.matchups["regionals"][region_name][round_name]
+
+    def get_final_four(self):
+        return self.matchups["final_4"]
+
+    def update_final_four(self, ff_matchup_id, winner):
+        if ff_matchup_id not in ["FF1", "FF2"]:
+            raise ValueError(f"Invalid Final Four matchup ID: {ff_matchup_id}")
+
+        matchup = self.matchups["final_4"][ff_matchup_id]
+        if matchup["teams"][0] is None:
+            matchup["teams"] = (winner, matchup["teams"][1])
+        else:
+            matchup["teams"] = (matchup["teams"][0], winner)
+
+    def get_championship(self):
+        return self.matchups["championship"]["C1"]["teams"]
+
+    def update_championship(self, teams):
+        self.matchups["championship"]["C1"]["teams"] = teams
+
+    def get_winner(self):
+        return self.matchups["championship"]["C1"]["winner"]
 
     def print_bracket(self):
         for region, rounds in self.matchups["regionals"].items():
@@ -215,7 +254,7 @@ class BracketData:
 
 
 if __name__ == "__main__":
-    bracket = BracketData("bracket_2024.json")
+    bracket = Bracket("bracket_2024.json")
     print("Initial bracket data loaded.")
     print("\nBracket after loading initial data:")
     bracket.print_bracket()
