@@ -17,7 +17,10 @@
                 "E3": "Illinois",
                 "E4": "Iowa St."
             },
-            "sweet_16": null,
+            "sweet_16": {
+                "E1": "UConn",
+                "E2": "Illinois"
+            },
             "elite_8": null
         },
         "west": {
@@ -37,7 +40,10 @@
                 "W3": "Clemson",
                 "W4": "Arizona"
             },
-            "sweet_16": null,
+            "sweet_16": {
+                "W1": "Alabama",
+                "W2": "Clemson"
+            },
             "elite_8": null
         },
         "south": {
