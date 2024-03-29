@@ -1,271 +1,273 @@
 import json
 from termcolor import colored
+from typing import Tuple, Dict, Optional, List
 
 
 class Team:
-    def __init__(self, name, seed):
+    def __init__(self, name: str, seed: int):
         self.name = name
         self.seed = seed
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} ({self.seed})"
 
-    def __repr__(self):
-        return f"Team(name='{self.name}', seed={self.seed})"
+
+class Matchup:
+    def __init__(
+        self,
+        matchup_id: str,
+        team1: Optional[Team] = None,
+        team2: Optional[Team] = None,
+        winner: Optional[Team] = None,
+    ):
+        self.matchup_id = matchup_id
+        self.team1 = team1
+        self.team2 = team2
+        self.winner = winner
+
+    def is_decided(self) -> bool:
+        return self.team1 is not None and self.team2 is not None
+
+    def __str__(self) -> str:
+        team1_str = str(self.team1) if self.team1 else "TBD"
+        team2_str = str(self.team2) if self.team2 else "TBD"
+        winner_str = str(self.winner) if self.winner else "TBD"
+        return f"{self.matchup_id}: {team1_str} vs {team2_str} | Winner: {winner_str}"
+
+
+class Round:
+    def __init__(self, name: str, matchups: List[Matchup]):
+        self.name = name
+        self.matchups = matchups
+
+    def __str__(self) -> str:
+        matchups_str = "\n".join(str(matchup) for matchup in self.matchups)
+        return f"{self.name}:\n{matchups_str}"
+
+
+class Region:
+    def __init__(self, name: str, rounds: List[Round]):
+        self.name = name
+        self.rounds = rounds
+
+    def __str__(self) -> str:
+        rounds_str = "\n\n".join(str(round) for round in self.rounds)
+        return f"{self.name} Region:\n{rounds_str}"
 
 
 class Bracket:
-    def __init__(self, initial_data_file, current_state_file=None):
-        self.matchups = {
-            "regionals": {
-                "east": {
-                    "round_of_64": {
-                        "E1": {"teams": (None, None), "winner": None},
-                        "E2": {"teams": (None, None), "winner": None},
-                        "E3": {"teams": (None, None), "winner": None},
-                        "E4": {"teams": (None, None), "winner": None},
-                        "E5": {"teams": (None, None), "winner": None},
-                        "E6": {"teams": (None, None), "winner": None},
-                        "E7": {"teams": (None, None), "winner": None},
-                        "E8": {"teams": (None, None), "winner": None},
-                    },
-                    "round_of_32": {
-                        "E1": {"teams": (None, None), "winner": None},
-                        "E2": {"teams": (None, None), "winner": None},
-                        "E3": {"teams": (None, None), "winner": None},
-                        "E4": {"teams": (None, None), "winner": None},
-                    },
-                    "sweet_16": {
-                        "E1": {"teams": (None, None), "winner": None},
-                        "E2": {"teams": (None, None), "winner": None},
-                    },
-                    "elite_8": {"E1": {"teams": (None, None), "winner": None}},
-                },
-                "west": {
-                    "round_of_64": {
-                        "W1": {"teams": (None, None), "winner": None},
-                        "W2": {"teams": (None, None), "winner": None},
-                        "W3": {"teams": (None, None), "winner": None},
-                        "W4": {"teams": (None, None), "winner": None},
-                        "W5": {"teams": (None, None), "winner": None},
-                        "W6": {"teams": (None, None), "winner": None},
-                        "W7": {"teams": (None, None), "winner": None},
-                        "W8": {"teams": (None, None), "winner": None},
-                    },
-                    "round_of_32": {
-                        "W1": {"teams": (None, None), "winner": None},
-                        "W2": {"teams": (None, None), "winner": None},
-                        "W3": {"teams": (None, None), "winner": None},
-                        "W4": {"teams": (None, None), "winner": None},
-                    },
-                    "sweet_16": {
-                        "W1": {"teams": (None, None), "winner": None},
-                        "W2": {"teams": (None, None), "winner": None},
-                    },
-                    "elite_8": {"W1": {"teams": (None, None), "winner": None}},
-                },
-                "south": {
-                    "round_of_64": {
-                        "S1": {"teams": (None, None), "winner": None},
-                        "S2": {"teams": (None, None), "winner": None},
-                        "S3": {"teams": (None, None), "winner": None},
-                        "S4": {"teams": (None, None), "winner": None},
-                        "S5": {"teams": (None, None), "winner": None},
-                        "S6": {"teams": (None, None), "winner": None},
-                        "S7": {"teams": (None, None), "winner": None},
-                        "S8": {"teams": (None, None), "winner": None},
-                    },
-                    "round_of_32": {
-                        "S1": {"teams": (None, None), "winner": None},
-                        "S2": {"teams": (None, None), "winner": None},
-                        "S3": {"teams": (None, None), "winner": None},
-                        "S4": {"teams": (None, None), "winner": None},
-                    },
-                    "sweet_16": {
-                        "S1": {"teams": (None, None), "winner": None},
-                        "S2": {"teams": (None, None), "winner": None},
-                    },
-                    "elite_8": {"S1": {"teams": (None, None), "winner": None}},
-                },
-                "midwest": {
-                    "round_of_64": {
-                        "M1": {"teams": (None, None), "winner": None},
-                        "M2": {"teams": (None, None), "winner": None},
-                        "M3": {"teams": (None, None), "winner": None},
-                        "M4": {"teams": (None, None), "winner": None},
-                        "M5": {"teams": (None, None), "winner": None},
-                        "M6": {"teams": (None, None), "winner": None},
-                        "M7": {"teams": (None, None), "winner": None},
-                        "M8": {"teams": (None, None), "winner": None},
-                    },
-                    "round_of_32": {
-                        "M1": {"teams": (None, None), "winner": None},
-                        "M2": {"teams": (None, None), "winner": None},
-                        "M3": {"teams": (None, None), "winner": None},
-                        "M4": {"teams": (None, None), "winner": None},
-                    },
-                    "sweet_16": {
-                        "M1": {"teams": (None, None), "winner": None},
-                        "M2": {"teams": (None, None), "winner": None},
-                    },
-                    "elite_8": {"M1": {"teams": (None, None), "winner": None}},
-                },
-            },
-            "final_4": {"FF1": {"teams": (None, None), "winner": None}, "FF2": {"teams": (None, None), "winner": None}},
-            "championship": {"C1": {"teams": (None, None), "winner": None}},
-        }
-        self.winner = None
+    def __init__(self, regions: List[Region], final_four: Round, championship: Matchup):
+        self.regions = regions
+        self.final_four = final_four
+        self.championship = championship
 
-        self.load_initial_data(initial_data_file)
-        if current_state_file:
-            self.update_current_state(current_state_file)
-
-    def load_initial_data(self, filename):
+    def load_initial_data(self, filename: str) -> None:
         with open(filename) as file:
             data = json.load(file)
 
-        for region in ["east", "west", "south", "midwest"]:
-            for matchup in data["regions"][region]:
-                team1 = Team(matchup["t1"][0], matchup["t1"][1])
-                team2 = Team(matchup["t2"][0], matchup["t2"][1])
-                matchup_id = matchup["id"]
-                self.matchups["regionals"][region]["round_of_64"][matchup_id]["teams"] = (team1, team2)
+        for region_name, region_data in data["regions"].items():
+            print(f"Loading data for {region_name} region")
+            for matchup_data in region_data:
+                matchup_id = matchup_data["id"]
+                team1_data = matchup_data["t1"]
+                team2_data = matchup_data["t2"]
 
-    def update_current_state(self, current_state_file):
-        print("\n===== Loading current state... =====\n")
-        with open(current_state_file) as file:
-            current_state = json.load(file)
+                team1 = Team(team1_data[0], team1_data[1])
+                team2 = Team(team2_data[0], team2_data[1])
+                # print(f"Matchup ID: {matchup_id}, Team 1: {team1}, Team 2: {team2}")
 
-        def update_matchups(matchups, current_state, region, round_name):
-            for matchup_id, winner_name in current_state.items():
-                matchup = matchups["regionals"][region][round_name][matchup_id]
+                region = self.get_region_by_name(region_name)
+                if region:
+                    for round in region.rounds:
+                        for matchup in round.matchups:
+                            if matchup.matchup_id == matchup_id:
+                                matchup.team1 = team1
+                                matchup.team2 = team2
+                                # print(f"Matchup ({matchup}) updated with teams")
+                                break
+                else:
+                    raise Exception(f"Region {region_name} not found")
 
-                if round_name != "round_of_64":
-                    prev_round = {
-                        "round_of_32": "round_of_64",
-                        "sweet_16": "round_of_32",
-                        "elite_8": "sweet_16",
-                    }[round_name]
-                    prev_matchup_ids = [matchup_id[:-1] + str(int(matchup_id[-1]) * 2 - i) for i in range(2)]
-                    team1 = matchups["regionals"][region][prev_round][prev_matchup_ids[0]]["winner"]
-                    team2 = matchups["regionals"][region][prev_round][prev_matchup_ids[1]]["winner"]
+    def load_current_state(self, filename: str) -> None:
+        with open(filename) as file:
+            data = json.load(file)
 
-                    matchup["teams"] = (team1, team2)
-                if winner_name is not None:
-                    team1, team2 = matchup["teams"]
-                    if team1 is not None and team1.name == winner_name:
-                        winner = team1
-                    elif team2 is not None and team2.name == winner_name:
-                        winner = team2
+        print(f"Loading current state from {filename}")
+
+        for region_name, region_data in data["regions"].items():
+            print(f"Processing {region_name} region")
+            region = self.get_region_by_name(region_name)
+            if region:
+                for round_name, round_data in region_data.items():
+                    if round_data:
+                        print(f"Processing {round_name} round")
+                        round = self.get_round_by_name(region_name, round_name)
+                        if round:
+                            matchup_id_prefix = region_name[0].upper()
+                            matchup_id_start = round.matchups[0].matchup_id[1:]
+                            for i, (matchup_key, winner_name) in enumerate(round_data.items()):
+                                matchup_id = f"{matchup_id_prefix}{int(matchup_id_start) + i}"
+                                print(f"Processing matchup {matchup_id}")
+                                matchup = self.get_matchup_by_id(region_name, round.name, matchup_id)
+                                if matchup:
+                                    winner = next(
+                                        (
+                                            team
+                                            for team in [matchup.team1, matchup.team2]
+                                            if team and team.name == winner_name
+                                        ),
+                                        None,
+                                    )
+                                    matchup.winner = winner
+                                    print(f"Matchup ({matchup}) updated with winner: {winner}")
+                                else:
+                                    print(
+                                        f"Matchup with ID {matchup_id} not found in {round.name} round of {region_name} region"
+                                    )
+
+                            # Create next round matchups
+                            if round.name != "elite_8":
+                                next_round_name = self.get_next_round_name(round.name)
+                                next_round = self.get_round_by_name(region_name, next_round_name)
+                                if next_round:
+                                    print(
+                                        f"Creating next round matchups for {next_round_name} round in {region_name} region"
+                                    )
+                                    self.create_next_round_matchups(round, next_round)
+                                else:
+                                    print(f"Next round ({next_round_name}) not found in {region_name} region")
+                            else:
+                                print(f"Skipping next round creation for {round.name} round in {region_name} region")
                     else:
-                        raise ValueError(
-                            f"Winner {winner_name} != teams in matchup={matchup_id}={team1.name}, {team2.name}"
-                        )
-                    matchup["winner"] = winner
+                        print(f"No data found for {round_name} round in {region_name} region")
+            else:
+                print(f"Region {region_name} not found")
 
-        for region, rounds in current_state["regions"].items():
-            for round_name, winners in rounds.items():
-                print(f"Updating {region} {round_name} matchups...")
-                if winners:
-                    update_matchups(self.matchups, winners, region, round_name)
+        # Update Final Four and Championship based on region winners
+        print("Updating Final Four and Championship")
+        self.update_final_four_and_championship()
 
-        print("Current state update complete.")
-        self.print_bracket()
-
-    def update_winner(self, region_name=None, round_name=None, matchup_id=None, winner=None):
-        if region_name is None and round_name is None and matchup_id is None:
-            # Championship round
-            self.matchups["championship"]["C1"]["winner"] = winner
-        else:
-            self.matchups["regionals"][region_name][round_name][matchup_id]["winner"] = winner
-
-    def update_teams(self, region_name, round_name, matchup_id, winner):
-        matchup = self.matchups["regionals"][region_name][round_name][matchup_id]
-        if matchup["teams"][0] is None:
-            matchup["teams"] = (Team(winner.name, winner.seed), matchup["teams"][1])
-        else:
-            matchup["teams"] = (matchup["teams"][0], Team(winner.name, winner.seed))
-
-    def get_matchup_id(self, team1, team2):
-        for region, rounds in self.matchups["regionals"].items():
-            for round_name, matchups in rounds.items():
-                for matchup_id, matchup in matchups.items():
-                    if matchup["teams"] == (team1, team2) or matchup["teams"] == (team2, team1):
-                        return region, round_name, matchup_id
-        return None, None, None
-
-    def get_match_winner(self, region_name, round_name, matchup_id):
-        if (
-            region_name in self.matchups["regionals"]
-            and round_name in self.matchups["regionals"][region_name]
-            and matchup_id in self.matchups["regionals"][region_name][round_name]
-        ):
-            winner = self.matchups["regionals"][region_name][round_name][matchup_id]["winner"]
-            if winner is not None:
-                return winner.name, winner.seed
+    def get_next_round_name(self, current_round_name: str) -> str:
+        round_progression = ["round_of_64", "round_of_32", "sweet_16", "elite_8"]
+        current_index = round_progression.index(current_round_name)
+        if current_index < len(round_progression) - 1:
+            return round_progression[current_index + 1]
         return None
 
-    def round_completed(self, region, round_name):
-        matchups = self.matchups["regionals"][region][round_name]
-        for matchup in matchups.values():
-            if matchup["winner"] is None:
-                return False
-        return True
+    def get_region_by_name(self, name: str) -> Optional[Region]:
+        for region in self.regions:
+            if region.name == name:
+                return region
+        return None
 
-    def get_matchups(self, region_name, round_name):
-        return self.matchups["regionals"][region_name][round_name]
+    def create_next_round_matchups(self, current_round: Round, next_round: Round) -> None:
+        winners = [matchup.winner for matchup in current_round.matchups if matchup.winner]
+        next_round_matchups = next_round.matchups
 
-    def get_final_four(self):
-        return self.matchups["final_4"]
+        for i in range(len(next_round_matchups)):
+            if i * 2 < len(winners):
+                next_round_matchups[i].team1 = winners[i * 2]
+                if i * 2 + 1 < len(winners):
+                    next_round_matchups[i].team2 = winners[i * 2 + 1]
+                else:
+                    next_round_matchups[i].team2 = None
+            else:
+                next_round_matchups[i].team1 = None
+                next_round_matchups[i].team2 = None
 
-    def update_final_four(self, ff_matchup_id, winner):
-        if ff_matchup_id not in ["FF1", "FF2"]:
-            raise ValueError(f"Invalid Final Four matchup ID: {ff_matchup_id}")
+            print(f"Next round matchup created: {next_round_matchups[i]}")
 
-        matchup = self.matchups["final_4"][ff_matchup_id]
-        if matchup["teams"][0] is None:
-            matchup["teams"] = (winner, matchup["teams"][1])
-        else:
-            matchup["teams"] = (matchup["teams"][0], winner)
+    def update_final_four_and_championship(self) -> None:
+        region_winners = [
+            region.rounds[-1].matchups[0].winner for region in self.regions if region.rounds[-1].matchups[0].winner
+        ]
 
-    def get_championship(self):
-        return self.matchups["championship"]["C1"]["teams"]
+        # Update Final Four
+        for i in range(len(self.final_four.matchups)):
+            if i < len(region_winners):
+                self.final_four.matchups[i].team1 = region_winners[i]
+                self.final_four.matchups[i].team2 = region_winners[i + 1] if i + 1 < len(region_winners) else None
 
-    def update_championship(self, teams):
-        self.matchups["championship"]["C1"]["teams"] = teams
+        # Update Championship
+        if len(region_winners) == 2:
+            self.championship.team1 = region_winners[0]
+            self.championship.team2 = region_winners[1]
 
-    def get_tournament_winner(self):
-        return self.matchups["championship"]["C1"]["winner"]
+    def get_round_by_name(self, region_name: str, round_name: str) -> Optional[Round]:
+        region = self.get_region_by_name(region_name)
+        if region:
+            for round in region.rounds:
+                if round.name == round_name:
+                    return round
+        return None
 
-    def print_bracket(self):
-        for region, rounds in self.matchups["regionals"].items():
-            print(colored(f"\n{region.capitalize()} Region:", "blue", attrs=["bold"]))
-            for round_name, matchups in rounds.items():
-                print(colored(f"  {round_name.replace('_', ' ').title()}:", "magenta"))
-                for matchup_id, matchup in matchups.items():
-                    team1, team2 = matchup["teams"]
-                    winner = matchup["winner"]
-                    if team1 is None:
-                        team1_info = "TBD"
-                    else:
-                        team1_info = colored(f"{team1.name} ({team1.seed})", "cyan")
-                    if team2 is None:
-                        team2_info = "TBD"
-                    else:
-                        team2_info = colored(f"{team2.name} ({team2.seed})", "cyan")
-                    if winner is not None:
-                        winner_info = colored(f"Winner: {winner.name} ({winner.seed})", "green")
-                    else:
-                        winner_info = colored("Winner: TBD", "red")
-                    print(f"    {matchup_id}: {team1_info} vs. {team2_info} - {winner_info}")
+    def get_matchup_by_id(self, region_name: str, round_name: str, matchup_id: str) -> Optional[Matchup]:
+        round = self.get_round_by_name(region_name, round_name)
+        if round:
+            for matchup in round.matchups:
+                if matchup.matchup_id == matchup_id:
+                    return matchup
+        return None
+
+    def update_matchup_winner(self, region_name: str, round_name: str, matchup_id: str, winner: Team) -> None:
+        matchup = self.get_matchup_by_id(region_name, round_name, matchup_id)
+        if matchup:
+            matchup.winner = winner
+
+    def is_region_round_complete(self, region_name: str, round_name: str) -> bool:
+        round = self.get_round_by_name(region_name, round_name)
+        if round:
+            return all(matchup.winner is not None for matchup in round.matchups)
+        return False
+
+    def get_region_winner(self, region_name: str) -> Optional[Team]:
+        region = self.get_region_by_name(region_name)
+        if region:
+            elite_eight_round = region.rounds[-1]
+            if len(elite_eight_round.matchups) == 1:
+                return elite_eight_round.matchups[0].winner
+        return None
+
+    def update_final_four(self, matchup_id: int, winner: Team) -> None:
+        if 0 <= matchup_id < len(self.final_four.matchups):
+            self.final_four.matchups[matchup_id].winner = winner
+
+    def update_championship(self, winner: Team) -> None:
+        self.championship.winner = winner
+
+    def get_tournament_winner(self) -> Optional[Team]:
+        return self.championship.winner
+
+    def __str__(self) -> str:
+        regions_str = "\n\n".join(str(region) for region in self.regions)
+        final_four_str = str(self.final_four)
+        championship_str = str(self.championship)
+        return f"Bracket:\n\n{regions_str}\n\nFinal Four:\n{final_four_str}\n\nChampionship:\n{championship_str}"
+
+
+def create_empty_bracket() -> Bracket:
+    regions = []
+    region_names = ["east", "west", "south", "midwest"]
+    region_codes = ["E", "W", "S", "M"]
+
+    for region_name, region_code in zip(region_names, region_codes):
+        rounds = []
+        matchup_id = 1
+        for round_name, num_matchups in [("round_of_64", 8), ("round_of_32", 4), ("sweet_16", 2), ("elite_8", 1)]:
+            matchups = [Matchup(f"{region_code}{matchup_id + i}") for i in range(num_matchups)]
+            rounds.append(Round(round_name, matchups))
+            matchup_id += num_matchups
+        regions.append(Region(region_name, rounds))
+
+    final_four = Round("final_4", [Matchup("F1"), Matchup("F2")])
+    championship = Matchup("C1")
+
+    return Bracket(regions, final_four, championship)
 
 
 if __name__ == "__main__":
-    bracket = Bracket("bracket_2024.json")
-    print("Initial bracket data loaded.")
-    print("\nBracket after loading initial data:")
-    bracket.print_bracket()
-
-    bracket.update_current_state("current_state.json")
-    print("\nBracket after updating current state:")
-    bracket.print_bracket()
+    bracket = create_empty_bracket()
+    bracket.load_initial_data("bracket_2024.json")
+    # print(bracket)
+    bracket.load_current_state("current_state.json")
+    print(bracket)
