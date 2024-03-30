@@ -74,7 +74,6 @@ class Bracket:
 
                 team1 = Team(team1_data[0], team1_data[1])
                 team2 = Team(team2_data[0], team2_data[1])
-                # print(f"Matchup ID: {matchup_id}, Team 1: {team1}, Team 2: {team2}")
 
                 region = self.get_region_by_name(region_name)
                 if region:
@@ -83,7 +82,6 @@ class Bracket:
                             if matchup.matchup_id == matchup_id:
                                 matchup.team1 = team1
                                 matchup.team2 = team2
-                                # print(f"Matchup ({matchup}) updated with teams")
                                 break
                 else:
                     raise Exception(f"Region {region_name} not found")
@@ -107,7 +105,7 @@ class Bracket:
                             matchup_id_start = round.matchups[0].matchup_id[1:]
                             for i, (matchup_key, winner_name) in enumerate(round_data.items()):
                                 matchup_id = f"{matchup_id_prefix}{int(matchup_id_start) + i}"
-                                print(f"Processing matchup {matchup_id}")
+                                # print(f"Processing matchup {matchup_id}")
                                 matchup = self.get_matchup_by_id(region_name, round.name, matchup_id)
                                 if matchup:
                                     winner = next(
@@ -119,31 +117,23 @@ class Bracket:
                                         None,
                                     )
                                     matchup.winner = winner
-                                    print(f"Matchup ({matchup}) updated with winner: {winner}")
+                                    # print(f"Matchup ({matchup}) updated with winner: {winner}")
                                 else:
-                                    print(
-                                        f"Matchup with ID {matchup_id} not found in {round.name} round of {region_name} region"
-                                    )
+                                    raise Exception(f"Matchup {matchup_id} not found in {region_name} region")
 
                             # Create next round matchups
                             if round.name != "elite_8":
                                 next_round_name = self.get_next_round_name(round.name)
                                 next_round = self.get_round_by_name(region_name, next_round_name)
-                                if next_round:
-                                    print(
-                                        f"Creating next round matchups for {next_round_name} round in {region_name} region"
-                                    )
-                                    self.create_next_round_matchups(round, next_round)
-                                else:
-                                    print(f"Next round ({next_round_name}) not found in {region_name} region")
+                                assert next_round is not None, f"No next round found in {region_name} region"
+                                self.create_next_round_matchups(round, next_round)
                             else:
-                                print(f"Skipping next round creation for {round.name} round in {region_name} region")
+                                raise Exception(f"Elite 8 round should not have data in {region_name} region")
                     else:
                         print(f"No data found for {round_name} round in {region_name} region")
             else:
-                print(f"Region {region_name} not found")
+                raise Exception(f"Region {region_name} not found")
 
-        # Update Final Four and Championship based on region winners
         print("Updating Final Four and Championship")
         self.update_final_four_and_championship()
 
@@ -174,8 +164,6 @@ class Bracket:
             else:
                 next_round_matchups[i].team1 = None
                 next_round_matchups[i].team2 = None
-
-            print(f"Next round matchup created: {next_round_matchups[i]}")
 
     def update_final_four_and_championship(self) -> None:
         region_winners = [
