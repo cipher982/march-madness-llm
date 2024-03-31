@@ -202,16 +202,39 @@ class Bracket:
                     return round
         return None
 
-    def get_matchup_by_id(self, region_name: str, round_name: str, matchup_id: str) -> Optional[Matchup]:
-        round = self.get_round_by_name(region_name, round_name)
-        for matchup in round.matchups:  # type: ignore
-            if matchup.matchup_id == matchup_id:
-                return matchup
-        raise Exception(f"Matchup {matchup_id} not found in {region_name} {round_name}")
+    def get_matchup_by_id(self, region_name: Optional[str], round_name: str, matchup_id: str) -> Optional[Matchup]:
+        if region_name:
+            round = self.get_round_by_name(region_name, round_name)
+            for matchup in round.matchups:  # type: ignore
+                if matchup.matchup_id == matchup_id:
+                    return matchup
+        else:
+            if round_name == "final_4":
+                for matchup in self.final_four.matchups:
+                    if matchup.matchup_id == matchup_id:
+                        return matchup
+            elif round_name == "championship":
+                if self.championship.matchup_id == matchup_id:
+                    return self.championship
+        raise Exception(f"Matchup {matchup_id} not found in {region_name or 'Final Four/Championship'} {round_name}")
 
-    def update_matchup_winner(self, region_name, round_name, matchup_id, winner):
-        matchup = self.get_matchup_by_id(region_name, round_name, matchup_id)
-        matchup.winner = winner  # type: ignore
+    def update_matchup_winner(self, region_name: Optional[str], round_name: str, matchup_id: str, winner: Team) -> None:
+        if region_name:
+            matchup = self.get_matchup_by_id(region_name, round_name, matchup_id)
+            matchup.winner = winner  # type: ignore
+        else:
+            if round_name == "final_4":
+                matchup = self.get_matchup_by_id(None, round_name, matchup_id)
+                matchup.winner = winner  # type: ignore
+                self.update_championship()
+            elif round_name == "championship":
+                self.championship.winner = winner
+
+    def update_championship(self) -> None:
+        final_four_winners = [matchup.winner for matchup in self.final_four.matchups if matchup.winner]
+        if len(final_four_winners) == 2:
+            self.championship.team1 = final_four_winners[0]
+            self.championship.team2 = final_four_winners[1]
 
     def is_region_round_complete(self, region_name: str, round_name: str) -> bool:
         round = self.get_round_by_name(region_name, round_name)
@@ -231,7 +254,7 @@ class Bracket:
         if 0 <= matchup_id < len(self.final_four.matchups):
             self.final_four.matchups[matchup_id].winner = winner
 
-    def update_championship(self, winner: Team) -> None:
+    def update_championship_winner(self, winner: Team) -> None:
         self.championship.winner = winner
 
     def get_tournament_winner(self) -> Optional[Team]:
