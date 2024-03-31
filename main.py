@@ -2,7 +2,7 @@ import argparse
 import asyncio
 from deciders import ai_wizard, best_seed, random_winner
 from termcolor import colored
-from bracket import Bracket
+from bracket import create_empty_bracket
 
 ROUND_NAMES = ["round_of_64", "round_of_32", "sweet_16", "elite_8", "final_4", "championship"]
 
@@ -163,12 +163,17 @@ def main():
     args = parser.parse_args()
     decision_functions = {"ai": ai_wizard, "seed": best_seed, "random": random_winner}
     decision_function = decision_functions[args.decider]
-    bracket = Bracket("bracket_2024.json")
-    simulator = Simulator(bracket)
+
+    # Create bracket with data
+    bracket = create_empty_bracket()
+    bracket.load_initial_data("bracket_2024.json")
     if args.current_state:
         print(colored("Loading current state...", "yellow"))
-        simulator.bracket.update_current_state(args.current_state)
+        bracket.load_current_state(args.current_state)
         print(colored("Current state loaded.", "green"))
+
+    # Simulate tournament
+    simulator = Simulator(bracket)
     asyncio.run(simulator.simulate_tournament(decision_function))
 
 
