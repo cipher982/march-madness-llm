@@ -70,37 +70,29 @@ class Simulator:
 
     async def simulate_final_four(self, decision_function):
         print(colored("\nSimulating Final Four...", "yellow"))
-        matchups = self.bracket.get_final_four()
+        matchups = self.bracket.final_four.matchups
         final_four_results = []
 
-        for matchup_id, matchup in matchups.items():
-            team1, team2 = matchup["teams"]
+        for matchup in matchups:
+            team1, team2 = matchup.team1, matchup.team2
             if team1 is None or team2 is None:
                 print(colored(f"Skipping {matchup_id} due to missing team(s).", "red"))
                 continue
             winner = await self.simulate_match(team1, team2, decision_function)
             final_four_results.append(winner)
-            self.bracket.update_final_four(matchup_id, winner)
+            self.bracket.update_final_four_and_championship()
 
         print(colored("Final Four results:", "green"))
         for team in final_four_results:
             print(colored(f"{team.name}", "green"))
 
-        self.bracket.update_championship(
-            (
-                (final_four_results[0].name, final_four_results[0].seed),
-                (final_four_results[1].name, final_four_results[1].seed),
-            )
-        )
-
     async def simulate_championship(self, decision_function):
         print(colored("\nSimulating Championship...", "yellow"))
-        matchup = self.bracket.get_championship()
-        team1 = Team(matchup[0][0], matchup[0][1])
-        team2 = Team(matchup[1][0], matchup[1][1])
+        matchup = self.bracket.championship
+        team1, team2 = matchup.team1, matchup.team2
         winner = await self.simulate_match(team1, team2, decision_function)
+        self.bracket.update_final_four_and_championship()
         print(colored(f"\nChampionship winner: {winner.name}", "magenta"))
-        self.bracket.update_winner(winner=(winner.name, winner.seed))
 
     async def simulate_tournament(self, decision_function):
         print(colored("Starting NCAA March Madness Bracket Simulation...\n", "yellow"))
@@ -112,10 +104,7 @@ class Simulator:
             print(colored(f"Starting round: {starting_round}", "green"))
             winner = await self.simulate_region(decision_function, region, starting_round)
             elite_eight_winners.append(winner)
-
-        for i, winner in enumerate(elite_eight_winners):
-            if winner is not None:
-                self.bracket.update_final_four(f"FF{i // 2 + 1}", winner)
+        self.bracket.update_final_four_and_championship()
 
         await self.simulate_final_four(decision_function)
         await self.simulate_championship(decision_function)
