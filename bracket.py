@@ -1,6 +1,5 @@
 import json
-from termcolor import colored
-from typing import Tuple, Dict, Optional, List
+from typing import Dict, Optional, List
 
 
 class Team:
@@ -137,7 +136,7 @@ class Bracket:
         print("Updating Final Four and Championship")
         self.update_final_four_and_championship()
 
-    def get_next_round_name(self, current_round_name: str) -> str:
+    def get_next_round_name(self, current_round_name: str) -> Optional[str]:
         round_progression = ["round_of_64", "round_of_32", "sweet_16", "elite_8"]
         current_index = round_progression.index(current_round_name)
         if current_index < len(round_progression) - 1:
