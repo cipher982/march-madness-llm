@@ -165,6 +165,14 @@ class Bracket:
                 next_round_matchups[i].team1 = None
                 next_round_matchups[i].team2 = None
 
+    def get_matchups(self, region_name: str, round_name: str) -> Dict[str, Matchup]:
+        region = self.get_region_by_name(region_name)
+        if region:
+            round = self.get_round_by_name(region_name, round_name)
+            if round:
+                return {matchup.matchup_id: matchup for matchup in round.matchups}
+        return {}
+
     def update_final_four_and_championship(self) -> None:
         region_winners = [
             region.rounds[-1].matchups[0].winner for region in self.regions if region.rounds[-1].matchups[0].winner
@@ -196,16 +204,14 @@ class Bracket:
 
     def get_matchup_by_id(self, region_name: str, round_name: str, matchup_id: str) -> Optional[Matchup]:
         round = self.get_round_by_name(region_name, round_name)
-        if round:
-            for matchup in round.matchups:
-                if matchup.matchup_id == matchup_id:
-                    return matchup
-        return None
+        for matchup in round.matchups:  # type: ignore
+            if matchup.matchup_id == matchup_id:
+                return matchup
+        raise Exception(f"Matchup {matchup_id} not found in {region_name} {round_name}")
 
-    def update_matchup_winner(self, region_name: str, round_name: str, matchup_id: str, winner: Team) -> None:
+    def update_matchup_winner(self, region_name, round_name, matchup_id, winner):
         matchup = self.get_matchup_by_id(region_name, round_name, matchup_id)
-        if matchup:
-            matchup.winner = winner
+        matchup.winner = winner  # type: ignore
 
     def is_region_round_complete(self, region_name: str, round_name: str) -> bool:
         round = self.get_round_by_name(region_name, round_name)
