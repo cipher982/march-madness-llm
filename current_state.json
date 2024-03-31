@@ -3,10 +3,10 @@
         "east": {
             "round_of_64": {
                 "E1": "UConn",
-                "E2": "FAU",
+                "E2": "Northwestern",
                 "E3": "San Diego St.",
                 "E4": "Yale",
-                "E5": "BYU",
+                "E5": "Duquesne",
                 "E6": "Illinois",
                 "E7": "Wash. St.",
                 "E8": "Iowa St."
@@ -21,12 +21,14 @@
                 "E1": "UConn",
                 "E2": "Illinois"
             },
-            "elite_8": null
+            "elite_8": {
+                "E1": "UConn"
+            }
         },
         "west": {
             "round_of_64": {
                 "W1": "N. Carolina",
-                "W2": "Miss. St.",
+                "W2": "Michigan St.",
                 "W3": "Grand Canyon",
                 "W4": "Alabama",
                 "W5": "Clemson",
@@ -44,7 +46,9 @@
                 "W1": "Alabama",
                 "W2": "Clemson"
             },
-            "elite_8": null
+            "elite_8": {
+                "W1": "Alabama"
+            }
         },
         "south": {
             "round_of_64": {
@@ -52,7 +56,7 @@
                 "S2": "Nebraska",
                 "S3": "Wisconsin",
                 "S4": "Duke",
-                "S5": "Texas Tech",
+                "S5": "NC State",
                 "S6": "Kentucky",
                 "S7": "Florida",
                 "S8": "Marquette"
@@ -60,11 +64,16 @@
             "round_of_32": {
                 "S1": "Houston",
                 "S2": "Duke",
-                "S3": "Texas Tech",
+                "S3": "NC State",
                 "S4": "Marquette"
             },
-            "sweet_16": null,
-            "elite_8": null
+            "sweet_16": {
+                "S1": "Duke",
+                "S2": "NC State"
+            },
+            "elite_8": {
+                "S1": null
+            }
         },
         "midwest": {
             "round_of_64": {
@@ -72,7 +81,7 @@
                 "M2": "Utah St",
                 "M3": "Gonzaga",
                 "M4": "Kansas",
-                "M5": "South Carolina",
+                "M5": "Oregon",
                 "M6": "Creighton",
                 "M7": "Texas",
                 "M8": "Tennessee"
@@ -83,8 +92,13 @@
                 "M3": "Creighton",
                 "M4": "Tennessee"
             },
-            "sweet_16": null,
-            "elite_8": null
+            "sweet_16": {
+                "M1": "Purdue",
+                "M2": "Tennessee"
+            },
+            "elite_8": {
+                "M1": null
+            }
         }
     },
     "final_4": null,
