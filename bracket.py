@@ -128,7 +128,7 @@ class Bracket:
                                 assert next_round is not None, f"No next round found in {region_name} region"
                                 self.create_next_round_matchups(round, next_round)
                             else:
-                                raise Exception(f"Elite 8 round should not have data in {region_name} region")
+                                print(f"Skipping next round for {round_name} in {region_name}")
                     else:
                         print(f"No data found for {round_name} round in {region_name} region")
             else:
@@ -171,15 +171,20 @@ class Bracket:
         ]
 
         # Update Final Four
-        for i in range(len(self.final_four.matchups)):
-            if i < len(region_winners):
-                self.final_four.matchups[i].team1 = region_winners[i]
-                self.final_four.matchups[i].team2 = region_winners[i + 1] if i + 1 < len(region_winners) else None
+        for i, matchup in enumerate(self.final_four.matchups):
+            if not matchup.is_decided():
+                if i * 2 < len(region_winners):
+                    matchup.team1 = region_winners[i * 2]
+                    matchup.team2 = region_winners[i * 2 + 1] if i * 2 + 1 < len(region_winners) else None
 
         # Update Championship
-        if len(region_winners) == 2:
-            self.championship.team1 = region_winners[0]
-            self.championship.team2 = region_winners[1]
+        final_four_winners = [matchup.winner for matchup in self.final_four.matchups if matchup.winner]
+        if len(final_four_winners) == 2:
+            self.championship.team1 = final_four_winners[0]
+            self.championship.team2 = final_four_winners[1]
+        else:
+            self.championship.team1 = None
+            self.championship.team2 = None
 
     def get_round_by_name(self, region_name: str, round_name: str) -> Optional[Round]:
         region = self.get_region_by_name(region_name)
