@@ -76,9 +76,10 @@ class Simulator:
         for matchup in matchups:
             team1, team2 = matchup.team1, matchup.team2
             if team1 is None or team2 is None:
-                print(colored(f"Skipping {matchup_id} due to missing team(s).", "red"))
+                print(colored(f"Skipping {matchup.matchup_id} due to missing team(s).", "red"))
                 continue
             winner = await self.simulate_match(team1, team2, decision_function)
+            self.bracket.update_matchup_winner(None, "final_4", matchup.matchup_id, winner)
             final_four_results.append(winner)
             self.bracket.update_final_four_and_championship()
 
@@ -91,7 +92,7 @@ class Simulator:
         matchup = self.bracket.championship
         team1, team2 = matchup.team1, matchup.team2
         winner = await self.simulate_match(team1, team2, decision_function)
-        self.bracket.update_final_four_and_championship()
+        self.bracket.update_matchup_winner(None, "championship", matchup.matchup_id, winner)
         print(colored(f"\nChampionship winner: {winner.name}", "magenta"))
 
     async def simulate_tournament(self, decision_function):
@@ -110,10 +111,7 @@ class Simulator:
         await self.simulate_championship(decision_function)
 
         winner = self.bracket.get_tournament_winner()
-        if winner is not None:
-            print(colored(f"\nTournament winner: {winner[0]} ({winner[1]})", "magenta"))
-        else:
-            print(colored("\nTournament winner: Not determined", "red"))
+        print(colored(f"\nTournament winner: {winner.name} ({winner.seed})", "magenta"))
 
 
 def main():
