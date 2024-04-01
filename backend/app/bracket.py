@@ -1,4 +1,5 @@
 import json
+import os
 from typing import Dict, Optional, List
 
 
@@ -282,29 +283,9 @@ class Bracket:
         return f"Bracket:\n\n{regions_str}\n\nFinal Four:\n{final_four_str}\n\nChampionship:\n{championship_str}"
 
 
-# def create_empty_bracket() -> Bracket:
-#     regions = []
-#     region_names = ["east", "west", "south", "midwest"]
-#     region_codes = ["E", "W", "S", "M"]
-
-#     for region_name, region_code in zip(region_names, region_codes):
-#         rounds = []
-#         matchup_id = 1
-#         for round_name, num_matchups in [("round_of_64", 8), ("round_of_32", 4), ("sweet_16", 2), ("elite_8", 1)]:
-#             matchups = [Matchup(f"{region_code}{matchup_id + i}") for i in range(num_matchups)]
-#             rounds.append(Round(round_name, matchups))
-#             matchup_id += num_matchups
-#         regions.append(Region(region_name, rounds))
-
-#     final_four = Round("final_4", [Matchup("F1"), Matchup("F2")])
-#     championship = Matchup("C1")
-
-#     return Bracket(regions, final_four, championship)
-
-
 if __name__ == "__main__":
     bracket = Bracket()
-    bracket.load_initial_data("bracket_2024.json")
-    # print(bracket)
-    bracket.load_current_state("current_state.json")
+    data_dir = os.path.join(os.path.dirname(__file__), "../data")
+    bracket.load_initial_data(os.path.join(data_dir, "bracket_2024.json"))
+    bracket.load_current_state(os.path.join(data_dir, "current_state.json"))
     print(bracket)

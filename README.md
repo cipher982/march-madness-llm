@@ -22,7 +22,7 @@ To get started with the NCAA March Madness Bracket Simulator, follow these steps
 `export OPENAI_API_KEY=your_api_key_here`
 
 4. Run the simulator:
-`python main.py`
+`python simulator.py`
 
 5. Customize the simulation by providing command-line arguments:
    - `--decider`: Choose the decision function for simulating games (options: "ai", "seed", "random", default: "seed").
