@@ -5,10 +5,18 @@ from .deciders import get_decision_function
 from .simulator import Simulator
 from .bracket import Bracket
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://marchmadness.drose.io"],
+    allow_methods=["POST"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
