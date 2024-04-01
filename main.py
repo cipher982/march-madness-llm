@@ -56,9 +56,6 @@ class Simulator:
             print(colored(f"\nSimulating {round_name} for {region_name} region...", "yellow"))
             round_results = await self.simulate_round(decision_function, region_name, round_name)
             print(colored(f"{region_name} {round_name} results:", "green"))
-            # for matchup_id, winner in round_results:
-            # print(colored(f"Matchup {matchup_id}: {winner.name}", "green"))
-            # self.bracket.update_matchup_winner(region_name, round_name, matchup_id, Team(winner.name, winner.seed))
 
             if round_name == "elite_8":
                 if len(round_results) > 0:

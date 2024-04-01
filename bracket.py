@@ -123,8 +123,9 @@ class Bracket:
                             # Create next round matchups
                             if round.name != "elite_8":
                                 next_round_name = self.get_next_round_name(round.name)
+                                assert next_round_name is not None
                                 next_round = self.get_round_by_name(region_name, next_round_name)
-                                assert next_round is not None, f"No next round found in {region_name} region"
+                                assert next_round is not None
                                 self.create_next_round_matchups(round, next_round)
                             else:
                                 print(f"Skipping next round for {round_name} in {region_name}")
