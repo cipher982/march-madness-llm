@@ -56,7 +56,7 @@ class Simulator:
             self.bracket.create_next_round_matchups(current_round, next_round_obj)
         return round_results
 
-    async def simulate_region(self, decision_function, region_name, starting_round=None):
+    async def simulate_region(self, decision_function, region_name, starting_round=None) -> Team:
         if starting_round is None:
             starting_round = "round_of_64"
 
@@ -65,13 +65,16 @@ class Simulator:
             logger.debug(f"\nSimulating {round_name} for {region_name} region...")
             round_results = await self.simulate_round(decision_function, region_name, round_name)
             logger.debug(f"{region_name} {round_name} results:")
+
             if round_name == "elite_8":
-                if len(round_results) > 0:
-                    logger.debug(f"\n{region_name} region winner: {round_results[0][1].name}")
-                    return round_results[0][1]
+                if len(round_results) == 1:
+                    region_winner = round_results[0][1]
+                    logger.debug(f"\n{region_name} region winner: {region_winner.name}")
+                    return region_winner
                 else:
-                    logger.warning(f"\n{region_name} region winner: Not determined")
-                    return None
+                    raise Exception(f"Error determining {region_name} region winner after elite 8 round.")
+
+        raise Exception(f"Error determining {region_name} region winner.")
 
     async def simulate_final_four(self, decision_function):
         logger.debug("\nSimulating Final Four...")
@@ -99,7 +102,7 @@ class Simulator:
         winner = await self.simulate_match(team1, team2, decision_function)
         self.bracket.update_matchup_winner(None, "championship", matchup.matchup_id, winner)
 
-    async def simulate_tournament(self, decision_function):
+    async def simulate_tournament(self, decision_function) -> list:
         logger.debug("Starting NCAA March Madness Bracket Simulation...\n")
 
         results = []
@@ -108,7 +111,8 @@ class Simulator:
             logger.debug(f"Simulating {region} region...")
             logger.debug(f"Starting round: {starting_round}")
             winner = await self.simulate_region(decision_function, region, starting_round)
-            results.append({"region": region, "winner": winner.name if winner else None})
+            results.append({"region": region, "winner": winner.name})
+            assert results is not None, f"results is None: {results}"
         self.bracket.update_final_four_and_championship()
 
         await self.simulate_final_four(decision_function)
@@ -116,6 +120,7 @@ class Simulator:
 
         winner = self.bracket.get_tournament_winner()
         results.append({"final_winner": winner.name if winner else None})
+        return results
 
 
 def main():

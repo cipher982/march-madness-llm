@@ -1,6 +1,9 @@
 import json
 import os
+import logging
 from typing import Dict, Optional, List
+
+logger = logging.getLogger(__name__)
 
 
 class Team:
@@ -83,7 +86,7 @@ class Bracket:
             data = json.load(file)
 
         for region_name, region_data in data["regions"].items():
-            print(f"Loading data for {region_name} region")
+            logger.debug(f"Loading data for {region_name} region")
             for matchup_data in region_data:
                 matchup_id = matchup_data["id"]
                 team1_data = matchup_data["t1"]
@@ -107,15 +110,15 @@ class Bracket:
         with open(filename) as file:
             data = json.load(file)
 
-        print(f"Loading current state from {filename}")
+        logger.debug(f"Loading current state from {filename}")
 
         for region_name, region_data in data["regions"].items():
-            print(f"Processing {region_name} region")
+            logger.debug(f"Processing {region_name} region")
             region = self.get_region_by_name(region_name)
             if region:
                 for round_name, round_data in region_data.items():
                     if round_data:
-                        print(f"Processing {round_name} round")
+                        logger.debug(f"Processing {round_name} round")
                         round = self.get_round_by_name(region_name, round_name)
                         if round:
                             matchup_id_prefix = region_name[0].upper()
@@ -144,13 +147,13 @@ class Bracket:
                                 assert next_round is not None
                                 self.create_next_round_matchups(round, next_round)
                             else:
-                                print(f"Skipping next round for {round_name} in {region_name}")
+                                logger.debug(f"Skipping next round for {round_name} in {region_name}")
                     else:
-                        print(f"No data found for {round_name} round in {region_name} region")
+                        logger.debug(f"No data found for {round_name} round in {region_name} region")
             else:
                 raise Exception(f"Region {region_name} not found")
 
-        print("Updating Final Four and Championship")
+        logger.debug("Updating Final Four and Championship")
         self.update_final_four_and_championship()
 
     def get_next_round_name(self, current_round_name: str) -> Optional[str]:
@@ -288,4 +291,4 @@ if __name__ == "__main__":
     data_dir = os.path.join(os.path.dirname(__file__), "../data")
     bracket.load_initial_data(os.path.join(data_dir, "bracket_2024.json"))
     bracket.load_current_state(os.path.join(data_dir, "current_state.json"))
-    print(bracket)
+    logger.info(bracket)
