@@ -55,10 +55,27 @@ class Region:
 
 
 class Bracket:
-    def __init__(self, regions: List[Region], final_four: Round, championship: Matchup):
-        self.regions = regions
-        self.final_four = final_four
-        self.championship = championship
+    def __init__(self):
+        self.regions: List[Region] = []
+        self.final_four: Round = Round("final_4", [])
+        self.championship: Matchup = Matchup("C1")
+        self._initialize_empty_bracket()
+
+    def _initialize_empty_bracket(self):
+        region_names = ["east", "west", "south", "midwest"]
+        region_codes = ["E", "W", "S", "M"]
+
+        for region_name, region_code in zip(region_names, region_codes):
+            rounds = []
+            matchup_id = 1
+            for round_name, num_matchups in [("round_of_64", 8), ("round_of_32", 4), ("sweet_16", 2), ("elite_8", 1)]:
+                matchups = [Matchup(f"{region_code}{matchup_id + i}") for i in range(num_matchups)]
+                rounds.append(Round(round_name, matchups))
+                matchup_id += num_matchups
+            self.regions.append(Region(region_name, rounds))
+
+        self.final_four = Round("final_4", [Matchup("F1"), Matchup("F2")])
+        self.championship = Matchup("C1")
 
     def load_initial_data(self, filename: str) -> None:
         with open(filename) as file:
@@ -104,7 +121,6 @@ class Bracket:
                             matchup_id_start = round.matchups[0].matchup_id[1:]
                             for i, (matchup_key, winner_name) in enumerate(round_data.items()):
                                 matchup_id = f"{matchup_id_prefix}{int(matchup_id_start) + i}"
-                                # print(f"Processing matchup {matchup_id}")
                                 matchup = self.get_matchup_by_id(region_name, round.name, matchup_id)
                                 if matchup:
                                     winner = next(
@@ -116,7 +132,6 @@ class Bracket:
                                         None,
                                     )
                                     matchup.winner = winner
-                                    # print(f"Matchup ({matchup}) updated with winner: {winner}")
                                 else:
                                     raise Exception(f"Matchup {matchup_id} not found in {region_name} region")
 
@@ -267,28 +282,28 @@ class Bracket:
         return f"Bracket:\n\n{regions_str}\n\nFinal Four:\n{final_four_str}\n\nChampionship:\n{championship_str}"
 
 
-def create_empty_bracket() -> Bracket:
-    regions = []
-    region_names = ["east", "west", "south", "midwest"]
-    region_codes = ["E", "W", "S", "M"]
+# def create_empty_bracket() -> Bracket:
+#     regions = []
+#     region_names = ["east", "west", "south", "midwest"]
+#     region_codes = ["E", "W", "S", "M"]
 
-    for region_name, region_code in zip(region_names, region_codes):
-        rounds = []
-        matchup_id = 1
-        for round_name, num_matchups in [("round_of_64", 8), ("round_of_32", 4), ("sweet_16", 2), ("elite_8", 1)]:
-            matchups = [Matchup(f"{region_code}{matchup_id + i}") for i in range(num_matchups)]
-            rounds.append(Round(round_name, matchups))
-            matchup_id += num_matchups
-        regions.append(Region(region_name, rounds))
+#     for region_name, region_code in zip(region_names, region_codes):
+#         rounds = []
+#         matchup_id = 1
+#         for round_name, num_matchups in [("round_of_64", 8), ("round_of_32", 4), ("sweet_16", 2), ("elite_8", 1)]:
+#             matchups = [Matchup(f"{region_code}{matchup_id + i}") for i in range(num_matchups)]
+#             rounds.append(Round(round_name, matchups))
+#             matchup_id += num_matchups
+#         regions.append(Region(region_name, rounds))
 
-    final_four = Round("final_4", [Matchup("F1"), Matchup("F2")])
-    championship = Matchup("C1")
+#     final_four = Round("final_4", [Matchup("F1"), Matchup("F2")])
+#     championship = Matchup("C1")
 
-    return Bracket(regions, final_four, championship)
+#     return Bracket(regions, final_four, championship)
 
 
 if __name__ == "__main__":
-    bracket = create_empty_bracket()
+    bracket = Bracket()
     bracket.load_initial_data("bracket_2024.json")
     # print(bracket)
     bracket.load_current_state("current_state.json")
