@@ -2,7 +2,7 @@ import argparse
 import asyncio
 from deciders import ai_wizard, best_seed, random_winner
 from termcolor import colored
-from bracket import create_empty_bracket, Team
+from bracket import Bracket, Team
 
 ROUND_NAMES = ["round_of_64", "round_of_32", "sweet_16", "elite_8", "final_4", "championship"]
 
@@ -40,7 +40,6 @@ class Simulator:
                 round_results.append((matchup_id, winner))
                 self.bracket.update_matchup_winner(region_name, round_name, matchup_id, Team(winner.name, winner.seed))
         next_round = self.bracket.get_next_round_name(round_name)
-        print(self.bracket)
         if next_round is not None:
             current_round = self.bracket.get_round_by_name(region_name, round_name)
             next_round_obj = self.bracket.get_round_by_name(region_name, next_round)
@@ -90,7 +89,6 @@ class Simulator:
         team1, team2 = matchup.team1, matchup.team2
         winner = await self.simulate_match(team1, team2, decision_function)
         self.bracket.update_matchup_winner(None, "championship", matchup.matchup_id, winner)
-        print(colored(f"\nChampionship winner: {winner.name}", "magenta"))
 
     async def simulate_tournament(self, decision_function):
         print(colored("Starting NCAA March Madness Bracket Simulation...\n", "yellow"))
@@ -131,7 +129,7 @@ def main():
     decision_function = decision_functions[args.decider]
 
     # Create bracket with data
-    bracket = create_empty_bracket()
+    bracket = Bracket()
     bracket.load_initial_data("bracket_2024.json")
     if args.current_state:
         print(colored("Loading current state...", "yellow"))
