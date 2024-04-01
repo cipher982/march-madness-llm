@@ -1,9 +1,9 @@
 import argparse
 import asyncio
 import os
-from deciders import ai_wizard, best_seed, random_winner
 from termcolor import colored
-from bracket import Bracket, Team
+from .deciders import get_decision_function
+from .bracket import Bracket, Team
 
 ROUND_NAMES = [
     "round_of_64",
@@ -116,20 +116,20 @@ class Simulator:
     async def simulate_tournament(self, decision_function):
         print(colored("Starting NCAA March Madness Bracket Simulation...\n", "yellow"))
 
-        elite_eight_winners = []
+        results = []
         for region in ["east", "west", "south", "midwest"]:
             starting_round = None
             print(colored(f"Simulating {region} region...", "yellow"))
             print(colored(f"Starting round: {starting_round}", "green"))
             winner = await self.simulate_region(decision_function, region, starting_round)
-            elite_eight_winners.append(winner)
+            results.append({"region": region, "winner": winner.name if winner else None})
         self.bracket.update_final_four_and_championship()
 
         await self.simulate_final_four(decision_function)
         await self.simulate_championship(decision_function)
 
         winner = self.bracket.get_tournament_winner()
-        print(colored(f"\nTournament winner: {winner.name} ({winner.seed})", "magenta"))
+        results.append({"final_winner": winner.name if winner else None})
 
 
 def main():
@@ -148,8 +148,9 @@ def main():
         help="JSON file containing the current state of the bracket",
     )
     args = parser.parse_args()
-    decision_functions = {"ai": ai_wizard, "seed": best_seed, "random": random_winner}
-    decision_function = decision_functions[args.decider]
+    decision_function = get_decision_function(args.decider)
+    if decision_function is None:
+        raise ValueError(f"Invalid decider: {args.decider}")
 
     # Create bracket with data
     bracket = Bracket()
