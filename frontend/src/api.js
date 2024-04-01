@@ -1,3 +1,5 @@
+console.log('api.js file loaded');
+
 import axios from 'axios';
 
 console.log('API Base URL:', process.env.REACT_APP_API_BASE_URL);

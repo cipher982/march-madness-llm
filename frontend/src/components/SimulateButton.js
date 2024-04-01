@@ -1,3 +1,6 @@
+console.log('simulatebutton.js file loaded');
+
+
 import React, { useState } from "react";
 import api from "../api";
 
