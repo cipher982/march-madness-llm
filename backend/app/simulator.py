@@ -1,10 +1,18 @@
 import argparse
 import asyncio
+import os
 from deciders import ai_wizard, best_seed, random_winner
 from termcolor import colored
 from bracket import Bracket, Team
 
-ROUND_NAMES = ["round_of_64", "round_of_32", "sweet_16", "elite_8", "final_4", "championship"]
+ROUND_NAMES = [
+    "round_of_64",
+    "round_of_32",
+    "sweet_16",
+    "elite_8",
+    "final_4",
+    "championship",
+]
 
 
 class Simulator:
@@ -18,9 +26,19 @@ class Simulator:
 
     def print_match_summary(self, team1, team2, winner, played=False):
         if played:
-            print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed}) - Already Played", "yellow"))
+            print(
+                colored(
+                    f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed}) - Already Played",
+                    "yellow",
+                )
+            )
         else:
-            print(colored(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})", "cyan"))
+            print(
+                colored(
+                    f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})",
+                    "cyan",
+                )
+            )
         print(colored(f"Winner: {winner.name}\n", "green"))
 
     async def simulate_round(self, decision_function, region_name, round_name):
@@ -58,7 +76,12 @@ class Simulator:
 
             if round_name == "elite_8":
                 if len(round_results) > 0:
-                    print(colored(f"\n{region_name} region winner: {round_results[0][1].name}", "magenta"))
+                    print(
+                        colored(
+                            f"\n{region_name} region winner: {round_results[0][1].name}",
+                            "magenta",
+                        )
+                    )
                     return round_results[0][1]
                 else:
                     print(colored(f"\n{region_name} region winner: Not determined", "red"))
@@ -130,7 +153,7 @@ def main():
 
     # Create bracket with data
     bracket = Bracket()
-    bracket.load_initial_data("bracket_2024.json")
+    bracket.load_initial_data(os.path.join(os.path.dirname(__file__), "../data", "bracket_2024.json"))
     if args.current_state:
         print(colored("Loading current state...", "yellow"))
         bracket.load_current_state(args.current_state)
