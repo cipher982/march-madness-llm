@@ -1,9 +1,7 @@
-console.log('simulatebutton.js file loaded');
-
-
 import React, { useState } from "react";
 import api from "../api";
 
+console.log('simulatebutton.js file loaded');
 
 const SimulateButton = ({ onSimulationComplete }) => {
     const [isLoading, setIsLoading] = useState(false);
