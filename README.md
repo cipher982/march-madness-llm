@@ -1,5 +1,5 @@
 # NCAA March Madness Bracket Simulator
-Welcome to the NCAA March Madness Bracket Simulator! This Python-based project allows you to simulate the entire NCAA March Madness tournament, from the Round of 64 to the Championship game. Whether you're a college basketball enthusiast, a data scientist, or a developer looking to explore sports simulations, this repository has something for you.
+Quick hobby hack to made a march madness bracket simulator as I was too lazy to fill one out online. It's probably terrible but was fun to put together. Utilizes the openai function calling to extract a single winner from provided matchups as the tournament progresses. Can also run a quick random or seed based decider. Looking at next steps of injecting more information into the prompts such as team history, statlines, etc. Also would be interesting to provide custom prompt instructions such as "pick teams with dog mascots" or "pick teams with the highest powered offense".
 
 
 ## Features
