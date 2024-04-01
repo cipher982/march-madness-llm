@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api";
+
 
 const SimulateButton = ({ onSimulationComplete }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -10,7 +11,7 @@ const SimulateButton = ({ onSimulationComplete }) => {
 
         try {
             setIsLoading(true);
-            const response = await axios.post("/simulate", {
+            const response = await api.post("/simulate", {
                 decider: decider,
                 current_state: currentState,
             });

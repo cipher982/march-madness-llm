@@ -21,7 +21,7 @@ class SimulateRequest(BaseModel):
     current_state: str = ""
 
 
-@app.post("/simulate")
+@app.post("/api/simulate")
 async def simulate(request: SimulateRequest):
     decider = request.decider
     current_state = request.current_state
