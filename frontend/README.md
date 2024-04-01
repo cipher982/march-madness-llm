@@ -1,70 +1,33 @@
-# Getting Started with Create React App
+# NCAA March Madness Bracket Simulator Frontend
+This is the frontend portion of the NCAA March Madness Bracket Simulator project, built using React. The frontend interacts with a Python FastAPI backend to simulate the tournament and display the results.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### App.js
+`App.js` is the main component of the frontend application. It manages the state of the simulation results and renders the SimulateButton component.
+Key features:
+- Uses the useState hook to manage the simulationResults state.
+- Defines a handleSimulationComplete function that is passed as a prop to the SimulateButton component. This function is called when the simulation is complete and updates the simulationResults state with the results received from the backend.
+- Renders the SimulateButton component and passes the handleSimulationComplete function as the onSimulationComplete prop.
+- Displays the simulation results when available, showing the winner of each region and the overall tournament winner.
 
-## Available Scripts
+### SimulateButton.js
+`SimulateButton.js` is a functional component that represents the button to initiate the tournament simulation. It communicates with the backend API to start the simulation and receive the results.
 
-In the project directory, you can run:
+Key features:
+- Uses the useState hook to manage the isLoading state, which indicates whether the simulation is in progress.
+- Defines a handleSimulate function that is called when the button is clicked. This function sends a POST request to the backend's `/simulate` endpoint with the decider and current_state data.
+- Displays a loading message when the simulation is in progress and disables the button to prevent multiple simulations from being started simultaneously.
+- Calls the onSimulationComplete function passed as a prop with the simulation results received from the backend.
 
-### `npm start`
+### Interaction with the Backend
+The frontend communicates with the Python backend using the Axios library to make HTTP requests. The SimulateButton component sends a POST request to the `/simulate` endpoint with the following data:
+- decider: A string representing the decision-making strategy for the simulation (e.g., "random", "seed", or "ai").
+- current_state: A string representing the current state of the bracket (optional).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The backend processes the request, runs the simulation using the specified decider and current state, and returns the simulation results as a response. The frontend then updates the simulationResults state with the received results and displays them in the App component.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Future Enhancements
+Some potential enhancements for the frontend include:
+- Adding more interactive features, such as the ability to modify the initial bracket data or select different decision-making strategies.
+- Improving the user interface and styling to provide a more engaging and visually appealing experience.
+- Implementing real-time updates and animations to show the progress of the simulation.
+Adding data visualization components to display statistics and insights about the simulated tournaments.
