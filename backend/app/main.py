@@ -1,9 +1,12 @@
 import os
+import logging
 from fastapi import FastAPI, HTTPException
 from .deciders import get_decision_function
 from .simulator import Simulator
 from .bracket import Bracket
 from pydantic import BaseModel
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -22,7 +25,7 @@ class SimulateRequest(BaseModel):
 async def simulate(request: SimulateRequest):
     decider = request.decider
     current_state = request.current_state
-    print(f"Received simulate request with decider: {decider}, current_state: {current_state}")
+    logger.info(f"Received simulate request with decider: {decider}, current_state: {current_state}")
 
     decision_function = get_decision_function(decider)
     if decision_function is None:

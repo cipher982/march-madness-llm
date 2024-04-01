@@ -22,7 +22,7 @@ const App = () => {
                 {result.region && (
                   <div>
                     <strong>{result.region.toUpperCase()} Region Winner:</strong>{' '}
-                    {result.winner ? result.winner.name : 'Not determined'}
+                    {result.winner}
                   </div>
                 )}
                 {result.final_winner && (
