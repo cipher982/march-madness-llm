@@ -5,6 +5,7 @@ const App = () => {
   const [simulationResults, setSimulationResults] = useState(null);
 
   const handleSimulationComplete = (results) => {
+    console.log('handleSimulationComplete called with results:', results);
     setSimulationResults(results);
   };
 

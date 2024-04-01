@@ -1,9 +1,11 @@
 import argparse
 import asyncio
 import os
-from termcolor import colored
+import logging
 from .deciders import get_decision_function
 from .bracket import Bracket, Team
+
+logger = logging.getLogger(__name__)
 
 ROUND_NAMES = [
     "round_of_64",
@@ -26,20 +28,10 @@ class Simulator:
 
     def print_match_summary(self, team1, team2, winner, played=False):
         if played:
-            print(
-                colored(
-                    f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed}) - Already Played",
-                    "yellow",
-                )
-            )
+            logger.warning(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed}) - Already Played")
         else:
-            print(
-                colored(
-                    f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})",
-                    "cyan",
-                )
-            )
-        print(colored(f"Winner: {winner.name}\n", "green"))
+            logger.info(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})")
+        logger.debug(f"Winner: {winner.name}")
 
     async def simulate_round(self, decision_function, region_name, round_name):
         matchups = self.bracket.get_matchups(region_name, round_name)
@@ -49,7 +41,7 @@ class Simulator:
         for matchup_id, matchup in matchups.items():
             team1, team2 = matchup.team1, matchup.team2
             if team1 is None and team2 is None:
-                print(f"Skipping matchup {matchup_id} due to missing teams.")
+                logger.warning(f"Skipping matchup {matchup_id} due to missing teams.")
                 continue
             elif team1 is None or team2 is None:
                 raise Exception(f"Invalid matchup: {matchup}, team1: {team1}, team2: {team2}")
@@ -70,57 +62,51 @@ class Simulator:
 
         starting_index = ROUND_NAMES.index(starting_round)
         for round_name in ROUND_NAMES[starting_index:4]:
-            print(colored(f"\nSimulating {round_name} for {region_name} region...", "yellow"))
+            logger.debug(f"\nSimulating {round_name} for {region_name} region...")
             round_results = await self.simulate_round(decision_function, region_name, round_name)
-            print(colored(f"{region_name} {round_name} results:", "green"))
-
+            logger.debug(f"{region_name} {round_name} results:")
             if round_name == "elite_8":
                 if len(round_results) > 0:
-                    print(
-                        colored(
-                            f"\n{region_name} region winner: {round_results[0][1].name}",
-                            "magenta",
-                        )
-                    )
+                    logger.debug(f"\n{region_name} region winner: {round_results[0][1].name}")
                     return round_results[0][1]
                 else:
-                    print(colored(f"\n{region_name} region winner: Not determined", "red"))
+                    logger.warning(f"\n{region_name} region winner: Not determined")
                     return None
 
     async def simulate_final_four(self, decision_function):
-        print(colored("\nSimulating Final Four...", "yellow"))
+        logger.debug("\nSimulating Final Four...")
         matchups = self.bracket.final_four.matchups
         final_four_results = []
 
         for matchup in matchups:
             team1, team2 = matchup.team1, matchup.team2
             if team1 is None or team2 is None:
-                print(colored(f"Skipping {matchup.matchup_id} due to missing team(s).", "red"))
+                logger.warning(f"Skipping {matchup.matchup_id} due to missing team(s).")
                 continue
             winner = await self.simulate_match(team1, team2, decision_function)
             self.bracket.update_matchup_winner(None, "final_4", matchup.matchup_id, winner)
             final_four_results.append(winner)
             self.bracket.update_final_four_and_championship()
 
-        print(colored("Final Four results:", "green"))
+        logger.debug("Final Four results:")
         for team in final_four_results:
-            print(colored(f"{team.name}", "green"))
+            logger.debug(f"{team.name}")
 
     async def simulate_championship(self, decision_function):
-        print(colored("\nSimulating Championship...", "yellow"))
+        logger.debug("\nSimulating Championship...")
         matchup = self.bracket.championship
         team1, team2 = matchup.team1, matchup.team2
         winner = await self.simulate_match(team1, team2, decision_function)
         self.bracket.update_matchup_winner(None, "championship", matchup.matchup_id, winner)
 
     async def simulate_tournament(self, decision_function):
-        print(colored("Starting NCAA March Madness Bracket Simulation...\n", "yellow"))
+        logger.debug("Starting NCAA March Madness Bracket Simulation...\n")
 
         results = []
         for region in ["east", "west", "south", "midwest"]:
             starting_round = None
-            print(colored(f"Simulating {region} region...", "yellow"))
-            print(colored(f"Starting round: {starting_round}", "green"))
+            logger.debug(f"Simulating {region} region...")
+            logger.debug(f"Starting round: {starting_round}")
             winner = await self.simulate_region(decision_function, region, starting_round)
             results.append({"region": region, "winner": winner.name if winner else None})
         self.bracket.update_final_four_and_championship()
@@ -156,11 +142,11 @@ def main():
     bracket = Bracket()
     bracket.load_initial_data(os.path.join(os.path.dirname(__file__), "../data", "bracket_2024.json"))
     if args.current_state:
-        print(colored("Loading current state...", "yellow"))
+        logger.debug("Loading current state...")
         bracket.load_current_state(args.current_state)
-        print(colored("Current state loaded.", "green"))
+        logger.debug("Current state loaded.")
 
-    print(bracket)
+    logger.info(bracket)
 
     # Simulate tournament
     simulator = Simulator(bracket)

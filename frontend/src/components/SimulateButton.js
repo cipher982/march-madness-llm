@@ -14,7 +14,7 @@ const SimulateButton = ({ onSimulationComplete }) => {
                 decider: decider,
                 current_state: currentState,
             });
-            // Pass the results array directly to the onSimulationComplete callback
+            console.log("Response data from backend:", response.data);
             onSimulationComplete(response.data.results);
         } catch (error) {
             console.error(error);
