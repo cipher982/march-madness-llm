@@ -16,6 +16,11 @@ class Team:
         self.seed = seed
 
 
+def get_decision_function(decider):
+    decision_functions = {"ai": ai_wizard, "seed": best_seed, "random": random_winner}
+    return decision_functions.get(decider)
+
+
 async def best_seed(team1, team2):
     if team1.seed < team2.seed:
         return team1

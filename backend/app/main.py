@@ -1,6 +1,9 @@
-from fastapi import FastAPI
-from backend.app.simulator import Simulator
-from backend.app.bracket import Bracket
+import os
+from fastapi import FastAPI, HTTPException
+from .deciders import get_decision_function
+from .simulator import Simulator
+from .bracket import Bracket
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -10,14 +13,27 @@ async def root():
     return {"message": "Welcome to the NCAA March Madness Bracket Simulator!"}
 
 
+class SimulateRequest(BaseModel):
+    decider: str
+    current_state: str = ""
+
+
 @app.post("/simulate")
-async def simulate(decider: str, current_state: str = ""):
+async def simulate(request: SimulateRequest):
+    decider = request.decider
+    current_state = request.current_state
+    print(f"Received simulate request with decider: {decider}, current_state: {current_state}")
+
+    decision_function = get_decision_function(decider)
+    if decision_function is None:
+        raise HTTPException(status_code=400, detail=f"Invalid decider: {decider}")
+
     bracket = Bracket()
-    bracket.load_initial_data("bracket_2024.json")
+    bracket.load_initial_data(os.path.join(os.path.dirname(__file__), "../data", "bracket_2024.json"))
     if current_state:
         bracket.load_current_state(current_state)
 
     simulator = Simulator(bracket)
-    await simulator.simulate_tournament(decider)
+    results = await simulator.simulate_tournament(decision_function)
 
-    return {"message": "Simulation completed"}
+    return {"message": "Simulation completed", "results": results}

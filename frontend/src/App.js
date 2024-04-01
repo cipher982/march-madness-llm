@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import SimulateButton from './components/SimulateButton';
 
-function App() {
+const App = () => {
+  const [simulationResults, setSimulationResults] = useState(null);
+
+  const handleSimulationComplete = (results) => {
+    setSimulationResults(results);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {/* Other components */}
+      <SimulateButton onSimulationComplete={handleSimulationComplete} />
+      {simulationResults && (
+        <div>
+          <h2>Simulation Results</h2>
+          <ul>
+            {simulationResults.map((result, index) => (
+              <li key={index}>
+                {result.region && (
+                  <div>
+                    <strong>{result.region.toUpperCase()} Region Winner:</strong>{' '}
+                    {result.winner ? result.winner.name : 'Not determined'}
+                  </div>
+                )}
+                {result.final_winner && (
+                  <div>
+                    <strong>Tournament Winner:</strong> {result.final_winner}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default App;
