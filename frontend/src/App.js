@@ -4,11 +4,17 @@ import SimulateButton from './components/SimulateButton';
 const App = () => {
   const [simulationResults, setSimulationResults] = useState(null);
   const [decider, setDecider] = useState("random"); // Default decider
-
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleSimulationComplete = (results) => {
     console.log('handleSimulationComplete called with results:', results);
     setSimulationResults(results);
+    setErrorMessage(null);
+  };
+
+  const handleError = (message) => {
+    setErrorMessage(message);
+    setSimulationResults(null);
   };
 
   return (
@@ -21,7 +27,14 @@ const App = () => {
       </select>
 
       {/* Other components */}
-      <SimulateButton onSimulationComplete={handleSimulationComplete} decider={decider} />
+      <SimulateButton onSimulationComplete={handleSimulationComplete} onError={handleError} decider={decider} />
+
+      {errorMessage && (
+        <div>
+          <p>Error: {errorMessage}</p>
+        </div>
+      )}
+
       {simulationResults && (
         <div>
           <h2>Simulation Results</h2>

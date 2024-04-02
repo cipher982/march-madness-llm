@@ -1,19 +1,7 @@
 import random
 import json
-import os
 from openai import AsyncOpenAI
-from dotenv import load_dotenv
-
-load_dotenv()
-
-api_key = os.getenv("OPENAI_API_KEY")
-client = AsyncOpenAI(api_key=api_key)
-
-
-class Team:
-    def __init__(self, name, seed):
-        self.name = name
-        self.seed = seed
+from bracket import Team
 
 
 def get_decision_function(decider):
@@ -21,7 +9,7 @@ def get_decision_function(decider):
     return decision_functions.get(decider)
 
 
-async def best_seed(team1, team2):
+async def best_seed(team1: Team, team2: Team) -> Team:
     if team1.seed < team2.seed:
         return team1
     elif team1.seed > team2.seed:
@@ -30,7 +18,7 @@ async def best_seed(team1, team2):
         return random.choice([team1, team2])
 
 
-async def random_winner(team1, team2):
+async def random_winner(team1: Team, team2: Team) -> Team:
     winner = random.choice([team1, team2])
     return winner
 
@@ -46,8 +34,9 @@ Choose one.
 """
 
 
-async def ai_wizard(team1, team2):
+async def ai_wizard(team1: Team, team2: Team, api_key: str) -> Team:
     try:
+        client = AsyncOpenAI(api_key=api_key)
         tools = [
             {
                 "type": "function",
