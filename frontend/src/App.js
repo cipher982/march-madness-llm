@@ -27,6 +27,7 @@ const App = () => {
   const handleSimulationComplete = async (results, simulatedBracket) => {
     console.log('handleSimulationComplete called with results:', results);
     console.log('Simulated bracket:', simulatedBracket);
+
     setSimulatedBracket(simulatedBracket);
     setErrorMessage(null);
   };
@@ -64,16 +65,19 @@ const App = () => {
         apiKey={apiKey}
       />
 
+      {errorMessage && (
+        <div>
+          <p>Error: {errorMessage}</p>
+        </div>
+      )}
+
       {/* Display the initial bracket */}
       {simulatedBracket ? (
         <BracketDisplay bracket={simulatedBracket} />
       ) : (
         initialBracket && <BracketDisplay bracket={initialBracket} />
-      )}      {errorMessage && (
-        <div>
-          <p>Error: {errorMessage}</p>
-        </div>
       )}
+
     </div>
   );
 };
