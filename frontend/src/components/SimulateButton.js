@@ -9,6 +9,13 @@ const SimulateButton = ({ onSimulationComplete, onError, decider, apiKey }) => {
     const handleSimulate = async () => {
         const useCurrentState = false;
 
+        if (decider === "ai") {
+            if (!apiKey || !apiKey.startsWith("sk-") || apiKey.length < 20) {
+                onError("Does not look like a valid key to me 👎");
+                return;
+            }
+        }
+
         try {
             setIsLoading(true);
             const response = await api.post("/simulate", {
