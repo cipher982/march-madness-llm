@@ -20,6 +20,7 @@ jobs:
     - name: Deploy to Server
       run: |
         ssh -o StrictHostKeyChecking=no drose@5.161.97.53 << EOF
+          source ~/.zshrc
           cd /home/drose/march-madness-llm/frontend
           git pull
           npm install
