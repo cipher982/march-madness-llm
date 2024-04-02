@@ -1,3 +1,41 @@
+// create mappings for display names for march madness rounds
+const roundNames = {
+    "round_of_64": "Round of 64",
+    "round_of_32": "Round of 32",
+    "sweet_16": "Sweet 16",
+    "elite_8": "Elite 8",
+    "final_four": "Final Four",
+    "championship": "Championship",
+};
+
+
+const TeamDisplay = ({ team }) => {
+    if (!team) return 'TBD';
+    const { name, seed } = team;
+    return `${name} (${seed})`;
+};
+
+const MatchupDisplay = ({ matchup }) => {
+    const { team1, team2, winner } = matchup;
+
+    return (
+        <div>
+            <p>
+                {winner?.name === team1?.name ? (
+                    <strong>{TeamDisplay({ team: team1 })}</strong>
+                ) : (
+                    TeamDisplay({ team: team1 })
+                )}
+                {' vs '}
+                {winner?.name === team2?.name ? (
+                    <strong>{TeamDisplay({ team: team2 })}</strong>
+                ) : (
+                    TeamDisplay({ team: team2 })
+                )}
+            </p>
+        </div>
+    );
+};
 const BracketDisplay = ({ bracket }) => {
     if (!bracket) {
         return <div>No bracket data available</div>;
@@ -5,29 +43,22 @@ const BracketDisplay = ({ bracket }) => {
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{ maxWidth: '1400px', padding: '20px' }}>
-                <div style={{ fontSize: '16px' }}>
-                    <h2>Initial Bracket</h2>
+            <div style={{ maxWidth: '1000px', padding: '20px' }}>
+                <div style={{ fontSize: '13px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <h2>Bracket</h2>
+                    </div>
                     {bracket && (
                         <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 {bracket.regions.map((region, index) => (
                                     <div key={index} style={{ flex: '1', marginRight: '20px' }}>
-                                        <h3>{region.name}</h3>
+                                        <h3>{region.name.charAt(0).toUpperCase() + region.name.slice(1)}</h3>
                                         {region.rounds.map((round, roundIndex) => (
                                             <div key={roundIndex}>
-                                                <h4>{round.name}</h4>
+                                                <h4>{roundNames[round.name]}</h4>
                                                 {round.matchups.map((matchup, matchupIndex) => (
-                                                    <div key={matchupIndex}>
-                                                        <p>
-                                                            {matchup.team1 ? `${matchup.team1.name} (${matchup.team1.seed})` : 'TBD'}
-                                                            {' vs '}
-                                                            {matchup.team2 ? `${matchup.team2.name} (${matchup.team2.seed})` : 'TBD'}
-                                                        </p>
-                                                        {matchup.winner && (
-                                                            <p>Winner: {matchup.winner.name}</p>
-                                                        )}
-                                                    </div>
+                                                    <MatchupDisplay key={matchupIndex} matchup={matchup} />
                                                 ))}
                                             </div>
                                         ))}
@@ -40,14 +71,7 @@ const BracketDisplay = ({ bracket }) => {
                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                                     {bracket.finalFour.matchups.map((matchup, index) => (
                                         <div key={index} style={{ marginRight: '20px' }}>
-                                            <p>
-                                                {matchup.team1 ? `${matchup.team1.name} (${matchup.team1.seed})` : 'TBD'}
-                                                {' vs '}
-                                                {matchup.team2 ? `${matchup.team2.name} (${matchup.team2.seed})` : 'TBD'}
-                                            </p>
-                                            {matchup.winner && (
-                                                <p>Winner: {matchup.winner.name}</p>
-                                            )}
+                                            <MatchupDisplay matchup={matchup} />
                                         </div>
                                     ))}
                                 </div>
@@ -56,14 +80,7 @@ const BracketDisplay = ({ bracket }) => {
                             <div style={{ marginTop: '20px' }}>
                                 <h3>Championship</h3>
                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                    <p>
-                                        {bracket.championship.team1 ? `${bracket.championship.team1.name} (${bracket.championship.team1.seed})` : 'TBD'}
-                                        {' vs '}
-                                        {bracket.championship.team2 ? `${bracket.championship.team2.name} (${bracket.championship.team2.seed})` : 'TBD'}
-                                    </p>
-                                    {bracket.championship.winner && (
-                                        <p>Winner: {bracket.championship.winner.name}</p>
-                                    )}
+                                    <MatchupDisplay matchup={bracket.championship} />
                                 </div>
                             </div>
                         </div>
@@ -75,4 +92,3 @@ const BracketDisplay = ({ bracket }) => {
 };
 
 export default BracketDisplay;
-
