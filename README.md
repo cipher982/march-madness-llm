@@ -2,6 +2,22 @@
 Quick hobby hack to made a march madness bracket simulator as I was too lazy to fill one out online. It's probably terrible but was fun to put together. Utilizes the openai function calling to extract a single winner from provided matchups as the tournament progresses. Can also run a quick random or seed based decider. Looking at next steps of injecting more information into the prompts such as team history, statlines, etc. Also would be interesting to provide custom prompt instructions such as "pick teams with dog mascots" or "pick teams with the highest powered offense".
 
 
+---
+##### Update 2024-04-01: frontend website launched
+Put this app behind fastapi and hosted a React page!
+
+The new frontend provides an interactive and user-friendly interface for simulating the NCAA March Madness tournament. It communicates with the Python FastAPI/Uvicorn backend to run the simulations and display the results in real-time.
+
+Key features of the frontend include:
+- Not much!
+
+View here: [https://marchmadness.drose.io](https://marchmadness.drose.io)
+
+For more details about the frontend implementation, please refer to the [frontend README](frontend/README.md).
+
+---
+
+
 ## Features
 - Realistic Simulations: The simulator uses advanced decision-making functions to determine the winner of each matchup, taking into account factors such as team rankings, historical performance, and more.
 - Multiple Decision Functions: Choose from three different decision functions to determine the outcome of each game: AI-powered decisions using OpenAI's GPT-3.5, seed-based decisions, or random winner selection.
