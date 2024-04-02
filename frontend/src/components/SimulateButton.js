@@ -3,17 +3,18 @@ import api from "../api";
 
 console.log('simulatebutton.js file loaded');
 
-const SimulateButton = ({ onSimulationComplete, onError, decider }) => {
+const SimulateButton = ({ onSimulationComplete, onError, decider, apiKey }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSimulate = async () => {
-        const currentState = "";
+        const useCurrentState = false;
 
         try {
             setIsLoading(true);
             const response = await api.post("/simulate", {
                 decider: decider,
-                current_state: currentState,
+                use_current_state: useCurrentState,
+                api_key: apiKey,
             });
             console.log("Response data from backend:", response.data);
             if (response.data.bracket.championship.winner) {

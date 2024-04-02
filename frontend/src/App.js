@@ -7,6 +7,7 @@ const App = () => {
   const [initialBracket, setInitialBracket] = useState(null); // empty bracket on page load
   const [simulatedBracket, setSimulatedBracket] = useState(null); // updated bracket after simulation
   const [decider, setDecider] = useState("random"); // Default decider
+  const [apiKey, setApiKey] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
@@ -44,7 +45,24 @@ const App = () => {
         <option value="ai">AI</option>
       </select>
 
-      <SimulateButton onSimulationComplete={handleSimulationComplete} onError={handleError} decider={decider} />
+      {decider === "ai" && (
+        <div>
+          <label htmlFor="apiKey">OpenAI API Key:</label>
+          <input
+            type="text"
+            id="apiKey"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+          />
+        </div>
+      )}
+
+      <SimulateButton
+        onSimulationComplete={handleSimulationComplete}
+        onError={handleError}
+        decider={decider}
+        apiKey={apiKey}
+      />
 
       {/* Display the initial bracket */}
       {simulatedBracket ? (
