@@ -1,0 +1,33 @@
+name: Deploy - Clifford
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Deploy to Server
+      run: |
+        ssh -o StrictHostKeyChecking=no drose@5.161.97.53 << EOF
+          cd /home/drose/march-madness-llm/frontend
+          git pull
+          npm install
+          npm run build
+
+          # Restart the Uvicorn service to apply changes
+          sudo systemctl restart marchmadness.service
+
+          # Only needed if you've changed Nginx configuration
+          # sudo systemctl reload nginx
+        EOF
