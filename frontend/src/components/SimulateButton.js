@@ -3,11 +3,10 @@ import api from "../api";
 
 console.log('simulatebutton.js file loaded');
 
-const SimulateButton = ({ onSimulationComplete }) => {
+const SimulateButton = ({ onSimulationComplete, decider }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSimulate = async () => {
-        const decider = "random";
         const currentState = "";
 
         try {
