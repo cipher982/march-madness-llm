@@ -3,7 +3,7 @@ import api from "../api";
 
 console.log('simulatebutton.js file loaded');
 
-const SimulateButton = ({ onSimulationComplete, decider }) => {
+const SimulateButton = ({ onSimulationComplete, onError, decider }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSimulate = async () => {
@@ -19,7 +19,7 @@ const SimulateButton = ({ onSimulationComplete, decider }) => {
             onSimulationComplete(response.data.results);
         } catch (error) {
             console.error(error);
-            // Handle the error, display an error message, etc.
+            onError(error.response?.data?.message || "An error occurred");
         } finally {
             setIsLoading(false);
         }
