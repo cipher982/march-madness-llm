@@ -104,6 +104,11 @@ async def simulate(request: SimulateRequest):
         bracket.load_current_state(fp_current)
 
     simulator = Simulator(bracket, api_key=request.api_key)
-    results = await simulator.simulate_tournament(decision_function)
+    results, updated_bracket = await simulator.simulate_tournament(decision_function)
+    assert updated_bracket.championship.winner is not None, "No champion after simulation"
 
-    return {"message": "Simulation completed", "results": results}
+    return {
+        "message": "Simulation completed",
+        "results": results,
+        "bracket": updated_bracket.to_dict(),
+    }

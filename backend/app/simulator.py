@@ -108,7 +108,7 @@ class Simulator:
         winner = await self.simulate_match(team1, team2, decision_function)
         self.bracket.update_matchup_winner(None, "championship", matchup.matchup_id, winner)
 
-    async def simulate_tournament(self, decision_function) -> list:
+    async def simulate_tournament(self, decision_function) -> tuple:
         logger.debug("Starting NCAA March Madness Bracket Simulation...\n")
 
         results = []
@@ -126,7 +126,7 @@ class Simulator:
 
         winner = self.bracket.get_tournament_winner()
         results.append({"final_winner": winner.name if winner else None})
-        return results
+        return results, self.bracket
 
 
 def main():
