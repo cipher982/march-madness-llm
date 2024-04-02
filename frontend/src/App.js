@@ -5,6 +5,7 @@ import SimulateButton from './components/SimulateButton';
 
 const App = () => {
   const [initialBracket, setInitialBracket] = useState(null);
+  const [simulatedBracket, setSimulatedBracket] = useState(null);
   const [decider, setDecider] = useState("random"); // Default decider
   const [simulationResults, setSimulationResults] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -23,10 +24,20 @@ const App = () => {
     fetchInitialBracket();
   }, []);
 
-  const handleSimulationComplete = (results) => {
+  const handleSimulationComplete = async (results, simulatedBracket) => {
     console.log('handleSimulationComplete called with results:', results);
+    console.log('Simulated bracket:', simulatedBracket);
     setSimulationResults(results);
+    setSimulatedBracket(simulatedBracket);
     setErrorMessage(null);
+
+    try {
+      const response = await api.get('/bracket_current');
+      setSimulatedBracket(response.data.bracket);
+    } catch (error) {
+      console.error('Error fetching current bracket:', error);
+      setErrorMessage('Failed to fetch current bracket data');
+    }
   };
 
   const handleError = (message) => {
@@ -69,8 +80,11 @@ const App = () => {
         </div>
       )}
       {/* Display the initial bracket */}
-      {initialBracket && <BracketDisplay bracket={initialBracket} />}
-      {errorMessage && (
+      {simulatedBracket ? (
+        <BracketDisplay bracket={simulatedBracket} />
+      ) : (
+        initialBracket && <BracketDisplay bracket={initialBracket} />
+      )}      {errorMessage && (
         <div>
           <p>Error: {errorMessage}</p>
         </div>

@@ -16,7 +16,11 @@ const SimulateButton = ({ onSimulationComplete, onError, decider }) => {
                 current_state: currentState,
             });
             console.log("Response data from backend:", response.data);
-            onSimulationComplete(response.data.results);
+            if (response.data.bracket.championship.winner) {
+                onSimulationComplete(response.data.results, response.data.bracket);
+            } else {
+                throw new Error("Championship winner is missing");
+            }
         } catch (error) {
             console.error(error);
             onError(error.response?.data?.message || "An error occurred");

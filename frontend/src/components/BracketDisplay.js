@@ -1,33 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import api from '../api';
-
-const BracketDisplay = () => {
-    const [bracket, setBracket] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchBracket = async () => {
-            try {
-                const response = await api.get('/bracket_start');
-                setBracket(response.data.bracket);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching bracket:', error);
-                setError('Failed to fetch bracket data');
-                setLoading(false);
-            }
-        };
-
-        fetchBracket();
-    }, []);
-
-    if (loading) {
-        return <div>Loading bracket...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
+const BracketDisplay = ({ bracket }) => {
+    if (!bracket) {
+        return <div>No bracket data available</div>;
     }
 
     return (
