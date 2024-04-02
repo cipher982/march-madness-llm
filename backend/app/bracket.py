@@ -11,6 +11,12 @@ class Team:
         self.name = name
         self.seed = seed
 
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "seed": self.seed,
+        }
+
     def __str__(self) -> str:
         return f"{self.name} ({self.seed})"
 
@@ -31,6 +37,14 @@ class Matchup:
     def is_decided(self) -> bool:
         return self.team1 is not None and self.team2 is not None
 
+    def to_dict(self) -> dict:
+        return {
+            "id": self.matchup_id,
+            "team1": self.team1.to_dict() if self.team1 else None,
+            "team2": self.team2.to_dict() if self.team2 else None,
+            "winner": self.winner.to_dict() if self.winner else None,
+        }
+
     def __str__(self) -> str:
         team1_str = str(self.team1) if self.team1 else "TBD"
         team2_str = str(self.team2) if self.team2 else "TBD"
@@ -43,6 +57,12 @@ class Round:
         self.name = name
         self.matchups = matchups
 
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "matchups": [matchup.to_dict() for matchup in self.matchups],
+        }
+
     def __str__(self) -> str:
         matchups_str = "\n".join(str(matchup) for matchup in self.matchups)
         return f"{self.name}:\n{matchups_str}"
@@ -52,6 +72,12 @@ class Region:
     def __init__(self, name: str, rounds: List[Round]):
         self.name = name
         self.rounds = rounds
+
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "rounds": [round.to_dict() for round in self.rounds],
+        }
 
     def __str__(self) -> str:
         rounds_str = "\n\n".join(str(round) for round in self.rounds)
@@ -278,6 +304,13 @@ class Bracket:
 
     def get_tournament_winner(self) -> Optional[Team]:
         return self.championship.winner
+
+    def to_dict(self) -> dict:
+        return {
+            "regions": [region.to_dict() for region in self.regions],
+            "finalFour": self.final_four.to_dict(),
+            "championship": self.championship.to_dict(),
+        }
 
     def __str__(self) -> str:
         regions_str = "\n\n".join(str(region) for region in self.regions)
