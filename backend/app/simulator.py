@@ -1,9 +1,12 @@
 import argparse
 import asyncio
-import os
 import logging
-from deciders import get_decision_function, ai_wizard
-from bracket import Bracket, Team
+import os
+
+from bracket import Bracket
+from bracket import Team
+from deciders import ai_wizard
+from deciders import get_decision_function
 
 logger = logging.getLogger(__name__)
 
@@ -18,13 +21,14 @@ ROUND_NAMES = [
 
 
 class Simulator:
-    def __init__(self, bracket: Bracket, api_key: str):
+    def __init__(self, bracket: Bracket, api_key: str, user_preferences: str):
         self.bracket = bracket
         self.api_key = api_key
+        self.user_preferences = user_preferences
 
     async def simulate_match(self, team1, team2, decision_function, played=False):
         if decision_function == ai_wizard:
-            winner = await decision_function(team1, team2, self.api_key)
+            winner = await decision_function(team1, team2, self.api_key, self.user_preferences)
         else:
             winner = await decision_function(team1, team2)
         self.print_match_summary(team1, team2, winner, played)
@@ -164,7 +168,7 @@ def main():
         raise EnvironmentError("OPENAI_API_KEY must be set in env.")
 
     # Simulate tournament
-    simulator = Simulator(bracket, api_key=api_key)
+    simulator = Simulator(bracket, api_key=api_key, user_preferences=args.user_preferences)
     asyncio.run(simulator.simulate_tournament(decision_function))
 
 

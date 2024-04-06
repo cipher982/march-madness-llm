@@ -1,7 +1,9 @@
-import random
 import json
-from openai import AsyncOpenAI
+import random
+from textwrap import dedent
+
 from bracket import Team
+from openai import AsyncOpenAI
 
 
 def get_decision_function(decider):
@@ -23,18 +25,7 @@ async def random_winner(team1: Team, team2: Team) -> Team:
     return winner
 
 
-PROMPT = """
-Consider a March Madness tournament matchup between two teams.
-Team 1, named '{team1.name}', is seeded {team1.seed}.
-Team 2, named '{team2.name}', is seeded {team2.seed}.
-
-Taking into account factors such as likely team performance, seed ranking, \
-historical success in tournaments, or anything else helpful.
-Choose one.
-"""
-
-
-async def ai_wizard(team1: Team, team2: Team, api_key: str) -> Team:
+async def ai_wizard(team1: Team, team2: Team, api_key: str, user_preferences: str) -> Team:
     try:
         client = AsyncOpenAI(api_key=api_key)
         tools = [
@@ -67,7 +58,23 @@ async def ai_wizard(team1: Team, team2: Team, api_key: str) -> Team:
                 },
             }
         ]
-        messages = [{"role": "user", "content": PROMPT.format(team1=team1, team2=team2)}]
+
+        prompt = dedent("""
+        Consider a March Madness tournament matchup between two teams.
+        Team 1, named '{team1.name}', is seeded {team1.seed}.
+        Team 2, named '{team2.name}', is seeded {team2.seed}.
+             
+        You should also consider these user preferences to help you make a decision.
+        If this is populated, then you should use the user preferences to help make a decision.
+        Preferences: {user_preferences}.
+
+        Now, taking into account factors such as likely team performance, seed ranking, \
+        historical success in tournaments, or any user preferences, which team would you choose?
+        Choose one.
+        """)
+        messages = [
+            {"role": "user", "content": prompt.format(team1=team1, team2=team2, user_preferences=user_preferences)}
+        ]
 
         response = await client.chat.completions.create(
             # model="gpt-4-0125-preview",
