@@ -1,16 +1,17 @@
-import os
 import logging
-
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
-from starlette.exceptions import HTTPException as StarletteHTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+import os
 
 from bracket import Bracket
 from deciders import get_decision_function
+from fastapi import FastAPI
+from fastapi import HTTPException
+from fastapi import Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from simulator import Simulator
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +66,7 @@ class SimulateRequest(BaseModel):
     decider: str
     use_current_state: bool = False
     api_key: str = ""
+    user_preferences: str = ""
 
 
 @app.get("/api/bracket_start")
@@ -90,6 +92,7 @@ async def get_current_bracket():
 async def simulate(request: SimulateRequest):
     decider = request.decider
     use_current_state = request.use_current_state
+    user_preferences = request.user_preferences
     logger.info(f"Received simulate request with decider: {decider}, use_current_state: {use_current_state}")
 
     decision_function = get_decision_function(decider)
@@ -102,8 +105,11 @@ async def simulate(request: SimulateRequest):
     if use_current_state:
         fp_current = os.path.join(os.path.dirname(__file__), "../data", "current_state.json")
         bracket.load_current_state(fp_current)
-
-    simulator = Simulator(bracket, api_key=request.api_key)
+    simulator = Simulator(
+        bracket=bracket,
+        api_key=request.api_key,
+        user_preferences=user_preferences,
+    )
     results, updated_bracket = await simulator.simulate_tournament(decision_function)
     assert updated_bracket.championship.winner is not None, "No champion after simulation"
 
