@@ -6,7 +6,7 @@ authors = ["David Rose <david@drose.io>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 openai = "^1.14.2"
 fastapi = "^0.110.0"
 uvicorn = "^0.29.0"
@@ -14,6 +14,7 @@ python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.3.5"
+pre-commit = "^3.7.0"
 
 [tool.ruff]
 line-length = 120
