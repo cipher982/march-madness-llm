@@ -8,6 +8,7 @@ const App = () => {
   const [simulatedBracket, setSimulatedBracket] = useState(null); // updated bracket after simulation
   const [decider, setDecider] = useState("random"); // Default decider
   const [apiKey, setApiKey] = useState("");
+  const [userPreferences, setUserPreferences] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
@@ -55,6 +56,15 @@ const App = () => {
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
           />
+
+          <label htmlFor="userPreferences">User Preferences:</label>
+          <textarea
+            type="text"
+            id="userPreferences"
+            value={userPreferences}
+            onChange={(e) => setUserPreferences(e.target.value)}
+            placeholder="Enter custom instructions for the AI&#13;&#10;e.g. 'Select teams with dog mascots'"
+          />
         </div>
       )}
 
@@ -63,6 +73,7 @@ const App = () => {
         onError={handleError}
         decider={decider}
         apiKey={apiKey}
+        userPreferences={userPreferences}
       />
 
       {errorMessage && (

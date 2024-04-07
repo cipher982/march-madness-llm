@@ -22,6 +22,7 @@ const SimulateButton = ({ onSimulationComplete, onError, decider, apiKey }) => {
                 decider: decider,
                 use_current_state: useCurrentState,
                 api_key: apiKey,
+                user_preferences: userPreferences,
             });
             console.log("Response data from backend:", response.data);
             if (response.data.bracket.championship.winner) {
