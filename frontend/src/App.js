@@ -4,10 +4,10 @@ import BracketDisplay from './components/BracketDisplay';
 import SimulateButton from './components/SimulateButton';
 
 const App = () => {
+  const [apiKey, setApiKey] = useState(process.env.REACT_APP_OPENAI_API_KEY || "");
   const [initialBracket, setInitialBracket] = useState(null); // empty bracket on page load
   const [simulatedBracket, setSimulatedBracket] = useState(null); // updated bracket after simulation
   const [decider, setDecider] = useState("random"); // Default decider
-  const [apiKey, setApiKey] = useState("");
   const [userPreferences, setUserPreferences] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 

@@ -3,7 +3,7 @@ import api from "../api";
 
 console.log('simulatebutton.js file loaded');
 
-const SimulateButton = ({ onSimulationComplete, onError, decider, apiKey }) => {
+const SimulateButton = ({ onSimulationComplete, onError, decider, apiKey, userPreferences }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSimulate = async () => {
