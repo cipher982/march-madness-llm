@@ -89,7 +89,7 @@ const App = () => {
         </div>
       )}
 
-      <div className={`simulate-button ${isSimulating ? 'simulating' : ''}`}>
+      <div className="simulate-button">
         <SimulateButton
           onSimulationStart={handleSimulationStart}
           onSimulationComplete={handleSimulationComplete}
@@ -99,7 +99,6 @@ const App = () => {
           userPreferences={userPreferences}
           isSimulating={isSimulating}
         />
-        {isSimulating && <span className="simulating-text">Simulating...</span>}
       </div>
 
       {errorMessage && (
