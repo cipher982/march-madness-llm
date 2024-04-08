@@ -1,12 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import api from "../api";
 
-console.log('simulatebutton.js file loaded');
-
-const SimulateButton = ({ onSimulationComplete, onError, decider, apiKey, userPreferences }) => {
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleSimulate = async () => {
+const SimulateButton = ({ onSimulationStart, onSimulationComplete, onError, decider, apiKey, userPreferences, isSimulating }) => {
+    const handleClick = async () => {
         const useCurrentState = false;
 
         if (decider === "ai") {
@@ -17,7 +13,7 @@ const SimulateButton = ({ onSimulationComplete, onError, decider, apiKey, userPr
         }
 
         try {
-            setIsLoading(true);
+            onSimulationStart();
             const response = await api.post("/simulate", {
                 decider: decider,
                 use_current_state: useCurrentState,
@@ -33,14 +29,16 @@ const SimulateButton = ({ onSimulationComplete, onError, decider, apiKey, userPr
         } catch (error) {
             console.error(error);
             onError(error.response?.data?.message || "An error occurred");
-        } finally {
-            setIsLoading(false);
         }
     };
 
     return (
-        <button onClick={handleSimulate} disabled={isLoading}>
-            {isLoading ? "Simulating..." : "Simulate Tournament"}
+        <button
+            onClick={handleClick}
+            disabled={isSimulating}
+            className={`simulate-button ${isSimulating ? "simulating" : ""}`}
+        >
+            {isSimulating ? "Simulating..." : "Simulate"}
         </button>
     );
 };

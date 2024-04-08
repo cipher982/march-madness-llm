@@ -1,38 +1,164 @@
+/* App.css */
+
+/* Reset default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set a nice background color for the app */
+body {
+  background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
+}
+
+/* Center the app content */
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  min-height: 100vh;
+  padding: 20px;
 }
 
+/* Style the header */
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Style the logo */
+.App-logo {
+  height: 80px;
+  pointer-events: none;
+  margin-bottom: 20px;
+}
+
+/* Style the main content */
+.App-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Style links */
 .App-link {
   color: #61dafb;
+  text-decoration: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.App-link:hover {
+  text-decoration: underline;
+}
+
+/* Style form elements */
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button {
+  background-color: #61dafb;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #4aa0c5;
+}
+
+/* Style the "Simulating..." box */
+.simulating-box {
+  display: inline-block;
+  padding: 10px;
+  background-color: #ffff99;
+  color: #000;
+  border-radius: 5px;
+  animation: pulse 2s infinite;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* Style the table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+/* Adjust column widths */
+th:nth-child(1),
+td:nth-child(1) {
+  width: 40%; /* Increase width for team names */
+}
+
+th:nth-child(2),
+td:nth-child(2),
+th:nth-child(3),
+td:nth-child(3) {
+  width: 20%; /* Decrease width for other columns */
+}
+
+.simulate-button {
+  position: relative;
+  display: inline-block;
+}
+
+.simulating {
+  animation: pulse 2s infinite;
+}
+
+.simulating-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Define the pulse animation */
+@keyframes pulse {
+  0% {
+    background-color: #61dafb;
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    background-color: #4aa0c5;
+  }
+  100% {
+    background-color: #61dafb;
   }
 }
