@@ -1,7 +1,9 @@
 import json
-import os
 import logging
-from typing import Dict, Optional, List
+import os
+from typing import Dict
+from typing import List
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
