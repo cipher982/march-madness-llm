@@ -23,6 +23,8 @@ class Simulator:
         self.bracket = bracket
         self.user_preferences = user_preferences
         self.api_key = api_key
+        self.current_region = None
+        self.current_round = None
         if api_key:
             self.client = wrap_openai(AsyncOpenAI(api_key=api_key))
 
@@ -72,6 +74,8 @@ class Simulator:
 
         starting_index = ROUND_NAMES.index(starting_round)
         for round_name in ROUND_NAMES[starting_index:4]:
+            self.current_round = round_name
+            logger.info(f"Simulating {round_name} round...")
             logger.debug(f"\nSimulating {round_name} for {region_name} region...")
             round_results = await self.simulate_round(decision_function, region_name, round_name)
             logger.debug(f"{region_name} {round_name} results:")
@@ -118,6 +122,7 @@ class Simulator:
         results = []
         for region in ["east", "west", "south", "midwest"]:
             self.current_region = region
+            logger.info(f"Simulating {region} region...")
             starting_round = None
             logger.debug(f"Simulating {region} region...")
             logger.debug(f"Starting round: {starting_round}")
