@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from './api';
 import BracketDisplay from './components/BracketDisplay';
 import SimulateButton from './components/SimulateButton';
+import SimulationStatus from './components/SimulationStatus';
 import "./App.css";
 
 const App = () => {
@@ -100,6 +101,12 @@ const App = () => {
           isSimulating={isSimulating}
         />
       </div>
+
+      {isSimulating && (
+        <div className="simulating-box">
+          <SimulationStatus />
+        </div>
+      )}
 
       {errorMessage && (
         <div style={{ marginTop: '20px', color: 'red' }}>

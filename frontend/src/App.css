@@ -150,6 +150,18 @@ td:nth-child(3) {
   color: #fff;
 }
 
+.simulating-box {
+  display: inline-block;
+  padding: 10px;
+  background-color: #ffff99;
+  color: #000;
+  border-radius: 5px;
+  animation: pulse 2s infinite;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
 /* Define the pulse animation */
 @keyframes pulse {
   0% {
