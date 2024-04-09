@@ -3,6 +3,7 @@ import os
 
 from bracket import Bracket
 from deciders import get_decision_function
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi import Request
@@ -13,6 +14,9 @@ from pydantic import BaseModel
 from simulator import Simulator
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+load_dotenv()
+
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()

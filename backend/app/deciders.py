@@ -3,7 +3,7 @@ import random
 from textwrap import dedent
 
 from bracket import Team
-from openai import AsyncOpenAI
+from langsmith import traceable
 
 
 def get_decision_function(decider):
@@ -25,9 +25,11 @@ async def random_winner(team1: Team, team2: Team) -> Team:
     return winner
 
 
-async def ai_wizard(team1: Team, team2: Team, api_key: str, user_preferences: str) -> Team:
+@traceable
+async def ai_wizard(team1: Team, team2: Team, user_preferences: str, client=None) -> Team:
+    if client is None:
+        raise ValueError("OpenAI client is not initialized")
     try:
-        client = AsyncOpenAI(api_key=api_key)
         tools = [
             {
                 "type": "function",
@@ -91,6 +93,7 @@ async def ai_wizard(team1: Team, team2: Team, api_key: str, user_preferences: st
             winner = Team(arguments["winner"], winner_team.seed)
         else:
             raise Exception("No decision made by AI")
+        print(f"AI decision: {winner.name}")
         return winner
     except Exception as e:
         print(f"Error calling OpenAI or executing function: {e}")
