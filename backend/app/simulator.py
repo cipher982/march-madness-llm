@@ -1,12 +1,10 @@
-import argparse
-import asyncio
 import logging
-import os
 
 from bracket import Bracket
 from bracket import Team
 from deciders import ai_wizard
-from deciders import get_decision_function
+from langsmith.wrappers import wrap_openai
+from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -21,14 +19,16 @@ ROUND_NAMES = [
 
 
 class Simulator:
-    def __init__(self, bracket: Bracket, api_key: str, user_preferences: str):
+    def __init__(self, bracket: Bracket, user_preferences: str, api_key: str):
         self.bracket = bracket
-        self.api_key = api_key
         self.user_preferences = user_preferences
+        self.api_key = api_key
+        if api_key:
+            self.client = wrap_openai(AsyncOpenAI(api_key=api_key))
 
     async def simulate_match(self, team1, team2, decision_function, played=False):
         if decision_function == ai_wizard:
-            winner = await decision_function(team1, team2, self.api_key, self.user_preferences)
+            winner = await decision_function(team1, team2, self.user_preferences, self.client)
         else:
             winner = await decision_function(team1, team2)
         self.print_match_summary(team1, team2, winner, played)
@@ -131,46 +131,3 @@ class Simulator:
         winner = self.bracket.get_tournament_winner()
         results.append({"final_winner": winner.name if winner else None})
         return results, self.bracket
-
-
-def main():
-    parser = argparse.ArgumentParser(description="NCAA March Madness Bracket Simulator")
-    parser.add_argument(
-        "--decider",
-        type=str,
-        default="seed",
-        choices=["ai", "seed", "random"],
-        help="Decision function to use for simulating games (default: seed)",
-    )
-    parser.add_argument(
-        "--current-state",
-        type=str,
-        default=None,
-        help="JSON file containing the current state of the bracket",
-    )
-    args = parser.parse_args()
-    decision_function = get_decision_function(args.decider)
-    if decision_function is None:
-        raise ValueError(f"Invalid decider: {args.decider}")
-
-    # Create bracket with data
-    bracket = Bracket()
-    bracket.load_initial_data(os.path.join(os.path.dirname(__file__), "../data", "bracket_2024.json"))
-    if args.current_state:
-        logger.debug("Loading current state...")
-        bracket.load_current_state(args.current_state)
-        logger.debug("Current state loaded.")
-
-    logger.info(bracket)
-
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise EnvironmentError("OPENAI_API_KEY must be set in env.")
-
-    # Simulate tournament
-    simulator = Simulator(bracket, api_key=api_key, user_preferences=args.user_preferences)
-    asyncio.run(simulator.simulate_tournament(decision_function))
-
-
-if __name__ == "__main__":
-    main()
