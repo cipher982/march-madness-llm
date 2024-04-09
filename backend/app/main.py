@@ -21,6 +21,8 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+simulator = None
+
 
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
@@ -94,6 +96,7 @@ async def get_current_bracket():
 
 @app.post("/api/simulate")
 async def simulate(request: SimulateRequest):
+    global simulator
     decider = request.decider
     use_current_state = request.use_current_state
     user_preferences = request.user_preferences
@@ -122,3 +125,12 @@ async def simulate(request: SimulateRequest):
         "results": results,
         "bracket": updated_bracket.to_dict(),
     }
+
+
+@app.get("/api/simulation_status")
+async def get_simulation_status():
+    global simulator
+    if simulator:
+        return {"region": simulator.current_region, "round": simulator.current_round}
+    else:
+        return {"region": None, "round": None}

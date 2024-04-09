@@ -117,6 +117,7 @@ class Simulator:
 
         results = []
         for region in ["east", "west", "south", "midwest"]:
+            self.current_region = region
             starting_round = None
             logger.debug(f"Simulating {region} region...")
             logger.debug(f"Starting round: {starting_round}")
@@ -125,7 +126,10 @@ class Simulator:
             assert results is not None, f"results is None: {results}"
         self.bracket.update_final_four_and_championship()
 
+        self.current_round = "final_4"
         await self.simulate_final_four(decision_function)
+
+        self.current_round = "championship"
         await self.simulate_championship(decision_function)
 
         winner = self.bracket.get_tournament_winner()
