@@ -174,3 +174,44 @@ td:nth-child(3) {
     background-color: #61dafb;
   }
 }
+
+/* ... */
+
+.matchup-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+}
+
+.team-logo {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.team-name {
+  font-weight: bold;
+}
+
+.team-seed {
+  margin-left: 5px;
+  color: #888;
+}
+
+.vs-text {
+  font-weight: bold;
+  margin: 0 10px;
+}
+
+.winner {
+  background-color: #c8e6c9;
+}

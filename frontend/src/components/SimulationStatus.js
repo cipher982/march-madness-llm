@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { roundNames } from './BracketDisplay';
+import MatchupCard from './MatchupCard';
 import api from '../api';
 
 const SimulationStatus = () => {
@@ -28,15 +30,12 @@ const SimulationStatus = () => {
 
     return (
         <div>
-            <p>Current Region: {simulationStatus.region}</p>
-            <p>Current Round: {simulationStatus.round}</p>
+            <p>Current Region: {simulationStatus.region.charAt(0).toUpperCase() + simulationStatus.region.slice(1)}</p>
+            <p>Current Round: {roundNames[simulationStatus.round]}</p>
             {simulationStatus.current_matchup && (
                 <div>
                     <h4>Current Matchup:</h4>
-                    <p>
-                        {simulationStatus.current_matchup.team1.name} vs{' '}
-                        {simulationStatus.current_matchup.team2.name}
-                    </p>
+                    <MatchupCard matchup={simulationStatus.current_matchup} />
                 </div>
             )}
             {simulationStatus.current_matchup && simulationStatus.current_winner && (
