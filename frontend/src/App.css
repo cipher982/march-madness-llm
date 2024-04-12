@@ -7,9 +7,17 @@
   box-sizing: border-box;
 }
 
+:root {
+  --primary-color: #ff6600;
+  --secondary-color: #1c1c1c;
+  --text-color: #ffffff;
+  --background-color: #c1c1c1;
+}
+
 /* Set a nice background color for the app */
 body {
-  background-color: #f0f0f0;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
   font-family: Arial, sans-serif;
 }
 
@@ -25,9 +33,9 @@ body {
 
 /* Style the header */
 .App-header {
-  background-color: #282c34;
+  background-color: var(--primary-color);
   padding: 20px;
-  color: white;
+  color: var(--text-color);
   text-align: center;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -43,7 +51,8 @@ body {
 
 /* Style the main content */
 .App-content {
-  background-color: white;
+  background-color: var(--background-color);
+  color: var(--text-color);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -64,6 +73,7 @@ body {
 /* Style form elements */
 input[type="text"],
 textarea {
+  background-color: var(--background-color);
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
@@ -73,8 +83,8 @@ textarea {
 }
 
 button {
-  background-color: #61dafb;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--text-color);
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -84,7 +94,7 @@ button {
 }
 
 button:hover {
-  background-color: #4aa0c5;
+  background-color: #cc5500;
 }
 
 /* Style the "Simulating..." box */
@@ -115,7 +125,7 @@ td {
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: #4c4c4c;
   font-weight: bold;
 }
 
@@ -165,13 +175,13 @@ td:nth-child(3) {
 /* Define the pulse animation */
 @keyframes pulse {
   0% {
-    background-color: #61dafb;
+    background-color: #fb8d61;
   }
   50% {
-    background-color: #4aa0c5;
+    background-color: #fb8d61c7;
   }
   100% {
-    background-color: #61dafb;
+    background-color: #fb8d61a4;
   }
 }
 
@@ -182,7 +192,9 @@ td:nth-child(3) {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background-color: #f5f5f5;
+  background-color: #3c3c3c;
+  border: 2px solid var(--primary-color);
+  color: var(--text-color);
   border-radius: 4px;
   margin-bottom: 10px;
 }
@@ -196,10 +208,12 @@ td:nth-child(3) {
   width: 30px;
   height: 30px;
   margin-right: 10px;
+  color: var(--text-color);
 }
 
 .team-name {
   font-weight: bold;
+  font-family: "March Madness", sans-serif;
 }
 
 .team-seed {
