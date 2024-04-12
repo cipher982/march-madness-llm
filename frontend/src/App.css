@@ -71,9 +71,13 @@ body {
 }
 
 /* Style form elements */
+#decider,
+#apiKey,
+#userPreferences {
+  background-color: var(--background-color);
+}
 input[type="text"],
 textarea {
-  background-color: var(--background-color);
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
