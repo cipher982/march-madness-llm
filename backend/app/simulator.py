@@ -32,11 +32,11 @@ class Simulator:
             self.client = wrap_openai(AsyncOpenAI(api_key=api_key))
 
     async def simulate_match(self, team1, team2, decision_function, played=False):
-        self.current_matchup = (team1, team2)
         if decision_function == ai_wizard:
             winner = await decision_function(team1, team2, self.user_preferences, self.client)
         else:
             winner = await decision_function(team1, team2)
+        self.current_matchup = (team1, team2)
         self.current_winner = winner
         self.print_match_summary(team1, team2, winner, played)
         return winner
