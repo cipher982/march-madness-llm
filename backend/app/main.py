@@ -131,6 +131,42 @@ async def simulate(request: SimulateRequest):
 async def get_simulation_status():
     global simulator
     if simulator:
-        return {"region": simulator.current_region, "round": simulator.current_round}
+        current_matchup = None
+        current_winner = None
+        if simulator.current_matchup:
+            team1, team2 = simulator.current_matchup
+            current_matchup = {
+                "team1": team1.to_dict(),
+                "team2": team2.to_dict(),
+            }
+            if simulator.current_winner:
+                current_winner = simulator.current_winner.to_dict()
+
+        return {
+            "region": simulator.current_region,
+            "round": simulator.current_round,
+            "current_matchup": current_matchup,
+            "current_winner": current_winner,
+        }
     else:
-        return {"region": None, "round": None}
+        return {
+            "region": None,
+            "round": None,
+            "current_matchup": None,
+            "current_winner": None,
+        }
+
+
+# @app.get("/api/current_matchup", response_model=Matchup)
+# async def get_current_matchup():
+#     global simulator
+#     if simulator and simulator.current_matchup:
+#         team1, team2 = simulator.current_matchup
+#         return Matchup(
+#             matchup_id="current",
+#             team1=team1,
+#             team2=team2,
+#             winner=simulator.current_winner,
+#         )
+#     else:
+#         return Matchup(matchup_id="current")
