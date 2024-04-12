@@ -1,5 +1,4 @@
-// create mappings for display names for march madness rounds
-const roundNames = {
+export const roundNames = {
     "round_of_64": "Round of 64",
     "round_of_32": "Round of 32",
     "sweet_16": "Sweet 16",
