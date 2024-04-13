@@ -7,6 +7,7 @@
   box-sizing: border-box;
 }
 
+/* Custom properties */
 :root {
   --primary-color: #ff6600;
   --secondary-color: #1c1c1c;
@@ -14,14 +15,14 @@
   --background-color: #c1c1c1;
 }
 
-/* Set a nice background color for the app */
+/* Global styles */
 body {
   background-color: var(--secondary-color);
   color: var(--text-color);
   font-family: Arial, sans-serif;
 }
 
-/* Center the app content */
+/* App layout */
 .App {
   display: flex;
   flex-direction: column;
@@ -31,7 +32,7 @@ body {
   padding: 20px;
 }
 
-/* Style the header */
+/* Header */
 .App-header {
   background-color: var(--primary-color);
   padding: 20px;
@@ -42,14 +43,14 @@ body {
   margin-bottom: 20px;
 }
 
-/* Style the logo */
+/* Logo */
 .App-logo {
   height: 80px;
   pointer-events: none;
   margin-bottom: 20px;
 }
 
-/* Style the main content */
+/* Main content */
 .App-content {
   background-color: var(--background-color);
   color: var(--text-color);
@@ -60,7 +61,7 @@ body {
   max-width: 600px;
 }
 
-/* Style links */
+/* Links */
 .App-link {
   color: #61dafb;
   text-decoration: none;
@@ -70,12 +71,7 @@ body {
   text-decoration: underline;
 }
 
-/* Style form elements */
-#decider,
-#apiKey,
-#userPreferences {
-  background-color: var(--background-color);
-}
+/* Form elements */
 input[type="text"],
 textarea {
   width: 100%;
@@ -101,20 +97,7 @@ button:hover {
   background-color: #cc5500;
 }
 
-/* Style the "Simulating..." box */
-.simulating-box {
-  display: inline-block;
-  padding: 10px;
-  background-color: #ffff99;
-  color: #000;
-  border-radius: 5px;
-  animation: pulse 2s infinite;
-  text-align: center;
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-/* Style the table */
+/* Table */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -133,19 +116,18 @@ th {
   font-weight: bold;
 }
 
-/* Adjust column widths */
 th:nth-child(1),
 td:nth-child(1) {
-  width: 40%; /* Increase width for team names */
+  width: 40%;
 }
 
 th:nth-child(2),
 td:nth-child(2),
 th:nth-child(3),
 td:nth-child(3) {
-  width: 20%; /* Decrease width for other columns */
+  width: 20%;
 }
-
+/* Simulation */
 .simulate-button {
   position: relative;
   display: inline-block;
@@ -167,8 +149,8 @@ td:nth-child(3) {
 .simulating-box {
   display: inline-block;
   padding: 10px;
-  background-color: #ffff99;
-  color: #000;
+  background-color: #fb8d61;
+  color: #fff;
   border-radius: 5px;
   animation: pulse 2s infinite;
   text-align: center;
@@ -176,21 +158,19 @@ td:nth-child(3) {
   margin-top: 20px;
 }
 
-/* Define the pulse animation */
 @keyframes pulse {
   0% {
-    background-color: #fb8d61;
+    opacity: 1;
   }
   50% {
-    background-color: #fb8d61c7;
+    opacity: 0.7;
   }
   100% {
-    background-color: #fb8d61a4;
+    opacity: 1;
   }
 }
 
-/* ... */
-
+/* Matchup card */
 .matchup-card {
   display: flex;
   justify-content: space-between;
