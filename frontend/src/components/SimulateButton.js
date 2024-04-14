@@ -21,14 +21,33 @@ const SimulateButton = ({ onSimulationStart, onSimulationComplete, onError, deci
                 user_preferences: userPreferences,
             });
             console.log("Response data from backend:", response.data);
-            if (response.data.bracket.championship.winner) {
-                onSimulationComplete(response.data.results, response.data.bracket);
-            } else {
-                throw new Error("Championship winner is missing");
-            }
+
+            // Start polling for the simulation results
+            const pollInterval = setInterval(async () => {
+                try {
+                    const pollResponse = await api.get("/simulation-status");
+                    console.log("Poll response data:", pollResponse.data);
+
+                    // Check if the simulation is complete
+                    if (pollResponse.data.status === "complete") {
+                        clearInterval(pollInterval);
+                        onSimulationComplete(pollResponse.data.results, pollResponse.data.bracket);
+                    }
+                } catch (error) {
+                    if (error.response && error.response.status === 404) {
+                        // Simulation is complete, stop polling
+                        clearInterval(pollInterval);
+                        onSimulationComplete(null, null);
+                    } else {
+                        console.error("Error during polling:", error);
+                        clearInterval(pollInterval);
+                        onError("An error occurred while checking the simulation status");
+                    }
+                }
+            }, 5000); // Poll every 5 seconds
         } catch (error) {
-            console.error(error);
-            onError(error.response?.data?.message || "An error occurred");
+            console.error("Error during simulation:", error);
+            onError("An error occurred during simulation");
         }
     };
 
