@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 
@@ -16,7 +17,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 load_dotenv()
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
@@ -96,7 +97,6 @@ async def get_current_bracket():
 
 @app.post("/api/simulate")
 async def simulate(request: SimulateRequest):
-    global simulator
     decider = request.decider
     use_current_state = request.use_current_state
     user_preferences = request.user_preferences
@@ -112,18 +112,18 @@ async def simulate(request: SimulateRequest):
     if use_current_state:
         fp_current = os.path.join(os.path.dirname(__file__), "../data", "current_state.json")
         bracket.load_current_state(fp_current)
+
+    global simulator
     simulator = Simulator(
         bracket=bracket,
         api_key=request.api_key,
         user_preferences=user_preferences,
     )
-    results, updated_bracket = await simulator.simulate_tournament(decision_function)
-    assert updated_bracket.championship.winner is not None, "No champion after simulation"
+    asyncio.create_task(simulator.simulate_tournament(decision_function))
 
     return {
-        "message": "Simulation completed",
-        "results": results,
-        "bracket": updated_bracket.to_dict(),
+        "message": "Simulation started",
+        "bracket": bracket.to_dict(),
     }
 
 
@@ -142,31 +142,20 @@ async def get_simulation_status():
             if simulator.current_winner:
                 current_winner = simulator.current_winner.to_dict()
 
+        logger.info(f"FastAPI: returning populated data {current_winner}")
         return {
+            "bracket": simulator.bracket.to_dict(),
             "region": simulator.current_region,
             "round": simulator.current_round,
             "current_matchup": current_matchup,
             "current_winner": current_winner,
         }
     else:
+        logger.info("FastAPI: returning empty data")
         return {
+            "bracket": None,
             "region": None,
             "round": None,
             "current_matchup": None,
             "current_winner": None,
         }
-
-
-# @app.get("/api/current_matchup", response_model=Matchup)
-# async def get_current_matchup():
-#     global simulator
-#     if simulator and simulator.current_matchup:
-#         team1, team2 = simulator.current_matchup
-#         return Matchup(
-#             matchup_id="current",
-#             team1=team1,
-#             team2=team2,
-#             winner=simulator.current_winner,
-#         )
-#     else:
-#         return Matchup(matchup_id="current")
