@@ -40,8 +40,6 @@ const BracketDisplay = ({ bracket }) => {
         return <div>No bracket data available</div>;
     }
 
-    // log the bracket data
-    console.log(bracket);
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div style={{ maxWidth: '1000px', padding: '20px' }}>
