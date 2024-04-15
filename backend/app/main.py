@@ -8,12 +8,14 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi import Request
+from fastapi import WebSocket
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from simulator import Simulator
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.websockets import WebSocketDisconnect
 
 load_dotenv()
 
@@ -123,7 +125,7 @@ async def simulate(request: SimulateRequest):
 
     return {
         "message": "Simulation started",
-        "bracket": bracket.to_dict(),
+        "bracket": simulator.bracket.to_dict(),
     }
 
 
@@ -159,3 +161,37 @@ async def get_simulation_status():
             "current_matchup": None,
             "current_winner": None,
         }
+
+
+@app.websocket("/ws/simulate")
+async def simulate_websocket(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_json()
+            decider = data.get("decider")
+            use_current_state = data.get("use_current_state", False)
+            user_preferences = data.get("user_preferences", "")
+
+            decision_function = get_decision_function(decider)
+            if decision_function is None:
+                await websocket.send_json({"error": f"Invalid decider: {decider}"})
+                continue
+
+            bracket = Bracket()
+            fp_start = os.path.join(os.path.dirname(__file__), "../data", "bracket_2024.json")
+            bracket.load_initial_data(fp_start)
+            if use_current_state:
+                fp_current = os.path.join(os.path.dirname(__file__), "../data", "current_state.json")
+                bracket.load_current_state(fp_current)
+
+            simulator = Simulator(
+                bracket=bracket,
+                api_key=data.get("api_key", ""),
+                user_preferences=user_preferences,
+                websocket=websocket,
+            )
+            await simulator.simulate_tournament(decision_function)
+
+    except WebSocketDisconnect:
+        logger.info("WebSocket disconnected")

@@ -3,6 +3,7 @@ import logging
 from bracket import Bracket
 from bracket import Team
 from deciders import ai_wizard
+from fastapi import WebSocket
 from langsmith.wrappers import wrap_openai
 from openai import AsyncOpenAI
 
@@ -19,7 +20,8 @@ ROUND_NAMES = [
 
 
 class Simulator:
-    def __init__(self, bracket: Bracket, user_preferences: str, api_key: str):
+    def __init__(self, bracket: Bracket, user_preferences: str, api_key: str, websocket: WebSocket):
+        self.websocket = websocket
         self.bracket = bracket
         self.user_preferences = user_preferences
         self.api_key = api_key
@@ -31,6 +33,24 @@ class Simulator:
         if api_key:
             self.client = wrap_openai(AsyncOpenAI(api_key=api_key))
 
+    async def send_match_update(self, team1, team2, winner):
+        await self.websocket.send_json(
+            {
+                "type": "match_update",
+                "team1": team1.to_dict(),
+                "team2": team2.to_dict(),
+                "winner": winner.to_dict(),
+            }
+        )
+
+    async def send_bracket_update(self):
+        await self.websocket.send_json(
+            {
+                "type": "bracket_update",
+                "bracket": self.bracket.to_dict(),
+            }
+        )
+
     async def simulate_match(self, team1, team2, decision_function, played=False):
         if decision_function == ai_wizard:
             winner = await decision_function(team1, team2, self.user_preferences, self.client)
@@ -39,6 +59,8 @@ class Simulator:
         self.current_matchup = (team1, team2)
         self.current_winner = winner
         self.print_match_summary(team1, team2, winner, played)
+        await self.send_match_update(team1, team2, winner)
+        await self.send_bracket_update()
         return winner
 
     def print_match_summary(self, team1, team2, winner, played=False):
