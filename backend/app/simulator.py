@@ -37,9 +37,22 @@ class Simulator:
         await self.websocket.send_json(
             {
                 "type": "match_update",
-                "team1": team1.to_dict(),
-                "team2": team2.to_dict(),
-                "winner": winner.to_dict(),
+                "region": self.current_region,
+                "round": self.current_round,
+                "current_matchup": {
+                    "team1": {
+                        "name": team1.name,
+                        "seed": team1.seed,
+                    },
+                    "team2": {
+                        "name": team2.name,
+                        "seed": team2.seed,
+                    },
+                },
+                "current_winner": {
+                    "name": winner.name,
+                    "seed": winner.seed,
+                },
             }
         )
 
@@ -64,11 +77,7 @@ class Simulator:
         return winner
 
     def print_match_summary(self, team1, team2, winner, played=False):
-        if played:
-            logger.warning(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed}) - Already Played")
-        else:
-            logger.info(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed})")
-        logger.debug(f"Winner: {winner.name}")
+        logger.info(f"{team1.name} ({team1.seed}) vs {team2.name} ({team2.seed}), winner: {winner.name}")
 
     async def simulate_round(self, decision_function, region_name, round_name):
         matchups = self.bracket.get_matchups(region_name, round_name)
@@ -142,6 +151,7 @@ class Simulator:
         team1, team2 = matchup.team1, matchup.team2
         winner = await self.simulate_match(team1, team2, decision_function)
         self.bracket.update_matchup_winner(None, "championship", matchup.matchup_id, winner)
+        self.bracket.update_championship_winner(winner)  # Add this line
 
     async def simulate_tournament(self, decision_function) -> tuple:
         logger.debug("Starting NCAA March Madness Bracket Simulation...\n")
@@ -149,10 +159,7 @@ class Simulator:
         results = []
         for region in ["east", "west", "south", "midwest"]:
             self.current_region = region
-            logger.info(f"Simulating {region} region...")
             starting_round = None
-            logger.debug(f"Simulating {region} region...")
-            logger.debug(f"Starting round: {starting_round}")
             winner = await self.simulate_region(decision_function, region, starting_round)
             results.append({"region": region, "winner": winner.name})
             assert results is not None, f"results is None: {results}"
@@ -166,4 +173,6 @@ class Simulator:
 
         winner = self.bracket.get_tournament_winner()
         results.append({"final_winner": winner.name if winner else None})
+
+        await self.send_bracket_update()
         return results, self.bracket

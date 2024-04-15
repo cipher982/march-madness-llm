@@ -8,12 +8,16 @@ import "./App.css";
 const App = () => {
   const [apiKey, setApiKey] = useState(process.env.REACT_APP_OPENAI_API_KEY || '');
   const [initialBracket, setInitialBracket] = useState(null);
-  const [simulatedBracket, setSimulatedBracket] = useState(null);
   const [decider, setDecider] = useState('random');
   const [userPreferences, setUserPreferences] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
-  const [simulationComplete, setSimulationComplete] = useState(false);
+  const [simulationStatus, setSimulationStatus] = useState({
+    region: "",
+    round: "",
+    current_matchup: null,
+    current_winner: null,
+  });
 
   useEffect(() => {
     const fetchInitialBracket = async () => {
@@ -22,23 +26,42 @@ const App = () => {
         setInitialBracket(response.data.bracket);
       } catch (error) {
         console.error('Error fetching initial bracket:', error);
-        setErrorMessage('Failed to fetch initial bracket data');
       }
     };
 
     fetchInitialBracket();
   }, []);
 
-  const handleSimulationStart = () => {
+  const handleSimulationStart = (decider, apiKey, userPreferences) => {
     setIsSimulating(true);
-    setSimulationComplete(false);
-    setErrorMessage(null);
-  };
 
-  const handleSimulationComplete = async (results, simulatedBracket) => {
-    setSimulatedBracket(simulatedBracket);
-    setIsSimulating(false);
-    setSimulationComplete(true);
+    const socket = new WebSocket('ws://localhost:8001/ws/simulate');
+
+    socket.onopen = () => {
+      socket.send(JSON.stringify({
+        decider,
+        api_key: apiKey,
+        user_preferences: userPreferences,
+      }));
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'match_update') {
+        setSimulationStatus({
+          region: data.region,
+          round: data.round,
+          current_matchup: data.current_matchup,
+          current_winner: data.current_winner,
+        });
+      } else if (data.type === 'bracket_update') {
+        setInitialBracket(data.bracket);
+      }
+    };
+
+    socket.onclose = () => {
+      setIsSimulating(false);
+    };
   };
 
   const handleError = (message) => {
@@ -93,10 +116,9 @@ const App = () => {
       <div className="simulate-button">
         <SimulateButton
           onSimulationStart={handleSimulationStart}
-          onSimulationComplete={handleSimulationComplete}
-          onError={handleError}
           decider={decider}
           apiKey={apiKey}
+          onError={handleError}
           userPreferences={userPreferences}
           isSimulating={isSimulating}
         />
@@ -104,7 +126,7 @@ const App = () => {
 
       {isSimulating && (
         <div className="simulating-box">
-          <SimulationStatus />
+          <SimulationStatus simulationStatus={simulationStatus} />
         </div>
       )}
 
@@ -114,18 +136,8 @@ const App = () => {
         </div>
       )}
 
-      {simulationComplete && !isSimulating && (
-        <div style={{ marginTop: '20px', color: 'green' }}>
-          <p>Simulation completed successfully!</p>
-        </div>
-      )}
-
       <div style={{ marginTop: '40px' }}>
-        {simulatedBracket ? (
-          <BracketDisplay bracket={simulatedBracket} />
-        ) : (
-          initialBracket && <BracketDisplay bracket={initialBracket} />
-        )}
+        {initialBracket && <BracketDisplay bracket={initialBracket} />}
       </div>
     </div>
   );
