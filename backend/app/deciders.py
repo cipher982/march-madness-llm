@@ -13,7 +13,7 @@ def get_decision_function(decider):
 
 
 async def best_seed(team1: Team, team2: Team) -> Team:
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.05)
     if team1.seed < team2.seed:
         return team1
     elif team1.seed > team2.seed:
@@ -23,7 +23,7 @@ async def best_seed(team1: Team, team2: Team) -> Team:
 
 
 async def random_winner(team1: Team, team2: Team) -> Team:
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.05)
     winner = random.choice([team1, team2])
     return winner
 
