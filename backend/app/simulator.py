@@ -175,4 +175,5 @@ class Simulator:
         results.append({"final_winner": winner.name if winner else None})
 
         await self.send_bracket_update()
+        await self.websocket.send_json({"type": "simulation_complete"})
         return results, self.bracket

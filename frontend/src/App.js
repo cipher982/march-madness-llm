@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Confetti from 'react-confetti';
 import api from './api';
 import BracketDisplay from './components/BracketDisplay';
 import SimulateButton from './components/SimulateButton';
@@ -12,6 +13,8 @@ const App = () => {
   const [userPreferences, setUserPreferences] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [simulationStarted, setSimulationStarted] = useState(false);
+  const [simulationComplete, setSimulationComplete] = useState(false);
   const [simulationStatus, setSimulationStatus] = useState({
     region: "",
     round: "",
@@ -33,7 +36,9 @@ const App = () => {
   }, []);
 
   const handleSimulationStart = (decider, apiKey, userPreferences) => {
+    setSimulationStarted(true);
     setIsSimulating(true);
+    setSimulationComplete(false);
 
     const socket = new WebSocket('ws://localhost:8001/ws/simulate');
 
@@ -56,6 +61,9 @@ const App = () => {
         });
       } else if (data.type === 'bracket_update') {
         setInitialBracket(data.bracket);
+      } else if (data.type === 'simulation_complete') {
+        setIsSimulating(false);
+        setSimulationComplete(true);
       }
     };
 
@@ -124,7 +132,7 @@ const App = () => {
         />
       </div>
 
-      {isSimulating && (
+      {simulationStarted && (
         <div className="simulating-box">
           <SimulationStatus simulationStatus={simulationStatus} />
         </div>
@@ -139,6 +147,7 @@ const App = () => {
       <div style={{ marginTop: '40px' }}>
         {initialBracket && <BracketDisplay bracket={initialBracket} />}
       </div>
+      {simulationComplete && <Confetti />}
     </div>
   );
 };

@@ -152,10 +152,13 @@ td:nth-child(3) {
   background-color: #fb8d61;
   color: #fff;
   border-radius: 5px;
-  animation: pulse 2s infinite;
   text-align: center;
   font-weight: bold;
   margin-top: 20px;
+}
+
+.simulating-box.simulating {
+  animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
