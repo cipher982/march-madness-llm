@@ -1,23 +1,59 @@
 import React from 'react';
 import { SingleEliminationBracket, SVGViewer } from '@g-loot/react-tournament-brackets';
 
+const getMatchId = (region, round, matchIndex) => {
+    const regionCode = region.name.slice(0, 1).toUpperCase();
+    const roundCode = round.name.split('_').map(word => word.slice(0, 1)).join('').toUpperCase();
+    return `${regionCode}_${roundCode}_M${matchIndex + 1}`;
+};
+
 const adaptData = (bracket) => {
-    // This is a simplified example. You'll need to adapt it based on your actual data structure.
-    return bracket.regions.flatMap(region =>
-        region.rounds.map(round => ({
-            id: round.id,
-            name: round.name,
-            participants: [
-                { id: round.matchups[0].team1.id, name: round.matchups[0].team1.name },
-                { id: round.matchups[0].team2.id, name: round.matchups[0].team2.name }
-            ],
-            state: round.matchups[0].winner ? 'finished' : 'pending',
-            result: {
-                winnerId: round.matchups[0].winner?.id,
-                score: [round.matchups[0].team1Score, round.matchups[0].team2Score]
-            }
-        }))
-    );
+    const adaptedData = bracket.regions.flatMap((region) =>
+        region.rounds.map((round) => {
+            const roundMatchups = round.matchups.map((matchup, matchIndex) => {
+                const participants = [
+                    {
+                        id: matchup.team1.name,
+                        name: matchup.team1.name,
+                        resultText: matchup.winner?.name === matchup.team1.name ? 'WON' : null,
+                        isWinner: matchup.winner?.name === matchup.team1.name,
+                        status: matchup.winner ? 'PLAYED' : null,
+                    },
+                    {
+                        id: matchup.team2.name,
+                        name: matchup.team2.name,
+                        resultText: matchup.winner?.name === matchup.team2.name ? 'WON' : null,
+                        isWinner: matchup.winner?.name === matchup.team2.name,
+                        status: matchup.winner ? 'PLAYED' : null,
+                    },
+                ];
+
+                const match = {
+                    id: getMatchId(region, round, matchIndex),
+                    name: `${round.name} - Match`,
+                    nextMatchId: null,
+                    tournamentRoundText: round.name,
+                    startTime: '',
+                    state: matchup.winner ? 'DONE' : 'NO_SHOW',
+                    participants,
+                };
+
+                return match;
+            });
+
+            return roundMatchups;
+        })
+    ).flat();
+
+    // Add nextMatchId for each match
+    adaptedData.forEach((match, index) => {
+        const nextMatchIndex = Math.floor(index / 2);
+        if (nextMatchIndex < adaptedData.length / 2) {
+            match.nextMatchId = adaptedData[nextMatchIndex].id;
+        }
+    });
+
+    return adaptedData;
 };
 
 const BracketDisplay = ({ bracket }) => {
