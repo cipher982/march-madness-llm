@@ -37,7 +37,7 @@ const MatchupDisplay = ({ matchup }) => {
 };
 const BracketDisplay = ({ bracket }) => {
     if (!bracket) {
-        return <div>No bracket data available</div>;
+        return <div>No bracket data available.</div>;
     }
 
     return (
