@@ -40,7 +40,7 @@ const App = () => {
     setIsSimulating(true);
     setSimulationComplete(false);
 
-    const socket = new WebSocket('ws://localhost:8001/ws/simulate');
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
     socket.onopen = () => {
       socket.send(JSON.stringify({
