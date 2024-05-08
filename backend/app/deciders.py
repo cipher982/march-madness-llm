@@ -3,8 +3,9 @@ import json
 import random
 from textwrap import dedent
 
-from bracket import Team
 from langsmith import traceable
+
+from app.bracket import Team
 
 
 def get_decision_function(decider):
