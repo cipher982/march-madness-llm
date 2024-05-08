@@ -1,8 +1,6 @@
 import logging
 import os
 
-from bracket import Bracket
-from deciders import get_decision_function
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi import Request
@@ -11,9 +9,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from simulator import Simulator
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.websockets import WebSocketDisconnect
+
+from app.bracket import Bracket
+from app.deciders import get_decision_function
+from app.simulator import Simulator
 
 load_dotenv()
 
