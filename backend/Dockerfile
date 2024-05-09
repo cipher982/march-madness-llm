@@ -7,8 +7,8 @@ WORKDIR /app
 # Install Poetry
 RUN pip install --no-cache-dir poetry
 
-# Copy the pyproject.toml and poetry.lock files to the working directory
-COPY pyproject.toml poetry.lock ./
+# Copy the pyproject.toml for poetry requirements
+COPY pyproject.toml ./
 
 # Install the Python dependencies using Poetry
 RUN poetry config virtualenvs.create false \
