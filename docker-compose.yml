@@ -7,8 +7,6 @@ services:
     container_name: backend
     ports:
       - "${BACKEND_PORT}:8000"
-    volumes:
-      - ./backend:/app
     networks:
       - app-network
     environment:
