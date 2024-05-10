@@ -21,6 +21,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+      - REACT_APP_BACKEND_IP=${BACKEND_IP}
+      - REACT_APP_BACKEND_PORT=${BACKEND_PORT}
     container_name: frontend
     ports:
       - "${FRONTEND_PORT}:3000"
