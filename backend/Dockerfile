@@ -7,12 +7,18 @@ WORKDIR /app
 # Install Poetry
 RUN pip install --no-cache-dir poetry
 
+# Copy the pyproject.toml file to the working directory
+COPY pyproject.toml .
+
 # Copy the backend code to the working directory
 COPY . .
 
 # Install the Python dependencies using Poetry
 RUN poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi
+
+# Print the files in the /app directory for debugging
+RUN ls -la /app; sleep 10
 
 # Run the FastAPI server using Uvicorn
 CMD poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000
