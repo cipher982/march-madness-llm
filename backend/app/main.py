@@ -70,8 +70,10 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://marchmadness.drose.io",
+        "http://localhost",
         f"http://localhost:{frontend_port}",
+        "http://marchmadness.drose.io",
+        f"http://marchmadness.drose.io:{frontend_port}",
     ],
     allow_methods=["POST", "GET"],
     allow_headers=["*"],
