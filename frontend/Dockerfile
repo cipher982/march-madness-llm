@@ -16,4 +16,7 @@ WORKDIR /app
 
 COPY --from=build /app/build ./build
 
+ENV REACT_APP_BACKEND_IP=${REACT_APP_BACKEND_IP}
+ENV REACT_APP_BACKEND_PORT=${REACT_APP_BACKEND_PORT}
+
 CMD ["npx", "serve", "-s", "build", "-l", "3000"]
