@@ -2,10 +2,16 @@ import axios from 'axios';
 
 console.log('api.js file loaded');
 
-// log the backend ip
-console.log(`backend ip: ${process.env.REACT_APP_BACKEND_IP}`);
+const baseURL = `http://${process.env.REACT_APP_BACKEND_IP}:${process.env.REACT_APP_BACKEND_PORT}/api`;
+console.log(`axios baseURL: ${baseURL}`);
+
 const api = axios.create({
-    baseURL: `http://${process.env.REACT_APP_BACKEND_IP}:8000/api`,
+    baseURL: baseURL,
+});
+
+api.interceptors.response.use(response => response, error => {
+    console.error('API request error:', error);
+    return Promise.reject(error);
 });
 
 export default api;

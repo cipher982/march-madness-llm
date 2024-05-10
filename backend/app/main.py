@@ -25,6 +25,9 @@ app = FastAPI()
 
 simulator = None
 
+frontend_port = os.getenv("FRONTEND_PORT")
+assert frontend_port is not None, "FRONTEND_PORT environment variable not set"
+
 
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
@@ -61,7 +64,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://marchmadness.drose.io",
-        "http://localhost",
+        f"http://localhost:{frontend_port}",
     ],
     allow_methods=["POST", "GET"],
     allow_headers=["*"],
