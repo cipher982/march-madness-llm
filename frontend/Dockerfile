@@ -1,31 +1,21 @@
 FROM node:20 AS build
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files to the working directory
 COPY package*.json ./
 
-# Install the frontend dependencies
 RUN npm ci
 
-# Copy the frontend code to the working directory
 COPY . .
 
-# Build the React app
 RUN npm run build
 
-# Use a lightweight web server to serve the built files
-FROM nginx:stable-alpine
+FROM node:20-alpine
 
-# Copy the built files from the previous stage to the Nginx HTML directory
-COPY --from=build /app/build /usr/share/nginx/html
+WORKDIR /app
 
-# Copy the Nginx configuration file to the appropriate location
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/build ./build
 
-# Expose the port on which the frontend will be served
-EXPOSE 80
+EXPOSE 3000
 
-# Start the Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npx", "serve", "-s", "build", "-l", "3000"]

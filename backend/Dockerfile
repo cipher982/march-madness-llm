@@ -17,11 +17,5 @@ RUN poetry config virtualenvs.create false \
 # Copy the backend code to the working directory
 COPY . .
 
-# # Set the FASTAPI_PORT environment variable
-# ENV FASTAPI_PORT=8002
-
-# Expose the port on which the FastAPI server will run
-EXPOSE $FASTAPI_PORT
-
 # Run the FastAPI server using Uvicorn
-CMD poetry run uvicorn app.main:app --host 0.0.0.0 --port $FASTAPI_PORT
+CMD poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000
