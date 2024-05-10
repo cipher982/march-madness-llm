@@ -11,6 +11,11 @@ services:
       - app-network
     environment:
       - FRONTEND_PORT=${FRONTEND_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   frontend:
     build:
@@ -26,6 +31,11 @@ services:
     environment:
       - REACT_APP_BACKEND_IP=${BACKEND_IP}
       - REACT_APP_BACKEND_PORT=${BACKEND_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   app-network:
