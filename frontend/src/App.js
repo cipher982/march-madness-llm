@@ -40,7 +40,10 @@ const App = () => {
     setIsSimulating(true);
     setSimulationComplete(false);
 
-    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    const websocketBaseUrl = `ws://${process.env.REACT_APP_BACKEND_IP}:8000/ws/simulate`;
+    // log the websocket url
+    console.log(`websocket url: ${websocketBaseUrl}`);
+    const socket = new WebSocket(websocketBaseUrl);
 
     socket.onopen = () => {
       socket.send(JSON.stringify({
