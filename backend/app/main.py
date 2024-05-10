@@ -29,6 +29,13 @@ frontend_port = os.getenv("FRONTEND_PORT")
 assert frontend_port is not None, "FRONTEND_PORT environment variable not set"
 
 
+class SimulateRequest(BaseModel):
+    decider: str
+    use_current_state: bool = False
+    api_key: str = ""
+    user_preferences: str = ""
+
+
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled exception: {exc}", exc_info=True)
@@ -76,11 +83,9 @@ async def root():
     return {"message": "Welcome to the NCAA March Madness Bracket Simulator!"}
 
 
-class SimulateRequest(BaseModel):
-    decider: str
-    use_current_state: bool = False
-    api_key: str = ""
-    user_preferences: str = ""
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
 
 
 @app.get("/api/bracket_start")
