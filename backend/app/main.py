@@ -25,6 +25,8 @@ app = FastAPI()
 
 simulator = None
 
+origin_ip = os.getenv("BACKEND_IP")
+assert origin_ip is not None, "BACKEND_IP environment variable not set"
 frontend_port = os.getenv("FRONTEND_PORT")
 assert frontend_port is not None, "FRONTEND_PORT environment variable not set"
 
@@ -71,9 +73,14 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost",
+        "https://localhost",
         f"http://localhost:{frontend_port}",
+        f"https://localhost:{frontend_port}",
         "http://marchmadness.drose.io",
+        "https://marchmadness.drose.io",
         f"http://marchmadness.drose.io:{frontend_port}",
+        f"https://marchmadness.drose.io:{frontend_port}",
+        f"http://{origin_ip}:{frontend_port}",
     ],
     allow_methods=["POST", "GET"],
     allow_headers=["*"],
