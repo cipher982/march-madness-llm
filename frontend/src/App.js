@@ -25,7 +25,7 @@ const App = () => {
   useEffect(() => {
     const fetchInitialBracket = async () => {
       try {
-        const response = await api.get('/bracket_start');
+        const response = await api.get('/api/bracket_start');
         setInitialBracket(response.data.bracket);
       } catch (error) {
         console.error('Error fetching initial bracket:', error);
@@ -40,8 +40,9 @@ const App = () => {
     setIsSimulating(true);
     setSimulationComplete(false);
 
-    const { REACT_APP_BACKEND_IP, REACT_APP_BACKEND_PORT } = process.env;
-    const websocketBaseUrl = `ws://${REACT_APP_BACKEND_IP}:${REACT_APP_BACKEND_PORT}/ws/simulate`;
+    const backendUrl = new URL(process.env.REACT_APP_BACKEND_URL);
+    const websocketBaseUrl = `ws://${backendUrl.hostname}${backendUrl.port ? `:${backendUrl.port}` : ''}/ws/simulate`;
+    console.log(`websocketBaseUrl: ${websocketBaseUrl}`);
     const socket = new WebSocket(websocketBaseUrl);
 
     socket.onopen = () => {
