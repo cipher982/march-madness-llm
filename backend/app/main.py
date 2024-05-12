@@ -25,8 +25,6 @@ app = FastAPI()
 
 simulator = None
 
-frontend_port = os.getenv("FRONTEND_PORT")
-
 
 class SimulateRequest(BaseModel):
     decider: str
@@ -66,12 +64,17 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     )
 
 
+class CustomCORSMiddleware(CORSMiddleware):
+    def is_allowed_origin(self, origin: str) -> bool:
+        allowed_origins = self.allow_origins
+        if "http://localhost" in origin:
+            return True
+        return origin in allowed_origins
+
+
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        f"http://localhost:{frontend_port}",
-        "https://api.marchmadness.drose.io",
-    ],
+    CustomCORSMiddleware,
+    allow_origins=["https://api.marchmadness.drose.io"],
     allow_methods=["POST", "GET"],
     allow_headers=["*"],
 )
