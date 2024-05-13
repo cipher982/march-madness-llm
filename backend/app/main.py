@@ -1,7 +1,6 @@
 import logging
 import os
 
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi import WebSocket
@@ -16,14 +15,15 @@ from app.bracket import Bracket
 from app.deciders import get_decision_function
 from app.simulator import Simulator
 
-load_dotenv()
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
 simulator = None
+
+frontend_port = os.environ.get("FRONTEND_PORT")
+assert frontend_port is not None, "FRONTEND_PORT is not set"
 
 
 class SimulateRequest(BaseModel):
@@ -74,7 +74,10 @@ class CustomCORSMiddleware(CORSMiddleware):
 
 app.add_middleware(
     CustomCORSMiddleware,
-    allow_origins=["https://api.marchmadness.drose.io"],
+    allow_origins=[
+        "https://api.marchmadness.drose.io",
+        f"https://api.marchmadness.drose.io:{frontend_port}",
+    ],
     allow_methods=["POST", "GET"],
     allow_headers=["*"],
 )
