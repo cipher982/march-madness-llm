@@ -16,8 +16,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    labels:
-        - traefik.enable=false
 
   frontend:
     build:
@@ -37,8 +35,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    labels:
-        - traefik.enable=false
 
 networks:
   app-network:
