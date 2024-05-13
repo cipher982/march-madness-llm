@@ -1,5 +1,4 @@
 services:
-
   backend:
     build:
       context: ./backend
@@ -9,14 +8,11 @@ services:
     container_name: backend
     ports:
       - "${BACKEND_PORT}:8000"
-    networks:
-      - app-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-
   frontend:
     build:
       context: ./frontend
@@ -26,14 +22,8 @@ services:
     container_name: frontend
     depends_on:
       - backend
-    networks:
-      - app-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-networks:
-  app-network:
-    driver: bridge
