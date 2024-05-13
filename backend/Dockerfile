@@ -1,6 +1,8 @@
 # Use an official Python runtime as the base image
 FROM python:3.12
 
+RUN apt-get update && apt-get install -y curl
+
 # Set the working directory in the container
 WORKDIR /app
 
