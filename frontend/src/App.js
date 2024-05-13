@@ -41,7 +41,7 @@ const App = () => {
     setSimulationComplete(false);
 
     const backendUrl = new URL(process.env.REACT_APP_BACKEND_URL);
-    const websocketBaseUrl = `ws://${backendUrl.hostname}${backendUrl.port ? `:${backendUrl.port}` : ''}/ws/simulate`;
+    const websocketBaseUrl = `wss://${backendUrl.hostname}${backendUrl.port ? `:${backendUrl.port}` : ''}/ws/simulate`;
     console.log(`websocketBaseUrl: ${websocketBaseUrl}`);
     const socket = new WebSocket(websocketBaseUrl);
 
