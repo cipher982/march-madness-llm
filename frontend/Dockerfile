@@ -1,7 +1,5 @@
 FROM node:20 AS build
 
-RUN apt-get update && apt-get install -y curl
-
 WORKDIR /app
 
 COPY package*.json ./
@@ -16,6 +14,8 @@ ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 RUN npm run build
 
 FROM node:20-alpine
+
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
