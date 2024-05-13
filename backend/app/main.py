@@ -24,6 +24,7 @@ simulator = None
 
 frontend_port = os.environ.get("FRONTEND_PORT")
 assert frontend_port is not None, "FRONTEND_PORT is not set"
+print(f"Frontend port: {frontend_port}")
 
 
 class SimulateRequest(BaseModel):
@@ -64,17 +65,15 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     )
 
 
-class CustomCORSMiddleware(CORSMiddleware):
-    def is_allowed_origin(self, origin: str) -> bool:
-        if "http://marchmadness.drose.io" in origin or "http://localhost" in origin:
-            return True
-        return False
-
-
 app.add_middleware(
-    CustomCORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["POST", "GET"],
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost",
+        "http://localhost:8080",
+        "http://marchmadness.drose.io:50001",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
