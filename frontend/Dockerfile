@@ -21,6 +21,4 @@ WORKDIR /app
 
 COPY --from=build /app/build ./build
 
-expose 80
-
-CMD ["npx", "serve", "-s", "build", "-l", "80"]
+CMD ["npx", "serve", "-s", "build", "-l", "3000"]
