@@ -68,7 +68,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         f"http://localhost:{frontend_port}",
-        "https://api.marchmadness.drose.io",
+        "https://marchmadness.drose.io",
     ],
     allow_credentials=True,
     allow_methods=["*"],
