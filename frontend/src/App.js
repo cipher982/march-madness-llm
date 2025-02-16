@@ -83,76 +83,82 @@ const App = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-      <h1 style={{ marginBottom: '20px' }}>March Madness Simulator</h1>
-
-      <div style={{ marginBottom: '20px' }}>
-        <label htmlFor="decider" style={{ marginRight: '10px' }}>
-          Decider:
-        </label>
-        <select id="decider" value={decider} onChange={(e) => setDecider(e.target.value)}>
-          <option value="random">Random</option>
-          <option value="seed">Seed</option>
-          <option value="ai">AI</option>
-        </select>
+    <div className="App">
+      <div className="rebuild-notice">
+        <h2>🚧 2025 Tournament Rebuild in Progress 🚧</h2>
+        <p>This project is currently being rebuilt and enhanced for the 2025 NCAA Tournament. Stay tuned for major updates!</p>
       </div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+        <h1 style={{ marginBottom: '20px' }}>March Madness Simulator</h1>
 
-      {decider === 'ai' && (
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ marginBottom: '10px' }}>
-            <label htmlFor="apiKey" style={{ marginRight: '10px' }}>
-              OpenAI API Key:
-            </label>
-            <input
-              type="text"
-              id="apiKey"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              style={{ width: '300px' }}
-            />
+          <label htmlFor="decider" style={{ marginRight: '10px' }}>
+            Decider:
+          </label>
+          <select id="decider" value={decider} onChange={(e) => setDecider(e.target.value)}>
+            <option value="random">Random</option>
+            <option value="seed">Seed</option>
+            <option value="ai">AI</option>
+          </select>
+        </div>
+
+        {decider === 'ai' && (
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '10px' }}>
+              <label htmlFor="apiKey" style={{ marginRight: '10px' }}>
+                OpenAI API Key:
+              </label>
+              <input
+                type="text"
+                id="apiKey"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                style={{ width: '300px' }}
+              />
+            </div>
+            <div>
+              <label htmlFor="userPreferences" style={{ marginRight: '10px' }}>
+                User Preferences:
+              </label>
+              <textarea
+                id="userPreferences"
+                value={userPreferences}
+                onChange={(e) => setUserPreferences(e.target.value)}
+                placeholder="Enter custom instructions for the AI"
+                style={{ width: '300px', height: '100px' }}
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="userPreferences" style={{ marginRight: '10px' }}>
-              User Preferences:
-            </label>
-            <textarea
-              id="userPreferences"
-              value={userPreferences}
-              onChange={(e) => setUserPreferences(e.target.value)}
-              placeholder="Enter custom instructions for the AI"
-              style={{ width: '300px', height: '100px' }}
-            />
+        )}
+
+        <div className="simulate-button">
+          <SimulateButton
+            onSimulationStart={handleSimulationStart}
+            decider={decider}
+            apiKey={apiKey}
+            onError={handleError}
+            userPreferences={userPreferences}
+            isSimulating={isSimulating}
+          />
+        </div>
+
+        {simulationStarted && (
+          <div className="simulating-box">
+            <SimulationStatus simulationStatus={simulationStatus} />
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="simulate-button">
-        <SimulateButton
-          onSimulationStart={handleSimulationStart}
-          decider={decider}
-          apiKey={apiKey}
-          onError={handleError}
-          userPreferences={userPreferences}
-          isSimulating={isSimulating}
-        />
+        {errorMessage && (
+          <div style={{ marginTop: '20px', color: 'red' }}>
+            <p>Error: {errorMessage}</p>
+          </div>
+        )}
+
+        <div style={{ marginTop: '40px' }}>
+          {initialBracket && <BracketDisplay bracket={initialBracket} />}
+        </div>
+        {simulationComplete && <Confetti />}
       </div>
-
-      {simulationStarted && (
-        <div className="simulating-box">
-          <SimulationStatus simulationStatus={simulationStatus} />
-        </div>
-      )}
-
-      {errorMessage && (
-        <div style={{ marginTop: '20px', color: 'red' }}>
-          <p>Error: {errorMessage}</p>
-        </div>
-      )}
-
-      <div style={{ marginTop: '40px' }}>
-        {initialBracket && <BracketDisplay bracket={initialBracket} />}
-      </div>
-      {simulationComplete && <Confetti />}
     </div>
   );
 };
