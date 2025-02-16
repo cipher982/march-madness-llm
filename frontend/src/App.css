@@ -216,3 +216,23 @@ td:nth-child(3) {
 .winner {
   background-color: #c8e6c9;
 }
+
+.rebuild-notice {
+  background-color: #ffd700;
+  color: #000;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rebuild-notice h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.rebuild-notice p {
+  margin: 0;
+  font-size: 1.1rem;
+}

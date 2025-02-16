@@ -1,4 +1,10 @@
 # NCAA March Madness Bracket Simulator
+
+## 🚧 2025 Tournament Rebuild in Progress 🚧
+**This project is currently being rebuilt and enhanced for the 2025 NCAA Tournament. Stay tuned for major updates!**
+
+---
+
 Quick hobby hack to made a march madness bracket simulator as I was too lazy to fill one out online. It's probably terrible but was fun to put together. Utilizes the openai function calling to extract a single winner from provided matchups as the tournament progresses. Can also run a quick random or seed based decider. For AI decisions, you can input custom instructions such as "pick teams with a dog mascot".
 
 
