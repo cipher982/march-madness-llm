@@ -10,6 +10,7 @@ RUN pip install uv
 
 # Copy the backend code to the working directory
 COPY pyproject.toml uv.lock ./
+COPY data ./data
 
 RUN uv sync
 
