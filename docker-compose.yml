@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
       args:
         - FRONTEND_PORT=${FRONTEND_PORT}
+    env_file:
+      - .env
     container_name: backend
     ports:
       - "${BACKEND_PORT}:8000"
@@ -19,7 +21,11 @@ services:
       dockerfile: Dockerfile
       args:
         - REACT_APP_BACKEND_URL=${BACKEND_URL}
+    env_file:
+      - .env
     container_name: frontend
+    ports:
+      - "${FRONTEND_PORT}:3000"
     depends_on:
       - backend
     healthcheck:

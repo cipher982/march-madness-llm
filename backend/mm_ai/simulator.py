@@ -4,9 +4,9 @@ from fastapi import WebSocket
 from langsmith.wrappers import wrap_openai
 from openai import AsyncOpenAI
 
-from app.bracket import Bracket
-from app.bracket import Team
-from app.deciders import ai_wizard
+from mm_ai.bracket import Bracket
+from mm_ai.bracket import Team
+from mm_ai.deciders import ai_wizard
 
 logger = logging.getLogger(__name__)
 
