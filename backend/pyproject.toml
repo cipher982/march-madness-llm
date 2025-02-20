@@ -1,28 +1,44 @@
-[tool.poetry]
-name = "march-madness-llm"
+[project]
+name = "march-madness-ai"
 version = "0.1.0"
-description = "for fun"
-authors = ["David Rose <david@drose.io>"]
-package-mode = false
+description = "Using AI to simulate the NCAA March Madness tournament"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.8",
+    "langsmith>=0.3.8",
+    "openai>=1.63.2",
+    "python-dotenv>=1.0.1",
+    "uvicorn[standard]>=0.34.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-openai = "^1.14.2"
-fastapi = "^0.110.0"
-uvicorn = {extras = ["standard"], version = "^0.29.0"}
-python-dotenv = "^1.0.1"
-langsmith = "^0.1.40"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.3.5"
-pre-commit = "^3.7.0"
+[tool.hatch.build]
+packages = ["mm_ai"]
 
 [tool.ruff]
 line-length = 120
 
 [tool.ruff.lint]
-select = ["I", "E", "F"]
+select = ["I", "E", "F", "Q000"]
 ignore = []
 
 [tool.ruff.lint.isort]
 force-single-line = true
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov" 

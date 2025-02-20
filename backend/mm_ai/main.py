@@ -11,9 +11,9 @@ from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.websockets import WebSocketDisconnect
 
-from app.bracket import Bracket
-from app.deciders import get_decision_function
-from app.simulator import Simulator
+from mm_ai.bracket import Bracket
+from mm_ai.deciders import get_decision_function
+from mm_ai.simulator import Simulator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

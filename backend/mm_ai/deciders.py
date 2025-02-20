@@ -5,7 +5,7 @@ from textwrap import dedent
 
 from langsmith import traceable
 
-from app.bracket import Team
+from mm_ai.bracket import Team
 
 
 def get_decision_function(decider):
