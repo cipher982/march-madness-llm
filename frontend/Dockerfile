@@ -1,4 +1,4 @@
-FROM node:20 AS build
+FROM node:20
 
 WORKDIR /app
 
@@ -11,14 +11,12 @@ COPY . .
 ARG REACT_APP_BACKEND_URL
 ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
-RUN npm run build
+# Install dev dependencies for hot reloading
+RUN npm install -g npm@latest
 
-FROM node:20-alpine
+# Add curl for healthcheck
+RUN apt-get update && apt-get install -y curl
 
-RUN apk add --no-cache curl
+EXPOSE 3000
 
-WORKDIR /app
-
-COPY --from=build /app/build ./build
-
-CMD ["npx", "serve", "-s", "build", "-l", "3000"]
+CMD ["npm", "start"]
