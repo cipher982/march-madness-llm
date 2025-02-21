@@ -1,0 +1,360 @@
+team,team.id
+Abilene Christian,2000
+Air Force,2005
+Akron,2006
+Alabama,333
+Alabama A&M,2010
+Alabama State,2011
+Albany,399
+Alcorn State,2016
+American University,44
+Appalachian State,2026
+Arizona,12
+Arizona State,9
+Arkansas,8
+Arkansas State,2032
+Arkansas-Pine Bluff,2029
+Army,349
+Auburn,2
+Austin Peay,2046
+BYU,252
+Ball State,2050
+Baylor,239
+Bellarmine,91
+Belmont,2057
+Bethune-Cookman,2065
+Binghamton,2066
+Boise State,68
+Boston College,103
+Boston University,104
+Bowling Green,189
+Bradley,71
+Brown,225
+Bryant,2803
+Bucknell,2083
+Buffalo,2084
+Butler,2086
+CSU Bakersfield,2934
+CSU Fullerton,2239
+CSU Northridge,2463
+Cal Poly,13
+California,25
+California Baptist,2856
+Campbell,2097
+Canisius,2099
+Central Arkansas,2110
+Central Connecticut,2115
+Central Michigan,2117
+Charleston,232
+Charleston Southern,2127
+Charlotte,2429
+Chattanooga,236
+Chicago State,2130
+Cincinnati,2132
+Clemson,228
+Cleveland State,325
+Coastal Carolina,324
+Colgate,2142
+Colorado,38
+Colorado State,36
+Columbia,171
+Coppin State,2154
+Cornell,172
+Creighton,156
+Dartmouth,159
+Davidson,2166
+Dayton,2168
+DePaul,305
+Delaware,48
+Delaware State,2169
+Denver,2172
+Detroit Mercy,2174
+Dixie State,3101
+Drake,2181
+Drexel,2182
+Duke,150
+Duquesne,2184
+East Carolina,151
+East Tennessee State,2193
+Eastern Illinois,2197
+Eastern Kentucky,2198
+Eastern Michigan,2199
+Eastern Washington,331
+Elon,2210
+Evansville,339
+Fairfield,2217
+Fairleigh Dickinson,161
+Florida,57
+Florida A&M,50
+Florida Atlantic,2226
+Florida Gulf Coast,526
+Florida International,2229
+Florida State,52
+Fordham,2230
+Fresno State,278
+Furman,231
+Gardner-Webb,2241
+George Mason,2244
+George Washington,45
+Georgetown,46
+Georgia,61
+Georgia Southern,290
+Georgia State,2247
+Georgia Tech,59
+Gonzaga,2250
+Grambling,2755
+Grand Canyon,2253
+Green Bay,2739
+Hampton,2261
+Hartford,42
+Harvard,108
+Hawai'i,62
+High Point,2272
+Hofstra,2275
+Holy Cross,107
+Houston,248
+Houston Baptist,2277
+Howard,47
+IUPUI,85
+Idaho,70
+Idaho State,304
+Illinois,356
+Illinois State,2287
+Incarnate Word,2916
+Indiana,84
+Indiana State,282
+Iona,314
+Iowa,2294
+Iowa State,66
+Jackson State,2296
+Jacksonville,294
+Jacksonville State,55
+James Madison,256
+Kansas,2305
+Kansas City,140
+Kansas State,2306
+Kennesaw State,338
+Kent State,2309
+Kentucky,96
+LSU,99
+La Salle,2325
+Lafayette,322
+Lamar,2320
+Lehigh,2329
+Liberty,2335
+Lipscomb,288
+Little Rock,2031
+Long Beach State,299
+Long Island University,112358
+Longwood,2344
+Louisiana,309
+Louisiana Tech,2348
+Louisville,97
+Loyola (MD),2352
+Loyola Chicago,2350
+Loyola Marymount,2351
+Maine,311
+Manhattan,2363
+Marist,2368
+Marquette,269
+Marshall,276
+Maryland,120
+Maryland-Eastern Shore,2379
+McNeese,2377
+Memphis,235
+Mercer,2382
+Merrimack,2771
+Miami,2390
+Miami (OH),193
+Michigan,130
+Michigan State,127
+Middle Tennessee,2393
+Milwaukee,270
+Minnesota,135
+Mississippi State,344
+Mississippi Valley State,2400
+Missouri,142
+Missouri State,2623
+Monmouth,2405
+Montana,149
+Montana State,147
+Morehead State,2413
+Morgan State,2415
+Mount St. Mary's,116
+Murray State,93
+NC State,152
+NJIT,2885
+Navy,2426
+Nebraska,158
+Nevada,2440
+New Hampshire,160
+New Mexico,167
+New Mexico State,166
+New Orleans,2443
+Niagara,315
+Nicholls,2447
+Norfolk State,2450
+North Alabama,2453
+North Carolina,153
+North Carolina A&T,2448
+North Carolina Central,2428
+North Dakota,155
+North Dakota State,2449
+North Florida,2454
+North Texas,249
+Northeastern,111
+Northern Arizona,2464
+Northern Colorado,2458
+Northern Illinois,2459
+Northern Iowa,2460
+Northern Kentucky,94
+Northwestern,77
+Northwestern State,2466
+Notre Dame,87
+Oakland,2473
+Ohio,195
+Ohio State,194
+Oklahoma,201
+Oklahoma State,197
+Old Dominion,295
+Ole Miss,145
+Omaha,2437
+Oral Roberts,198
+Oregon,2483
+Oregon State,204
+Pacific,279
+Penn State,213
+Pennsylvania,219
+Pepperdine,2492
+Pittsburgh,221
+Portland,2501
+Portland State,2502
+Prairie View A&M,2504
+Presbyterian,2506
+Princeton,163
+Providence,2507
+Purdue,2509
+Purdue Fort Wayne,2870
+Quinnipiac,2514
+Radford,2515
+Rhode Island,227
+Rice,242
+Richmond,257
+Rider,2520
+Robert Morris,2523
+Rutgers,164
+SE Louisiana,2545
+SIU Edwardsville,2565
+SMU,2567
+Sacramento State,16
+Sacred Heart,2529
+Saint Joseph's,2603
+Saint Louis,139
+Saint Mary's,2608
+Saint Peter's,2612
+Sam Houston,2534
+Samford,2535
+San Diego,301
+San Diego State,21
+San Francisco,2539
+San Jos√© State,23
+Santa Clara,2541
+Seattle U,2547
+Seton Hall,2550
+Siena,2561
+South Alabama,6
+South Carolina,2579
+South Carolina State,2569
+South Carolina Upstate,2908
+South Dakota,233
+South Dakota State,2571
+South Florida,58
+Southeast Missouri State,2546
+Southern,2582
+Southern Illinois,79
+Southern Miss,2572
+Southern Utah,253
+St. Bonaventure,179
+St. Francis (BKN),2597
+St. Francis (PA),2598
+St. John's,2599
+St. Thomas - Minnesota,2900
+Stanford,24
+Stephen F. Austin,2617
+Stetson,56
+Stony Brook,2619
+Syracuse,183
+TCU,2628
+Tarleton,2627
+Temple,218
+Tennessee,2633
+Tennessee State,2634
+Tennessee Tech,2635
+Texas,251
+Texas A&M,245
+Texas A&M-CC,357
+Texas Southern,2640
+Texas State,326
+Texas Tech,2641
+The Citadel,2643
+Toledo,2649
+Towson,119
+Troy,2653
+Tulane,2655
+Tulsa,202
+UAB,5
+UC Davis,302
+UC Irvine,300
+UC Riverside,27
+UC San Diego,28
+UC Santa Barbara,2540
+UCF,2116
+UCLA,26
+UConn,41
+UConn,41
+UIC,82
+UL Monroe,2433
+UMBC,2378
+UMass,113
+UMass Lowell,2349
+UNC Asheville,2427
+UNC Greensboro,2430
+UNC Wilmington,350
+UNLV,2439
+USC,30
+UT Arlington,250
+UT Martin,2630
+UT Rio Grande Valley,292
+UTEP,2638
+UTSA,2636
+Utah,254
+Utah State,328
+Utah Valley,3084
+VCU,2670
+VMI,2678
+Valparaiso,2674
+Vanderbilt,238
+Vermont,261
+Villanova,222
+Virginia,258
+Virginia Tech,259
+Wagner,2681
+Wake Forest,154
+Washington,264
+Washington State,265
+Weber State,2692
+West Virginia,277
+Western Carolina,2717
+Western Illinois,2710
+Western Kentucky,98
+Western Michigan,2711
+Wichita State,2724
+William & Mary,2729
+Winthrop,2737
+Wisconsin,275
+Wofford,2747
+Wright State,2750
+Wyoming,2751
+Xavier,2752
+Yale,43
+Youngstown State,2754
