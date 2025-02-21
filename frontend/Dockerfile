@@ -2,9 +2,13 @@ FROM node:20
 
 WORKDIR /app
 
+# Copy package files first
 COPY package*.json ./
+COPY package-lock.json* ./
 
-RUN npm ci
+# Use cache mount for npm
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 COPY . .
 
