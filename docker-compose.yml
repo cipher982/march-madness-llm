@@ -10,9 +10,6 @@ services:
     container_name: backend
     ports:
       - "${BACKEND_PORT}:8000"
-    volumes:
-      - ./backend:/app
-    command: uv run uvicorn mm_ai.main:app --host 0.0.0.0 --port 8000 --reload
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
