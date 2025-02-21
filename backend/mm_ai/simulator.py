@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from fastapi import WebSocket
@@ -85,6 +86,20 @@ class Simulator:
         assert matchups, f"no matchups: {region_name}, {round_name}"
         round_results = []
 
+        # Use semaphore to limit concurrent requests and add small delays
+        sem = asyncio.Semaphore(5)  # Allow 3 concurrent requests
+
+        async def process_match(matchup_id: str, team1: Team, team2: Team):
+            async with sem:
+                # Small delay before starting each request
+                await asyncio.sleep(0.1)
+                winner = await self.simulate_match(team1, team2, decision_function)
+                round_results.append((matchup_id, winner))
+                self.bracket.update_matchup_winner(region_name, round_name, matchup_id, winner)
+                return winner
+
+        # Create tasks for all matches
+        tasks = []
         for matchup_id, matchup in matchups.items():
             team1, team2 = matchup.team1, matchup.team2
             if team1 is None and team2 is None:
@@ -93,9 +108,11 @@ class Simulator:
             elif team1 is None or team2 is None:
                 raise Exception(f"Invalid matchup: {matchup}, team1: {team1}, team2: {team2}")
             else:
-                winner = await self.simulate_match(team1, team2, decision_function)
-                round_results.append((matchup_id, winner))
-                self.bracket.update_matchup_winner(region_name, round_name, matchup_id, Team(winner.name, winner.seed))
+                tasks.append(process_match(matchup_id, team1, team2))
+
+        # Process all matches with controlled concurrency
+        await asyncio.gather(*tasks)
+
         next_round = self.bracket.get_next_round_name(round_name)
         if next_round is not None:
             current_round = self.bracket.get_round_by_name(region_name, round_name)

@@ -3,9 +3,9 @@ import json
 import random
 from textwrap import dedent
 
-from langsmith import traceable
-
 from mm_ai.bracket import Team
+
+MODEL = "gpt-4o-mini"
 
 
 def get_decision_function(decider):
@@ -29,7 +29,6 @@ async def random_winner(team1: Team, team2: Team) -> Team:
     return winner
 
 
-@traceable
 async def ai_wizard(team1: Team, team2: Team, user_preferences: str, client=None) -> Team:
     if client is None:
         raise ValueError("OpenAI client is not initialized")
@@ -83,8 +82,7 @@ async def ai_wizard(team1: Team, team2: Team, user_preferences: str, client=None
         ]
 
         response = await client.chat.completions.create(
-            # model="gpt-4-0125-preview",
-            model="gpt-3.5-turbo-0125",
+            model=MODEL,
             messages=messages,  # type: ignore
             tools=tools,  # type: ignore
             tool_choice="auto",
