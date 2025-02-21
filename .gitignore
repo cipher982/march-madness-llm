@@ -183,11 +183,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-
-
 # stuff
 .vscode
 .flake8
 poetry.lock
-frontend/public/logos
 backend/scripts/
