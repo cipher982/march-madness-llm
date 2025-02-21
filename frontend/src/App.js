@@ -6,6 +6,16 @@ import SimulateButton from './components/SimulateButton';
 import SimulationStatus from './components/SimulationStatus';
 import "./App.css";
 
+const Footer = () => (
+  <footer className="app-footer">
+    <small>
+      This is an independent simulation tool not affiliated with, endorsed by, or sponsored by the NCAA® or any collegiate institutions.
+      <br />
+      This site may reference collegiate team names, logos, or trademarks under the doctrine of fair use (17 U.S.C. § 107) for purposes such as criticism, commentary, and non-commercial research. All rights remain with their respective owners.
+    </small>
+  </footer>
+);
+
 const App = () => {
   const [apiKey, setApiKey] = useState(process.env.REACT_APP_OPENAI_API_KEY || '');
   const [initialBracket, setInitialBracket] = useState(null);
@@ -159,6 +169,7 @@ const App = () => {
         </div>
         {simulationComplete && <Confetti />}
       </div>
+      <Footer />
     </div>
   );
 };
