@@ -25,7 +25,7 @@ const Footer = () => {
 };
 
 const App = () => {
-  const [apiKey, setApiKey] = useState(process.env.REACT_APP_OPENAI_API_KEY || '');
+  // const [apiKey, setApiKey] = useState(process.env.REACT_APP_OPENAI_API_KEY || '')
   const [initialBracket, setInitialBracket] = useState(null);
   const [decider, setDecider] = useState('random');
   const [userPreferences, setUserPreferences] = useState('');
@@ -53,7 +53,7 @@ const App = () => {
     fetchInitialBracket();
   }, []);
 
-  const handleSimulationStart = (decider, apiKey, userPreferences) => {
+  const handleSimulationStart = (decider, userPreferences) => {
     setSimulationStarted(true);
     setIsSimulating(true);
     setSimulationComplete(false);
@@ -68,7 +68,6 @@ const App = () => {
     socket.onopen = () => {
       socket.send(JSON.stringify({
         decider,
-        api_key: apiKey,
         user_preferences: userPreferences,
       }));
     };
@@ -122,18 +121,6 @@ const App = () => {
 
         {decider === 'ai' && (
           <div style={{ marginBottom: '20px' }}>
-            <div style={{ marginBottom: '10px' }}>
-              <label htmlFor="apiKey" style={{ marginRight: '10px' }}>
-                OpenAI API Key:
-              </label>
-              <input
-                type="text"
-                id="apiKey"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                style={{ width: '300px' }}
-              />
-            </div>
             <div>
               <label htmlFor="userPreferences" style={{ marginRight: '10px' }}>
                 User Preferences:
@@ -153,7 +140,6 @@ const App = () => {
           <SimulateButton
             onSimulationStart={handleSimulationStart}
             decider={decider}
-            apiKey={apiKey}
             onError={handleError}
             userPreferences={userPreferences}
             isSimulating={isSimulating}

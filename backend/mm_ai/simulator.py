@@ -1,7 +1,9 @@
 import asyncio
 import logging
+import os
 import uuid
 
+from dotenv import load_dotenv
 from fastapi import WebSocket
 from langsmith.wrappers import wrap_openai
 from openai import AsyncOpenAI
@@ -11,6 +13,8 @@ from mm_ai.bracket import Team
 from mm_ai.deciders import ai_wizard
 
 logger = logging.getLogger(__name__)
+
+load_dotenv()
 
 ROUND_NAMES = [
     "round_of_64",
@@ -23,19 +27,17 @@ ROUND_NAMES = [
 
 
 class Simulator:
-    def __init__(self, bracket: Bracket, user_preferences: str, api_key: str, websocket: WebSocket):
+    def __init__(self, bracket: Bracket, user_preferences: str, websocket: WebSocket):
         self.websocket = websocket
         self.bracket = bracket
         self.user_preferences = user_preferences
-        self.api_key = api_key
         self.current_region = None
         self.current_round = None
         self.current_matchup = None
         self.current_winner = None
         self.simulation_id = str(uuid.uuid4())[:8]  # Use first 8 chars for readability
 
-        if api_key:
-            self.client = wrap_openai(AsyncOpenAI(api_key=api_key))
+        self.client = wrap_openai(AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY")))
 
     async def send_match_update(self, team1, team2, winner):
         await self.websocket.send_json(
