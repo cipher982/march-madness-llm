@@ -26,10 +26,6 @@ services:
     container_name: frontend
     ports:
       - "${FRONTEND_PORT}:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: npm start
     depends_on:
       - backend
     healthcheck:
