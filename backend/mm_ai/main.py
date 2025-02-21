@@ -2,22 +2,17 @@ import logging
 import os
 
 from fastapi import FastAPI
-from fastapi import HTTPException
 from fastapi import Request
 from fastapi import WebSocket
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.responses import StreamingResponse
-from minio.error import S3Error
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.websockets import WebSocketDisconnect
 
 from mm_ai.bracket import Bracket
 from mm_ai.deciders import get_decision_function
-from mm_ai.minio_client import LOGOS_BUCKET
-from mm_ai.minio_client import client as minio_client
 from mm_ai.simulator import Simulator
 
 logging.basicConfig(level=logging.INFO)
@@ -142,26 +137,3 @@ async def simulate_websocket(websocket: WebSocket):
 
     except WebSocketDisconnect:
         logger.info("WebSocket disconnected")
-
-
-@app.get("/api/team/logo/{team_id}")
-async def get_team_logo(team_id: str):
-    """Get team logo from Minio."""
-    logger.info(f"Fetching logo for team_id: {team_id}")
-    try:
-        # Get logo from Minio
-        logger.info(f"Attempting to get object from bucket: {LOGOS_BUCKET}, key: {team_id}.png")
-        data = minio_client.get_object(LOGOS_BUCKET, f"{team_id}.png")
-        logger.info("Successfully retrieved logo from Minio")
-        return StreamingResponse(
-            data,
-            media_type="image/png",
-            headers={
-                "Cache-Control": "public, max-age=31536000",  # Cache for 1 year
-            },
-        )
-    except S3Error as e:
-        logger.error(f"Minio error: {str(e)}")
-        if e.code == "NoSuchKey":
-            raise HTTPException(status_code=404, detail="Logo not found")
-        raise HTTPException(status_code=500, detail="Error fetching logo")
