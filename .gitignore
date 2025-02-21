@@ -189,4 +189,5 @@ yarn-error.log*
 .vscode
 .flake8
 poetry.lock
-
+frontend/public/logos
+backend/scripts/
