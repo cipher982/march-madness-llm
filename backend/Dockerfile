@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y curl
 RUN pip install uv
 
 COPY pyproject.toml uv.lock ./
+COPY data ./data
 
 RUN uv sync
 
