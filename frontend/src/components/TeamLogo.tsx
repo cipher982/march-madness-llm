@@ -29,10 +29,7 @@ export const TeamLogo: React.FC<TeamLogoProps> = ({
         return null;
     }
     
-    // Use the same backend URL configuration as the rest of the app
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || window.location.origin;
-    const logoUrl = `${backendUrl}/api/team/logo/${teamInfo.logo_id}`;
-    console.debug(`Loading logo for ${teamName} from ${logoUrl} (backend: ${backendUrl})`);
+    const logoUrl = `/logos/${teamInfo.logo_id}.png`;
     
     return (
         <img
@@ -42,7 +39,6 @@ export const TeamLogo: React.FC<TeamLogoProps> = ({
             height={size}
             className={`object-contain ${className}`}
             loading="lazy"
-            crossOrigin="anonymous"  // Add this for CORS images
             onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 console.error(`Error loading logo for ${teamName} (ID: ${teamInfo.logo_id}):`, e);
