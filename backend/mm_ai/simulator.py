@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import uuid
 
 from fastapi import WebSocket
 from langsmith.wrappers import wrap_openai
@@ -31,6 +32,7 @@ class Simulator:
         self.current_round = None
         self.current_matchup = None
         self.current_winner = None
+        self.simulation_id = str(uuid.uuid4())[:8]  # Use first 8 chars for readability
 
         if api_key:
             self.client = wrap_openai(AsyncOpenAI(api_key=api_key))
@@ -71,6 +73,7 @@ class Simulator:
             winner = await decision_function(team1, team2, self.user_preferences, self.client)
         else:
             winner = await decision_function(team1, team2)
+
         self.current_matchup = (team1, team2)
         self.current_winner = winner
         self.print_match_summary(team1, team2, winner, played)

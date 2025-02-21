@@ -3,6 +3,8 @@ import json
 import random
 from textwrap import dedent
 
+from langsmith import traceable
+
 from mm_ai.bracket import Team
 
 MODEL = "gpt-4o-mini"
@@ -29,6 +31,11 @@ async def random_winner(team1: Team, team2: Team) -> Team:
     return winner
 
 
+@traceable(
+    run_type="llm",
+    name="March Madness AI Decision",
+    metadata={"simulation_id": lambda x: x.get("client").simulation_id},
+)
 async def ai_wizard(team1: Team, team2: Team, user_preferences: str, client=None) -> Team:
     if client is None:
         raise ValueError("OpenAI client is not initialized")
