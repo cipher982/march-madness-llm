@@ -29,7 +29,6 @@ assert frontend_port is not None, "FRONTEND_PORT is not set"
 class SimulateRequest(BaseModel):
     decider: str
     use_current_state: bool = False
-    api_key: str = ""
     user_preferences: str = ""
 
 
@@ -129,7 +128,6 @@ async def simulate_websocket(websocket: WebSocket):
 
             simulator = Simulator(
                 bracket=bracket,
-                api_key=data.get("api_key", ""),
                 user_preferences=user_preferences,
                 websocket=websocket,
             )
