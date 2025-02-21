@@ -11,5 +11,6 @@ export const ABBREVIATED_TO_OFFICIAL: Record<string, string> = {
     "S. Dak. St.": "South Dakota State",
     "Utah St": "Utah State",
     "Colorado St": "Colorado State",
-    "Grambling St": "Grambling"
+    "Grambling St": "Grambling",
+    "LBSU": "Long Beach State"
 }; 
