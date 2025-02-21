@@ -12,7 +12,7 @@ client = Minio(
     str(os.getenv("MINIO_ENDPOINT")),
     access_key=str(os.getenv("MINIO_ACCESS_KEY")),
     secret_key=str(os.getenv("MINIO_SECRET_KEY")),
-    secure=bool(os.getenv("MINIO_SECURE")),
+    secure=str(os.getenv("MINIO_SECURE")).lower() == "true",
 )
 
 LOGOS_BUCKET = str(os.getenv("MINIO_BUCKET"))
