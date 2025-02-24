@@ -10,7 +10,8 @@ interface Team {
 interface Match {
   team1: Team | null;
   team2: Team | null;
-  winner?: Team | null;
+  winner?: Team;
+  matchup_id: string;
 }
 
 interface Round {
@@ -32,20 +33,24 @@ const getTeamHTML = (teamName: string, seed: number) => {
 };
 
 const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
-  console.log("1. Initial bracket data:", bracket);
+  const eastBracketRef = useRef<HTMLDivElement>(null);
+  const westBracketRef = useRef<HTMLDivElement>(null);
+  const southBracketRef = useRef<HTMLDivElement>(null);
+  const midwestBracketRef = useRef<HTMLDivElement>(null);
   
-  const bracketRef = useRef<HTMLDivElement>(null);
-  const bracketInstanceRef = useRef<any>(null);
+  const eastBracketInstanceRef = useRef<any>(null);
+  const westBracketInstanceRef = useRef<any>(null);
+  const southBracketInstanceRef = useRef<any>(null);
+  const midwestBracketInstanceRef = useRef<any>(null);
   
-  // Extract just the South region for now
+  // Extract regions
+  const eastRegion = bracket?.regions?.find((r: any) => r.name.toLowerCase() === "east");
+  const westRegion = bracket?.regions?.find((r: any) => r.name.toLowerCase() === "west");
   const southRegion = bracket?.regions?.find((r: any) => r.name.toLowerCase() === "south");
-  console.log("2. South region data:", southRegion);
+  const midwestRegion = bracket?.regions?.find((r: any) => r.name.toLowerCase() === "midwest");
   
   // Transform data for bracketry
   const transformMatchesToBracketry = (rounds: Round[] = []) => {
-    console.log("3. Input rounds:", rounds);
-
-    // Create matches array with all matches from all rounds
     const matches = rounds.flatMap((round, roundIndex) => 
       round.matchups.map((matchup: Match, matchOrder: number) => ({
         roundIndex,
@@ -65,7 +70,6 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
       }))
     );
 
-    // Create contestants object
     const contestants = Object.fromEntries(
       rounds.flatMap(round => 
         round.matchups.flatMap((matchup: Match) => [
@@ -85,78 +89,89 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
       ])
     );
 
-    const result = {
+    return {
       rounds: ROUND_TITLES.map(name => ({ name })),
       matches,
       contestants
     };
-
-    console.log("4. Final transformed data:", result);
-    return result;
   };
 
   useEffect(() => {
-    console.log("5. Effect running, bracketRef exists:", !!bracketRef.current);
-    console.log("6. South region exists:", !!southRegion);
+    const createRegionBracket = (
+      region: any,
+      bracketRef: React.RefObject<HTMLDivElement>,
+      bracketInstanceRef: React.MutableRefObject<any>
+    ) => {
+      if (bracketRef.current && region) {
+        if (bracketInstanceRef.current) {
+          bracketInstanceRef.current.uninstall();
+        }
 
-    if (bracketRef.current && southRegion) {
-      // Clean up previous instance if it exists
-      if (bracketInstanceRef.current) {
-        console.log("7. Cleaning up previous instance");
-        bracketInstanceRef.current.uninstall();
-      }
+        const bracketData = transformMatchesToBracketry(region.rounds);
 
-      const bracketData = transformMatchesToBracketry(southRegion.rounds);
-      console.log("8. Creating bracket with data:", bracketData);
-
-      try {
-        // Create the bracket instance
-        bracketInstanceRef.current = createBracket(
-          bracketData,
-          bracketRef.current,
-          {
-            getPlayerTitleHTML: (player: any) => getTeamHTML(player.title, player.seed),
-            visibleRoundsCount: 4,
-            // Vertical spacing
-            matchMinVerticalGap: 15,
-            matchAxisMargin: 2,
-            oneSidePlayersGap: 1,
-            // Horizontal spacing
-            matchHorMargin: 12,
-            matchMaxWidth: 180,
-            // Font size adjustments
-            matchFontSize: 12,
-            // Colors for dark theme
-            matchTextColor: "#ffffff",
-            rootBorderColor: "#666666",
-            connectionLinesColor: "#666666",
-            roundTitleColor: "#ffffff",
-            highlightedConnectionLinesColor: "#888888",
-            connectionLinesWidth: 1
-          }
-        );
-        console.log("10. Bracket instance created successfully");
-      } catch (error) {
-        console.error("11. Error creating bracket:", error);
-      }
-    }
-
-    return () => {
-      if (bracketInstanceRef.current) {
-        bracketInstanceRef.current.uninstall();
+        try {
+          bracketInstanceRef.current = createBracket(
+            bracketData,
+            bracketRef.current,
+            {
+              getPlayerTitleHTML: (player: any) => getTeamHTML(player.title, player.seed),
+              visibleRoundsCount: 4,
+              matchMinVerticalGap: 15,
+              matchAxisMargin: 2,
+              oneSidePlayersGap: 1,
+              matchHorMargin: 12,
+              matchMaxWidth: 180,
+              matchFontSize: 12,
+              matchTextColor: "#ffffff",
+              rootBorderColor: "#666666",
+              connectionLinesColor: "#666666",
+              roundTitleColor: "#ffffff",
+              highlightedConnectionLinesColor: "#888888",
+              connectionLinesWidth: 1
+            }
+          );
+        } catch (error) {
+          console.error("Error creating bracket:", error);
+        }
       }
     };
-  }, [southRegion]);
 
-  if (!southRegion) {
-    console.log("12. No south region found, returning early");
-    return <div>No South region data available</div>;
+    createRegionBracket(eastRegion, eastBracketRef, eastBracketInstanceRef);
+    createRegionBracket(westRegion, westBracketRef, westBracketInstanceRef);
+    createRegionBracket(southRegion, southBracketRef, southBracketInstanceRef);
+    createRegionBracket(midwestRegion, midwestBracketRef, midwestBracketInstanceRef);
+
+    return () => {
+      [eastBracketInstanceRef, westBracketInstanceRef, southBracketInstanceRef, midwestBracketInstanceRef].forEach(ref => {
+        if (ref.current) {
+          ref.current.uninstall();
+        }
+      });
+    };
+  }, [eastRegion, westRegion, southRegion, midwestRegion]);
+
+  if (!eastRegion || !westRegion || !southRegion || !midwestRegion) {
+    return <div>Region data not available</div>;
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h3>South Region (Bracketry Test)</h3>
-      <div ref={bracketRef} style={{ width: "100%", height: "600px", backgroundColor: "transparent", border: "1px solid #666" }} />
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+      <div>
+        <h3>East Region</h3>
+        <div ref={eastBracketRef} style={{ height: "600px" }} />
+      </div>
+      <div>
+        <h3>South Region</h3>
+        <div ref={southBracketRef} style={{ height: "600px" }} />
+      </div>
+      <div>
+        <h3>West Region</h3>
+        <div ref={westBracketRef} style={{ height: "600px" }} />
+      </div>
+      <div>
+        <h3>Midwest Region</h3>
+        <div ref={midwestBracketRef} style={{ height: "600px" }} />
+      </div>
     </div>
   );
 };

@@ -281,6 +281,7 @@ td:nth-child(3) {
   left: 0;
   border-top: 1px solid #eee;
   line-height: 1.4;
+  z-index: 1000;
 }
 
 .app-footer small {
