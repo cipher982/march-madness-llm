@@ -28,7 +28,21 @@ const ROUND_TITLES = ["Round of 64", "Round of 32", "Sweet 16", "Elite 8"];
 // Generate static HTML for team display
 const getTeamHTML = (teamName: string, seed: number) => {
   const teamInfo = TEAM_MAPPINGS[teamName];
+  
+  // Debug logging for team mapping issues
+  if (!teamInfo) {
+    console.warn(`Team info not found for ${teamName}`);
+  } else if (!teamInfo.logo_id) {
+    console.warn(`Logo ID missing for ${teamName}`);
+  }
+  
   const logoPath = teamInfo ? `/logos/optimized/50x50/${teamInfo.logo_id}.webp` : "";
+  
+  // Debug logging for logo path
+  if (logoPath) {
+    console.log(`Logo path for ${teamName}: ${logoPath}`);
+  }
+  
   return `${logoPath ? `<img src="${logoPath}" alt="${teamName} logo" style="width: 25px; height: 25px; vertical-align: middle; margin-right: 4px;" />` : ""}${seed}. ${teamName}`;
 };
 
@@ -59,12 +73,12 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
           {
             contestantId: matchup.team1?.name || "TBD",
             title: matchup.team1?.name || "TBD",
-            isWinner: matchup.winner?.name === matchup.team1?.name
+            isWinner: !!matchup.winner && !!matchup.team1 && matchup.winner.name === matchup.team1.name
           },
           {
             contestantId: matchup.team2?.name || "TBD",
             title: matchup.team2?.name || "TBD",
-            isWinner: matchup.winner?.name === matchup.team2?.name
+            isWinner: !!matchup.winner && !!matchup.team2 && matchup.winner.name === matchup.team2.name
           }
         ]
       }))
@@ -100,14 +114,30 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
     const createRegionBracket = (
       region: any,
       bracketRef: React.RefObject<HTMLDivElement>,
-      bracketInstanceRef: React.MutableRefObject<any>
+      bracketInstanceRef: React.MutableRefObject<any>,
+      isRightSide: boolean = false
     ) => {
       if (bracketRef.current && region) {
         if (bracketInstanceRef.current) {
           bracketInstanceRef.current.uninstall();
         }
 
+        // Create a copy of the rounds data
         const bracketData = transformMatchesToBracketry(region.rounds);
+
+        // For right-side brackets, we'll use CSS to handle the display direction
+        // instead of manipulating the data
+        /* Removing this code as it's causing display issues
+        if (isRightSide) {
+          // Reverse the round titles
+          bracketData.rounds = [...ROUND_TITLES].reverse().map(name => ({ name }));
+          
+          // Update each match's roundIndex to the reversed position
+          bracketData.matches.forEach(match => {
+            match.roundIndex = (ROUND_TITLES.length - 1) - match.roundIndex;
+          });
+        }
+        */
 
         try {
           bracketInstanceRef.current = createBracket(
@@ -130,6 +160,11 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
               connectionLinesWidth: 1
             }
           );
+          
+          // Add right-to-left class for right-side brackets
+          if (isRightSide && bracketRef.current) {
+            bracketRef.current.classList.add('right-side-bracket');
+          }
         } catch (error) {
           console.error("Error creating bracket:", error);
         }
@@ -138,8 +173,8 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
 
     createRegionBracket(eastRegion, eastBracketRef, eastBracketInstanceRef);
     createRegionBracket(westRegion, westBracketRef, westBracketInstanceRef);
-    createRegionBracket(southRegion, southBracketRef, southBracketInstanceRef);
-    createRegionBracket(midwestRegion, midwestBracketRef, midwestBracketInstanceRef);
+    createRegionBracket(southRegion, southBracketRef, southBracketInstanceRef, true);
+    createRegionBracket(midwestRegion, midwestBracketRef, midwestBracketInstanceRef, true);
 
     return () => {
       [eastBracketInstanceRef, westBracketInstanceRef, southBracketInstanceRef, midwestBracketInstanceRef].forEach(ref => {
@@ -156,21 +191,25 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-      <div>
-        <h3>East Region</h3>
-        <div ref={eastBracketRef} style={{ height: "600px" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div>
+          <h3>East Region</h3>
+          <div ref={eastBracketRef} style={{ height: "600px" }} />
+        </div>
+        <div>
+          <h3>West Region</h3>
+          <div ref={westBracketRef} style={{ height: "600px" }} />
+        </div>
       </div>
-      <div>
-        <h3>South Region</h3>
-        <div ref={southBracketRef} style={{ height: "600px" }} />
-      </div>
-      <div>
-        <h3>West Region</h3>
-        <div ref={westBracketRef} style={{ height: "600px" }} />
-      </div>
-      <div>
-        <h3>Midwest Region</h3>
-        <div ref={midwestBracketRef} style={{ height: "600px" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div>
+          <h3 style={{ textAlign: "right" }}>South Region</h3>
+          <div ref={southBracketRef} style={{ height: "600px" }} />
+        </div>
+        <div>
+          <h3 style={{ textAlign: "right" }}>Midwest Region</h3>
+          <div ref={midwestBracketRef} style={{ height: "600px" }} />
+        </div>
       </div>
     </div>
   );

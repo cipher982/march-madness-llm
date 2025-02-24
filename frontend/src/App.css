@@ -213,8 +213,22 @@ td:nth-child(3) {
   margin: 0 10px;
 }
 
-.winner {
-  background-color: #c8e6c9;
+/* Right-side bracket styling */
+.right-side-bracket {
+  /* Reverse the order of flex items to display from right to left */
+  direction: rtl;
+}
+
+/* Make sure text within the bracket still displays normally */
+.right-side-bracket .match-body,
+.right-side-bracket .player-title,
+.right-side-bracket .side-info-item {
+  direction: ltr;
+}
+
+/* Bracket winner styling */
+.bracket-root .side-wrapper.winner {
+  background-color: rgba(255, 102, 0, 0.3); /* Dark theme compatible orange highlight */
 }
 
 .rebuild-notice {
