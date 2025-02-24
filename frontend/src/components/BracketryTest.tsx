@@ -26,7 +26,9 @@ const ROUND_TITLES = ["Round of 64", "Round of 32", "Sweet 16", "Elite 8"];
 
 // Generate static HTML for team display
 const getTeamHTML = (teamName: string, seed: number) => {
-  return `${seed}. ${teamName}`;
+  const teamInfo = TEAM_MAPPINGS[teamName];
+  const logoPath = teamInfo ? `/logos/optimized/50x50/${teamInfo.logo_id}.webp` : "";
+  return `${logoPath ? `<img src="${logoPath}" alt="${teamName} logo" style="width: 25px; height: 25px; vertical-align: middle; margin-right: 4px;" />` : ""}${seed}. ${teamName}`;
 };
 
 const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
