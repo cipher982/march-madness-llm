@@ -8,7 +8,7 @@ COPY package-lock.json* ./
 
 # Use cache mount for npm
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+    npm install
 
 COPY . .
 
