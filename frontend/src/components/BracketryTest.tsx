@@ -191,21 +191,21 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
           <h3>East Region</h3>
-          <div ref={eastBracketRef} style={{ height: "600px", width: "700px" }} />
+          <div ref={eastBracketRef} style={{ height: "700px", width: "700px" }} />
         </div>
         <div>
           <h3>West Region</h3>
-          <div ref={westBracketRef} style={{ height: "600px", width: "700px" }} />
+          <div ref={westBracketRef} style={{ height: "700px", width: "700px" }} />
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
           <h3 style={{ textAlign: "right" }}>South Region</h3>
-          <div ref={southBracketRef} style={{ height: "600px", width: "700px" }} />
+          <div ref={southBracketRef} style={{ height: "700px", width: "700px" }} />
         </div>
         <div>
           <h3 style={{ textAlign: "right" }}>Midwest Region</h3>
-          <div ref={midwestBracketRef} style={{ height: "600px", width: "700px" }} />
+          <div ref={midwestBracketRef} style={{ height: "700px", width: "700px" }} />
         </div>
       </div>
     </div>
