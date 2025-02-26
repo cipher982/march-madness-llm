@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti';
 import api from './api';
 import BracketDisplay from './components/BracketDisplay';
+import BracketryTest from './components/BracketryTest';
 import SimulateButton from './components/SimulateButton';
 import SimulationStatus from './components/SimulationStatus';
 import "./App.css";
@@ -159,7 +160,8 @@ const App = () => {
         )}
 
         <div style={{ marginTop: '40px' }}>
-          {initialBracket && <BracketDisplay bracket={initialBracket} />}
+          {initialBracket && <BracketryTest bracket={initialBracket} />}
+          {/* {initialBracket && <BracketDisplay bracket={initialBracket} />} */}
         </div>
         {simulationComplete && <Confetti />}
       </div>
