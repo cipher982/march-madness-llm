@@ -161,7 +161,7 @@ const App = () => {
 
         <div style={{ marginTop: '40px' }}>
           {initialBracket && <BracketryTest bracket={initialBracket} />}
-          {initialBracket && <BracketDisplay bracket={initialBracket} />}
+          {/* {initialBracket && <BracketDisplay bracket={initialBracket} />} */}
         </div>
         {simulationComplete && <Confetti />}
       </div>

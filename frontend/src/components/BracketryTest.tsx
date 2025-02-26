@@ -47,6 +47,9 @@ const getTeamHTML = (teamName: string, seed: number) => {
 };
 
 const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
+  // Add a key that will change when bracket is updated
+  const bracketKey = React.useMemo(() => Math.random().toString(36).substring(7), [bracket]);
+  
   const eastBracketRef = useRef<HTMLDivElement>(null);
   const westBracketRef = useRef<HTMLDivElement>(null);
   const southBracketRef = useRef<HTMLDivElement>(null);
@@ -111,6 +114,14 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
   };
 
   useEffect(() => {
+    // Clean up any previous instances
+    [eastBracketInstanceRef, westBracketInstanceRef, southBracketInstanceRef, midwestBracketInstanceRef].forEach(ref => {
+      if (ref.current) {
+        ref.current.uninstall();
+        ref.current = null;
+      }
+    });
+
     const createRegionBracket = (
       region: any,
       bracketRef: React.RefObject<HTMLDivElement>,
@@ -124,21 +135,7 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
 
         // Create a copy of the rounds data
         const bracketData = transformMatchesToBracketry(region.rounds);
-
-        // For right-side brackets, we'll use CSS to handle the display direction
-        // instead of manipulating the data
-        /* Removing this code as it's causing display issues
-        if (isRightSide) {
-          // Reverse the round titles
-          bracketData.rounds = [...ROUND_TITLES].reverse().map(name => ({ name }));
-          
-          // Update each match's roundIndex to the reversed position
-          bracketData.matches.forEach(match => {
-            match.roundIndex = (ROUND_TITLES.length - 1) - match.roundIndex;
-          });
-        }
-        */
-
+        
         try {
           bracketInstanceRef.current = createBracket(
             bracketData,
@@ -194,21 +191,21 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
           <h3>East Region</h3>
-          <div ref={eastBracketRef} style={{ height: "600px" }} />
+          <div ref={eastBracketRef} style={{ height: "600px", width: "700px" }} />
         </div>
         <div>
           <h3>West Region</h3>
-          <div ref={westBracketRef} style={{ height: "600px" }} />
+          <div ref={westBracketRef} style={{ height: "600px", width: "700px" }} />
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
           <h3 style={{ textAlign: "right" }}>South Region</h3>
-          <div ref={southBracketRef} style={{ height: "600px" }} />
+          <div ref={southBracketRef} style={{ height: "600px", width: "700px" }} />
         </div>
         <div>
           <h3 style={{ textAlign: "right" }}>Midwest Region</h3>
-          <div ref={midwestBracketRef} style={{ height: "600px" }} />
+          <div ref={midwestBracketRef} style={{ height: "600px", width: "700px" }} />
         </div>
       </div>
     </div>

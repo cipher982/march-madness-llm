@@ -215,15 +215,15 @@ td:nth-child(3) {
 
 /* Right-side bracket styling */
 .right-side-bracket {
-  /* Reverse the order of flex items to display from right to left */
-  direction: rtl;
+  transform: scaleX(-1);
 }
 
-/* Make sure text within the bracket still displays normally */
-.right-side-bracket .match-body,
+.right-side-bracket .round-title,
 .right-side-bracket .player-title,
-.right-side-bracket .side-info-item {
-  direction: ltr;
+.right-side-bracket .match-title,
+.right-side-bracket .default-winner-svg,
+.right-side-bracket {
+  transform: scaleX(-1);
 }
 
 /* Bracket winner styling */
