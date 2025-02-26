@@ -7,6 +7,19 @@ import SimulateButton from './components/SimulateButton';
 import SimulationStatus from './components/SimulationStatus';
 import "./App.css";
 
+// GitHub link component for the top right corner
+const GitHubLink = () => (
+  <a 
+    href="https://github.com/cipher982/march-madness-llm" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="github-link"
+    aria-label="View on GitHub"
+  >
+    <img src="/github-mark-white.svg" alt="GitHub" width="32" height="32" />
+  </a>
+);
+
 const Footer = () => {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -102,6 +115,7 @@ const App = () => {
 
   return (
     <div className="App">
+      <GitHubLink />
       <div className="rebuild-notice">
         <h2>🚧 2025 Tournament Rebuild in Progress 🚧</h2>
         <p>This project is currently being rebuilt and enhanced for the 2025 NCAA Tournament. Stay tuned for major updates!</p>
