@@ -15,6 +15,20 @@
   --background-color: #c1c1c1;
 }
 
+/* GitHub link in top right corner */
+.github-link {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.github-link:hover {
+  opacity: 1;
+}
+
 /* Global styles */
 body {
   background-color: var(--secondary-color);
@@ -261,6 +275,12 @@ td:nth-child(3) {
 .team-display.winner {
   background-color: rgba(255, 102, 0, 0.2);
   font-weight: bold;
+}
+
+/* BracketryTest styling */
+div.round-title {
+  font-size: 1.1rem !important;
+  font-weight: normal !important;
 }
 
 /* Matchup display */
