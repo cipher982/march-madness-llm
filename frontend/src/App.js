@@ -9,8 +9,8 @@ import "./App.css";
 
 // GitHub link component for the top right corner
 const GitHubLink = () => (
-  <a 
-    href="https://github.com/cipher982/march-madness-llm" 
+  <a
+    href="https://github.com/cipher982/march-madness-llm"
     target="_blank" 
     rel="noopener noreferrer"
     className="github-link"

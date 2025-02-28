@@ -1,5 +1,19 @@
 # NCAA March Madness Bracket Simulator
 
+### 🌐 Live at: [marchmadness.drose.io](https://marchmadness.drose.io)
+[![Status](https://img.shields.io/uptimerobot/status/m798586528-7e266e98cdf0763250768d5b)](https://stats.uptimerobot.com/Jlo4zDIBm8)
+[![Uptime](https://img.shields.io/uptimerobot/ratio/30/m798586528-7e266e98cdf0763250768d5b)](https://stats.uptimerobot.com/Jlo4zDIBm8)
+
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-312/)
+[![React 18](https://img.shields.io/badge/react-18.2.0-61DAFB.svg?logo=react&logoColor=white)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/typescript-4.9.5-blue.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115.8-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![OpenAI](https://img.shields.io/badge/AI-OpenAI-green.svg)](https://openai.com/)
+[![Docker](https://img.shields.io/badge/docker-compose-2496ED.svg?logo=docker&logoColor=white)](https://www.docker.com/)
+[![UV](https://img.shields.io/badge/package%20manager-uv-4A4A4A.svg)](https://github.com/astral-sh/uv)
+[![Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+
 ## 🚧 2025 Tournament Rebuild in Progress 🚧
 **This project is currently being rebuilt and enhanced for the 2025 NCAA Tournament. Stay tuned for major updates!**
 
