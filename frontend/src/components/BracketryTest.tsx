@@ -142,7 +142,7 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
             matchAxisMargin: 2,
             oneSidePlayersGap: 1,
             matchHorMargin: 12,
-            matchMaxWidth: 180,
+            matchMaxWidth: 240,
             matchFontSize: 12,
             matchTextColor: "#ffffff",
             rootBorderColor: "#666666",
@@ -187,7 +187,7 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "20px" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "20px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
           <h3>East Region</h3>

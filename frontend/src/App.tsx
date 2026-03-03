@@ -75,6 +75,12 @@ const isWebSocketMessage = (payload: unknown): payload is WebSocketMessage => {
 };
 
 const App = (): JSX.Element => {
+  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  useEffect(() => {
+    const onResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
   const [initialBracket, setInitialBracket] = useState<BracketData | null>(null);
   const [decider, setDecider] = useState<Decider>("random");
   const [userPreferences, setUserPreferences] = useState("");
@@ -311,7 +317,7 @@ const App = (): JSX.Element => {
         <div style={{ marginTop: "40px", width: "100%" }}>
           {initialBracket && <BracketryTest bracket={initialBracket} />}
         </div>
-        {simulationComplete && <Confetti />}
+        {simulationComplete && <Confetti width={windowSize.width} height={windowSize.height} recycle={false} />}
       </div>
       <Footer />
     </div>
