@@ -43,3 +43,8 @@ def fake_websocket() -> FakeWebSocket:
 @pytest.fixture
 def client() -> TestClient:
     return TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limit_state() -> None:
+    main_module.SIMULATION_RATE_BUCKETS.clear()

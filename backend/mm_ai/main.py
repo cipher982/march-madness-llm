@@ -1,7 +1,10 @@
+import asyncio
 import json
 import logging
 import os
+from collections import deque
 from collections.abc import Callable
+from time import monotonic
 
 from fastapi import FastAPI
 from fastapi import Request
@@ -22,6 +25,8 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 DEFAULT_ORIGINS = ["https://marchmadness.drose.io"]
+SIMULATION_RATE_BUCKETS: dict[str, deque[float]] = {}
+SIMULATION_RATE_LOCK = asyncio.Lock()
 
 
 @app.exception_handler(Exception)
@@ -65,6 +70,35 @@ def get_allowed_origins() -> list[str]:
 
 def get_data_path(filename: str) -> str:
     return os.path.join(os.path.dirname(__file__), "../data", filename)
+
+
+def _parse_positive_int(value: str, default_value: int) -> int:
+    try:
+        parsed = int(value)
+    except ValueError:
+        return default_value
+    return parsed if parsed > 0 else default_value
+
+
+def get_rate_limit_config() -> tuple[int, int]:
+    max_requests = _parse_positive_int(os.getenv("SIMULATION_RATE_LIMIT_COUNT", "12"), 12)
+    window_seconds = _parse_positive_int(os.getenv("SIMULATION_RATE_LIMIT_WINDOW_SECONDS", "60"), 60)
+    return max_requests, window_seconds
+
+
+async def is_rate_limited(client_id: str) -> bool:
+    max_requests, window_seconds = get_rate_limit_config()
+    now = monotonic()
+    oldest_allowed = now - window_seconds
+
+    async with SIMULATION_RATE_LOCK:
+        bucket = SIMULATION_RATE_BUCKETS.setdefault(client_id, deque())
+        while bucket and bucket[0] < oldest_allowed:
+            bucket.popleft()
+        if len(bucket) >= max_requests:
+            return True
+        bucket.append(now)
+        return False
 
 
 app.add_middleware(
@@ -153,6 +187,11 @@ async def simulate_websocket(websocket: WebSocket) -> None:
                 decider, use_current_state, user_preferences = _parse_simulation_request(data)
             except ValueError as exc:
                 await _send_simulation_error(websocket, str(exc))
+                continue
+
+            client_id = websocket.client.host if websocket.client and websocket.client.host else "unknown"
+            if await is_rate_limited(client_id):
+                await _send_simulation_error(websocket, "Rate limit exceeded. Please wait and retry.")
                 continue
 
             decision_function: Callable | None = get_decision_function(decider)

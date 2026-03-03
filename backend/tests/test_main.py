@@ -37,6 +37,18 @@ def test_websocket_invalid_json_payload_returns_error(client: TestClient) -> Non
         assert message == {"error": "Invalid request payload: expected JSON object"}
 
 
+def test_websocket_enforces_rate_limit(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("mm_ai.main.get_rate_limit_config", lambda: (1, 60))
+    with client.websocket_connect("/ws/simulate") as websocket:
+        websocket.send_json({"decider": "invalid_decider"})
+        first_message = websocket.receive_json()
+        assert first_message == {"error": "Invalid decider: invalid_decider"}
+
+        websocket.send_json({"decider": "invalid_decider"})
+        second_message = websocket.receive_json()
+        assert second_message == {"error": "Rate limit exceeded. Please wait and retry."}
+
+
 def test_generic_exception_handler_hides_internal_details(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     def broken_loader(*args, **kwargs) -> None:  # noqa: ANN002, ANN003
         _ = args, kwargs
