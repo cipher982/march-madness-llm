@@ -31,16 +31,25 @@ jobs:
 
       - name: Install Infisical CLI
         run: |
-          curl -1sLf 'https://artifacts.infisical.com/setup.deb.sh' | sudo bash
-          sudo apt-get install -y infisical
+          curl -L "https://github.com/Infisical/cli/releases/download/v0.43.58/cli_0.43.58_linux_amd64.tar.gz" \
+            | sudo tar xz -C /usr/local/bin infisical
 
       - name: Ruff
         run: uv run ruff check .
 
       - name: Pytest
-        run: infisical run --env dev -- uv run pytest
+        run: |
+          INFISICAL_TOKEN=$(curl -sf -X POST "https://secrets.drose.io/api/v1/auth/universal-auth/login" \
+            -H "Content-Type: application/json" \
+            -d "{\"clientId\":\"${INFISICAL_CLIENT_ID}\",\"clientSecret\":\"${INFISICAL_CLIENT_SECRET}\"}" | \
+            python3 -c "import sys,json; print(json.load(sys.stdin)['accessToken'])")
+          infisical run --env dev --domain https://secrets.drose.io \
+            --projectId fdc5cddf-0304-448e-ba40-7cace6062dab \
+            --token "$INFISICAL_TOKEN" \
+            -- uv run pytest
         env:
-          INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
 
   frontend:
     runs-on: ubuntu-latest

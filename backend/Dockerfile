@@ -17,6 +17,8 @@ RUN pip install --no-cache-dir uv
 COPY pyproject.toml uv.lock ./
 COPY mm_ai ./mm_ai
 COPY data ./data
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 RUN uv sync --frozen --no-dev
 
@@ -28,4 +30,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
   CMD curl -f http://localhost:8000/health || exit 1
 
-CMD ["infisical", "run", "--env", "prod", "--", "uv", "run", "uvicorn", "mm_ai.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/entrypoint.sh", "uv", "run", "uvicorn", "mm_ai.main:app", "--host", "0.0.0.0", "--port", "8000"]
