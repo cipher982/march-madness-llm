@@ -1,26 +1,25 @@
-FROM node:20
+FROM oven/bun:1.2 AS build
 
 WORKDIR /app
 
-# Copy package files first
-COPY package*.json ./
-COPY package-lock.json* ./
-
-# Use cache mount for npm
-RUN --mount=type=cache,target=/root/.npm \
-    npm install
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 COPY . .
 
 ARG REACT_APP_BACKEND_URL
 ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
-# Install dev dependencies for hot reloading
-RUN npm install -g npm@latest
+RUN bun run build
 
-# Add curl for healthcheck
-RUN apt-get update && apt-get install -y curl
+FROM nginx:1.27-alpine AS runtime
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/build /usr/share/nginx/html
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD wget -qO- http://localhost:3000/ || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

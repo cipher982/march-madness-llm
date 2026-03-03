@@ -1,1 +1,5 @@
 node_modules
+bun.lockb
+build
+.git
+.DS_Store

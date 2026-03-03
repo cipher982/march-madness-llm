@@ -1,22 +1,29 @@
-# Use an official Python runtime as the base image
 FROM python:3.12-slim
 
-# Set the working directory in the container
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_LINK_MODE=copy
+
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y curl
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip install uv
+RUN pip install --no-cache-dir uv
 
 COPY pyproject.toml uv.lock ./
+COPY mm_ai ./mm_ai
 COPY data ./data
 
-RUN uv sync
+RUN uv sync --frozen --no-dev
 
-COPY mm_ai ./mm_ai
-
-ARG FRONTEND_PORT
+ARG FRONTEND_PORT=3000
 ENV FRONTEND_PORT=${FRONTEND_PORT}
 
-# Default command (can be overridden in docker-compose)
-CMD ["uv", "run", "uvicorn", "mm_ai.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD curl -f http://localhost:8000/health || exit 1
+
+CMD ["uv", "run", "uvicorn", "mm_ai.main:app", "--host", "0.0.0.0", "--port", "8000"]
