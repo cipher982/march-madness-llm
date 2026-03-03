@@ -142,7 +142,7 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
             matchAxisMargin: 2,
             oneSidePlayersGap: 1,
             matchHorMargin: 12,
-            matchMaxWidth: 240,
+            matchMaxWidth: 260,
             matchFontSize: 12,
             matchTextColor: "#ffffff",
             rootBorderColor: "#666666",

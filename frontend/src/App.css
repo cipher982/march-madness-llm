@@ -303,19 +303,15 @@ div.round-title {
 }
 
 .app-footer {
-  margin-top: auto;
+  margin-top: 40px;
   padding: 1.5rem;
   text-align: center;
   color: #666;
   font-size: 0.85rem;
   background: #999999;
   width: 100%;
-  position: sticky;
-  bottom: 0;
-  left: 0;
   border-top: 1px solid #eee;
   line-height: 1.4;
-  z-index: 1000;
 }
 
 .app-footer small {
