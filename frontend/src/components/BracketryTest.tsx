@@ -43,7 +43,7 @@ const getTeamHTML = (teamName: string, seed: number) => {
   const teamInfo = TEAM_MAPPING_RECORD[teamName];
   const logoPath = teamInfo ? `/logos/optimized/50x50/${teamInfo.logo_id}.webp` : "";
 
-  return `${logoPath ? `<img src="${logoPath}" alt="${teamName} logo" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 3px;" />` : ""}${seed}. ${teamName}`;
+  return `${logoPath ? `<img src="${logoPath}" alt="${teamName} logo" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 2px;" />` : ""}${seed}. ${teamName}`;
 };
 
 const transformMatchesToBracketry = (rounds: Round[] = []): BracketryData => {
@@ -143,7 +143,7 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
             oneSidePlayersGap: 1,
             matchHorMargin: 12,
             matchMaxWidth: 320,
-            matchFontSize: 12,
+            matchFontSize: 11,
             matchTextColor: "#ffffff",
             rootBorderColor: "#666666",
             connectionLinesColor: "#666666",
