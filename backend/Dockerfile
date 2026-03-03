@@ -9,6 +9,7 @@ WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl bash \
     && curl -1sLf 'https://artifacts.infisical.com/setup.deb.sh' | bash \
+    && apt-get update \
     && apt-get install -y infisical \
     && rm -rf /var/lib/apt/lists/*
 
