@@ -44,22 +44,34 @@ For more details about the frontend implementation, please refer to the [fronten
 
 
 ## Getting Started
-To get started with the NCAA March Madness Bracket Simulator, follow these steps:
-1. Clone the repository:
-`git clone https://github.com/cipher982/march-madness-llm`
 
-2. Install the required dependencies:
-`pip install -r requirements.tx`
+### Prerequisites
+- [uv](https://github.com/astral-sh/uv) (Python)
+- [bun](https://bun.sh) (frontend)
+- [Infisical CLI](https://infisical.com/docs/cli/overview) (`brew install infisical/get-infisical/infisical`)
 
-3. Obtain an API key from OpenAI and set it as an environment variable:
-`export OPENAI_API_KEY=your_api_key_here`
+### Setup
+```bash
+git clone https://github.com/cipher982/march-madness-llm
+infisical login   # once — opens browser
+```
 
-4. Run the simulator:
-`python simulator.py`
+### Run locally
+```bash
+# Backend
+cd backend
+infisical run --env dev -- uv run uvicorn mm_ai.main:app --reload --port 8000
 
-5. Customize the simulation by providing command-line arguments:
-   - `--decider`: Choose the decision function for simulating games (options: "ai", "seed", "random", default: "seed").
-   - `--current-state`: Provide a JSON file containing the current state of the bracket to resume the simulation. `current_state.json` is the file I try to keep updated, including the teams, matchups, rounds and winners. At least as current as I give the effort to update.
+# Frontend
+cd frontend
+infisical run --env dev -- bun run start
+
+# Tests
+cd backend
+infisical run --env dev -- uv run pytest
+```
+
+No `.env` files, no Keychain setup, no direnv. Secrets live in Infisical (project: `march-madness-llm`).
 
 ## Project Structure
 The project consists of three main files:

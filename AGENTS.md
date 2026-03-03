@@ -90,8 +90,8 @@ docker compose up
 
 ### Environment Variables
 ```
-OPENAI_API_KEY      # From macOS Keychain via .envrc
-LANGSMITH_API_KEY   # From macOS Keychain via .envrc
+OPENAI_API_KEY      # From Infisical (project: march-madness-llm)
+LANGSMITH_API_KEY   # From Infisical (project: march-madness-llm)
 LANGSMITH_TRACING   # true
 BACKEND_URL         # http://localhost:8000
 FRONTEND_PORT       # 3001
@@ -120,7 +120,7 @@ FRONTEND_PORT       # 3001
 - **Commits:** Atomic, descriptive. Never amend, never skip hooks.
 - **Python:** Ruff format, line-length 120, double quotes. Type hints required on new code.
 - **TypeScript:** All new/modified components must be `.tsx` with proper types. No `any`.
-- **Secrets:** Never in code. Use env vars loaded from Keychain (`.envrc`).
+- **Secrets:** Never in code. Use `infisical run --env dev -- <command>`. No `.env` files.
 - **LLM calls:** Use z.ai (GLM-5) for dev/personal. OpenAI for production bracket generation.
 
 ## Deployment
