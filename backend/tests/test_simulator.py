@@ -52,3 +52,18 @@ async def test_simulate_tournament_completes_and_sends_completion(
     assert results[-1]["final_winner"] == "UConn"
     assert bracket.get_tournament_winner() is not None
     assert fake_websocket.messages[-1]["type"] == "simulation_complete"
+
+
+@pytest.mark.asyncio
+async def test_simulator_without_openai_key_still_supports_non_ai_deciders(
+    monkeypatch: pytest.MonkeyPatch,
+    initialized_bracket: Bracket,
+    fake_websocket,
+) -> None:
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr("mm_ai.simulator.asyncio.sleep", no_sleep)
+
+    simulator = Simulator(bracket=initialized_bracket, user_preferences="", websocket=fake_websocket)
+    results = await simulator.simulate_round(lower_seed, "east", "round_of_64")
+
+    assert len(results) == 8

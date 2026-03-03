@@ -1,5 +1,7 @@
+import json
 import logging
 import os
+from collections.abc import Callable
 
 from fastapi import FastAPI
 from fastapi import Request
@@ -7,7 +9,6 @@ from fastapi import WebSocket
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.websockets import WebSocketDisconnect
 
@@ -20,29 +21,20 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-simulator = None
-
-frontend_port = os.environ.get("FRONTEND_PORT")
-assert frontend_port is not None, "FRONTEND_PORT is not set"
-
-
-class SimulateRequest(BaseModel):
-    decider: str
-    use_current_state: bool = False
-    user_preferences: str = ""
+DEFAULT_ORIGINS = ["https://marchmadness.drose.io"]
 
 
 @app.exception_handler(Exception)
-async def generic_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+async def generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    logger.error("Unhandled exception for %s: %s", request.url.path, exc, exc_info=True)
     return JSONResponse(
         status_code=500,
-        content={"message": str(exc)},  # Send the actual error message
+        content={"message": "Internal server error"},
     )
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
     return JSONResponse(
         status_code=422,
         content={"message": "Validation error", "details": exc.errors()},
@@ -50,25 +42,34 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 @app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
     if exc.status_code == 404:
         return JSONResponse(
             status_code=exc.status_code,
             content={"message": "Resource not found"},
         )
-    # Add more specific HTTP exception handling here if needed
     return JSONResponse(
         status_code=exc.status_code,
         content={"message": exc.detail},
     )
 
 
+def get_allowed_origins() -> list[str]:
+    configured_origins = os.getenv("ALLOWED_ORIGINS")
+    if configured_origins:
+        return [origin.strip() for origin in configured_origins.split(",") if origin.strip()]
+
+    frontend_port = os.getenv("FRONTEND_PORT", "3000")
+    return [f"http://localhost:{frontend_port}", *DEFAULT_ORIGINS]
+
+
+def get_data_path(filename: str) -> str:
+    return os.path.join(os.path.dirname(__file__), "../data", filename)
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        f"http://localhost:{frontend_port}",
-        "https://marchmadness.drose.io",
-    ],
+    allow_origins=get_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -76,62 +77,102 @@ app.add_middleware(
 
 
 @app.get("/")
-async def root():
+async def root() -> dict[str, str]:
     return {"message": "Welcome to the NCAA March Madness Bracket Simulator!"}
 
 
 @app.get("/health")
-async def health_check():
+async def health_check() -> dict[str, str]:
     return {"status": "ok"}
 
 
 @app.get("/api/bracket_start")
-async def get_bracket():
+async def get_bracket() -> dict[str, dict]:
     bracket = Bracket()
-    bracket.load_initial_data(os.path.join(os.path.dirname(__file__), "../data", "bracket_2024.json"))
+    bracket.load_initial_data(get_data_path("bracket_2024.json"))
     bracket_data = bracket.to_dict()
     return {"bracket": bracket_data}
 
 
 @app.get("/api/bracket_current")
-async def get_current_bracket():
+async def get_current_bracket() -> dict[str, dict]:
     bracket = Bracket()
-    base_dir = os.path.dirname(__file__)
-    bracket.load_initial_data(os.path.join(base_dir, "../data", "bracket_2024.json"))
-    current_state_path = os.path.join(base_dir, "../data", "current_state.json")
+    bracket.load_initial_data(get_data_path("bracket_2024.json"))
+    current_state_path = get_data_path("current_state.json")
     if os.path.exists(current_state_path):
         bracket.load_current_state(current_state_path)
     return {"bracket": bracket.to_dict()}
 
 
+async def _send_simulation_error(websocket: WebSocket, message: str) -> None:
+    await websocket.send_json({"error": message})
+
+
+def _parse_simulation_request(payload: dict) -> tuple[str, bool, str]:
+    decider = payload.get("decider")
+    if not isinstance(decider, str) or not decider.strip():
+        raise ValueError("Invalid decider: expected non-empty string")
+
+    use_current_state = payload.get("use_current_state", False)
+    if not isinstance(use_current_state, bool):
+        raise ValueError("Invalid use_current_state: expected boolean")
+
+    user_preferences = payload.get("user_preferences", "")
+    if not isinstance(user_preferences, str):
+        raise ValueError("Invalid user_preferences: expected string")
+
+    return decider, use_current_state, user_preferences
+
+
+def _build_bracket(use_current_state: bool) -> Bracket:
+    bracket = Bracket()
+    bracket.load_initial_data(get_data_path("bracket_2024.json"))
+    if use_current_state:
+        current_state_path = get_data_path("current_state.json")
+        if os.path.exists(current_state_path):
+            bracket.load_current_state(current_state_path)
+    return bracket
+
+
 @app.websocket("/ws/simulate")
-async def simulate_websocket(websocket: WebSocket):
+async def simulate_websocket(websocket: WebSocket) -> None:
     await websocket.accept()
     try:
         while True:
-            data = await websocket.receive_json()
-            decider = data.get("decider")
-            use_current_state = data.get("use_current_state", False)
-            user_preferences = data.get("user_preferences", "")
-
-            decision_function = get_decision_function(decider)
-            if decision_function is None:
-                await websocket.send_json({"error": f"Invalid decider: {decider}"})
+            try:
+                data = await websocket.receive_json()
+            except json.JSONDecodeError:
+                await _send_simulation_error(websocket, "Invalid request payload: expected JSON object")
                 continue
 
-            bracket = Bracket()
-            fp_start = os.path.join(os.path.dirname(__file__), "../data", "bracket_2024.json")
-            bracket.load_initial_data(fp_start)
-            if use_current_state:
-                fp_current = os.path.join(os.path.dirname(__file__), "../data", "current_state.json")
-                bracket.load_current_state(fp_current)
+            if not isinstance(data, dict):
+                await _send_simulation_error(websocket, "Invalid request payload: expected JSON object")
+                continue
 
-            simulator = Simulator(
-                bracket=bracket,
-                user_preferences=user_preferences,
-                websocket=websocket,
-            )
-            await simulator.simulate_tournament(decision_function)
+            try:
+                decider, use_current_state, user_preferences = _parse_simulation_request(data)
+            except ValueError as exc:
+                await _send_simulation_error(websocket, str(exc))
+                continue
+
+            decision_function: Callable | None = get_decision_function(decider)
+            if decision_function is None:
+                await _send_simulation_error(websocket, f"Invalid decider: {decider}")
+                continue
+
+            try:
+                bracket = _build_bracket(use_current_state)
+                simulator = Simulator(
+                    bracket=bracket,
+                    user_preferences=user_preferences,
+                    websocket=websocket,
+                )
+                await simulator.simulate_tournament(decision_function)
+            except WebSocketDisconnect:
+                raise
+            except Exception as exc:
+                logger.error("Simulation failed for decider=%s: %s", decider, exc, exc_info=True)
+                await _send_simulation_error(websocket, "Simulation failed. Please retry.")
 
     except WebSocketDisconnect:
         logger.info("WebSocket disconnected")
