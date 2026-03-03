@@ -1,121 +1,120 @@
 import React, { useEffect, useRef } from "react";
 import { createBracket } from "bracketry";
+
 import { TEAM_MAPPINGS } from "../team_mappings";
-
-interface Team {
-  name: string;
-  seed: number;
-}
-
-interface Match {
-  team1: Team | null;
-  team2: Team | null;
-  winner?: Team;
-  matchup_id: string;
-}
-
-interface Round {
-  name: string;
-  matchups: Match[];
-}
+import { BracketData, Matchup, Region, Round, Team } from "../types/bracket";
 
 interface BracketryTestProps {
-  bracket: any; // We'll type this better later
+  bracket: BracketData;
+}
+
+interface BracketryInstance {
+  uninstall: () => void;
+}
+
+interface BracketryMatch {
+  roundIndex: number;
+  order: number;
+  sides: Array<{
+    contestantId: string;
+    title: string;
+    isWinner: boolean;
+  }>;
+}
+
+interface BracketryData {
+  rounds: Array<{ name: string }>;
+  matches: BracketryMatch[];
+  contestants: Record<
+    string,
+    {
+      players: Array<{
+        title: string;
+        seed: number;
+      }>;
+    }
+  >;
 }
 
 const ROUND_TITLES = ["Round of 64", "Round of 32", "Sweet 16", "Elite 8"];
+const TEAM_MAPPING_RECORD = TEAM_MAPPINGS as Record<string, { logo_id?: string }>;
 
-// Generate static HTML for team display
 const getTeamHTML = (teamName: string, seed: number) => {
-  const teamInfo = TEAM_MAPPINGS[teamName];
-  
-  // Debug logging for team mapping issues
-  if (!teamInfo) {
-    console.warn(`Team info not found for ${teamName}`);
-  } else if (!teamInfo.logo_id) {
-    console.warn(`Logo ID missing for ${teamName}`);
-  }
-  
+  const teamInfo = TEAM_MAPPING_RECORD[teamName];
   const logoPath = teamInfo ? `/logos/optimized/50x50/${teamInfo.logo_id}.webp` : "";
-  
-  // Debug logging for logo path
-  if (logoPath) {
-    console.log(`Logo path for ${teamName}: ${logoPath}`);
-  }
-  
+
   return `${logoPath ? `<img src="${logoPath}" alt="${teamName} logo" style="width: 25px; height: 25px; vertical-align: middle; margin-right: 4px;" />` : ""}${seed}. ${teamName}`;
 };
 
-const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
-  // Add a key that will change when bracket is updated
-  const bracketKey = React.useMemo(() => Math.random().toString(36).substring(7), [bracket]);
-  
-  const eastBracketRef = useRef<HTMLDivElement>(null);
-  const westBracketRef = useRef<HTMLDivElement>(null);
-  const southBracketRef = useRef<HTMLDivElement>(null);
-  const midwestBracketRef = useRef<HTMLDivElement>(null);
-  
-  const eastBracketInstanceRef = useRef<any>(null);
-  const westBracketInstanceRef = useRef<any>(null);
-  const southBracketInstanceRef = useRef<any>(null);
-  const midwestBracketInstanceRef = useRef<any>(null);
-  
-  // Extract regions
-  const eastRegion = bracket?.regions?.find((r: any) => r.name.toLowerCase() === "east");
-  const westRegion = bracket?.regions?.find((r: any) => r.name.toLowerCase() === "west");
-  const southRegion = bracket?.regions?.find((r: any) => r.name.toLowerCase() === "south");
-  const midwestRegion = bracket?.regions?.find((r: any) => r.name.toLowerCase() === "midwest");
-  
-  // Transform data for bracketry
-  const transformMatchesToBracketry = (rounds: Round[] = []) => {
-    const matches = rounds.flatMap((round, roundIndex) => 
-      round.matchups.map((matchup: Match, matchOrder: number) => ({
-        roundIndex,
-        order: matchOrder,
-        sides: [
-          {
-            contestantId: matchup.team1?.name || "TBD",
-            title: matchup.team1?.name || "TBD",
-            isWinner: !!matchup.winner && !!matchup.team1 && matchup.winner.name === matchup.team1.name
-          },
-          {
-            contestantId: matchup.team2?.name || "TBD",
-            title: matchup.team2?.name || "TBD",
-            isWinner: !!matchup.winner && !!matchup.team2 && matchup.winner.name === matchup.team2.name
-          }
-        ]
-      }))
-    );
-
-    const contestants = Object.fromEntries(
-      rounds.flatMap(round => 
-        round.matchups.flatMap((matchup: Match) => [
-          matchup.team1,
-          matchup.team2
-        ])
-      )
-      .filter(team => team !== null)
-      .map(team => [
-        team!.name,
+const transformMatchesToBracketry = (rounds: Round[] = []): BracketryData => {
+  const matches: BracketryMatch[] = rounds.flatMap((round, roundIndex) =>
+    round.matchups.map((matchup: Matchup, matchOrder: number) => ({
+      roundIndex,
+      order: matchOrder,
+      sides: [
         {
-          players: [{
-            title: team!.name,
-            seed: team!.seed
-          }]
-        }
-      ])
-    );
+          contestantId: matchup.team1?.name || "TBD",
+          title: matchup.team1?.name || "TBD",
+          isWinner: Boolean(matchup.winner && matchup.team1 && matchup.winner.name === matchup.team1.name),
+        },
+        {
+          contestantId: matchup.team2?.name || "TBD",
+          title: matchup.team2?.name || "TBD",
+          isWinner: Boolean(matchup.winner && matchup.team2 && matchup.winner.name === matchup.team2.name),
+        },
+      ],
+    })),
+  );
 
-    return {
-      rounds: ROUND_TITLES.map(name => ({ name })),
-      matches,
-      contestants
-    };
+  const contestants = new Map<string, Team>();
+  rounds.forEach((round) => {
+    round.matchups.forEach((matchup) => {
+      if (matchup.team1) {
+        contestants.set(matchup.team1.name, matchup.team1);
+      }
+      if (matchup.team2) {
+        contestants.set(matchup.team2.name, matchup.team2);
+      }
+    });
+  });
+
+  const contestantPayload = Object.fromEntries(
+    Array.from(contestants.values()).map((team) => [
+      team.name,
+      {
+        players: [{ title: team.name, seed: team.seed }],
+      },
+    ]),
+  );
+
+  return {
+    rounds: ROUND_TITLES.map((name) => ({ name })),
+    matches,
+    contestants: contestantPayload,
   };
+};
+
+const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
+  const eastBracketRef = useRef<HTMLDivElement | null>(null);
+  const westBracketRef = useRef<HTMLDivElement | null>(null);
+  const southBracketRef = useRef<HTMLDivElement | null>(null);
+  const midwestBracketRef = useRef<HTMLDivElement | null>(null);
+
+  const eastBracketInstanceRef = useRef<BracketryInstance | null>(null);
+  const westBracketInstanceRef = useRef<BracketryInstance | null>(null);
+  const southBracketInstanceRef = useRef<BracketryInstance | null>(null);
+  const midwestBracketInstanceRef = useRef<BracketryInstance | null>(null);
+
+  const findRegion = (regionName: string): Region | undefined =>
+    bracket.regions.find((region) => region.name.toLowerCase() === regionName);
+
+  const eastRegion = findRegion("east");
+  const westRegion = findRegion("west");
+  const southRegion = findRegion("south");
+  const midwestRegion = findRegion("midwest");
 
   useEffect(() => {
-    // Clean up any previous instances
-    [eastBracketInstanceRef, westBracketInstanceRef, southBracketInstanceRef, midwestBracketInstanceRef].forEach(ref => {
+    [eastBracketInstanceRef, westBracketInstanceRef, southBracketInstanceRef, midwestBracketInstanceRef].forEach((ref) => {
       if (ref.current) {
         ref.current.uninstall();
         ref.current = null;
@@ -123,47 +122,41 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
     });
 
     const createRegionBracket = (
-      region: any,
+      region: Region | undefined,
       bracketRef: React.RefObject<HTMLDivElement>,
-      bracketInstanceRef: React.MutableRefObject<any>,
-      isRightSide: boolean = false
+      bracketInstanceRef: React.MutableRefObject<BracketryInstance | null>,
+      isRightSide = false,
     ) => {
       if (bracketRef.current && region) {
         if (bracketInstanceRef.current) {
           bracketInstanceRef.current.uninstall();
         }
 
-        // Create a copy of the rounds data
         const bracketData = transformMatchesToBracketry(region.rounds);
-        
+
         try {
-          bracketInstanceRef.current = createBracket(
-            bracketData,
-            bracketRef.current,
-            {
-              getPlayerTitleHTML: (player: any) => getTeamHTML(player.title, player.seed),
-              visibleRoundsCount: 4,
-              matchMinVerticalGap: 15,
-              matchAxisMargin: 2,
-              oneSidePlayersGap: 1,
-              matchHorMargin: 12,
-              matchMaxWidth: 180,
-              matchFontSize: 12,
-              matchTextColor: "#ffffff",
-              rootBorderColor: "#666666",
-              connectionLinesColor: "#666666",
-              roundTitleColor: "#ffffff",
-              highlightedConnectionLinesColor: "#888888",
-              connectionLinesWidth: 1
-            }
-          );
-          
-          // Add right-to-left class for right-side brackets
+          bracketInstanceRef.current = createBracket(bracketData, bracketRef.current, {
+            getPlayerTitleHTML: (player: { title: string; seed: number }) => getTeamHTML(player.title, player.seed),
+            visibleRoundsCount: 4,
+            matchMinVerticalGap: 15,
+            matchAxisMargin: 2,
+            oneSidePlayersGap: 1,
+            matchHorMargin: 12,
+            matchMaxWidth: 180,
+            matchFontSize: 12,
+            matchTextColor: "#ffffff",
+            rootBorderColor: "#666666",
+            connectionLinesColor: "#666666",
+            roundTitleColor: "#ffffff",
+            highlightedConnectionLinesColor: "#888888",
+            connectionLinesWidth: 1,
+          });
+
           if (isRightSide && bracketRef.current) {
-            bracketRef.current.classList.add('right-side-bracket');
+            bracketRef.current.classList.add("right-side-bracket");
           }
-        } catch (error) {
-          console.error("Error creating bracket:", error);
+        } catch (_error) {
+          bracketInstanceRef.current = null;
         }
       }
     };
@@ -174,7 +167,7 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
     createRegionBracket(midwestRegion, midwestBracketRef, midwestBracketInstanceRef, true);
 
     return () => {
-      [eastBracketInstanceRef, westBracketInstanceRef, southBracketInstanceRef, midwestBracketInstanceRef].forEach(ref => {
+      [eastBracketInstanceRef, westBracketInstanceRef, southBracketInstanceRef, midwestBracketInstanceRef].forEach((ref) => {
         if (ref.current) {
           ref.current.uninstall();
         }
@@ -186,26 +179,33 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
     return <div>Region data not available</div>;
   }
 
+  const bracketPanelStyle: React.CSSProperties = {
+    minHeight: "420px",
+    height: "min(65vw, 700px)",
+    width: "100%",
+    maxWidth: "700px",
+  };
+
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "20px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
           <h3>East Region</h3>
-          <div ref={eastBracketRef} style={{ height: "700px", width: "700px" }} />
+          <div ref={eastBracketRef} style={bracketPanelStyle} />
         </div>
         <div>
           <h3>West Region</h3>
-          <div ref={westBracketRef} style={{ height: "700px", width: "700px" }} />
+          <div ref={westBracketRef} style={bracketPanelStyle} />
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
           <h3 style={{ textAlign: "right" }}>South Region</h3>
-          <div ref={southBracketRef} style={{ height: "700px", width: "700px" }} />
+          <div ref={southBracketRef} style={bracketPanelStyle} />
         </div>
         <div>
           <h3 style={{ textAlign: "right" }}>Midwest Region</h3>
-          <div ref={midwestBracketRef} style={{ height: "700px", width: "700px" }} />
+          <div ref={midwestBracketRef} style={bracketPanelStyle} />
         </div>
       </div>
     </div>

@@ -1037,8 +1037,8 @@ export const TEAM_MAPPINGS: Record<string, TeamInfo> = {
         name: "San Francisco",
         logo_id: "2539",
     },
-    "San Jos√© State": {
-        name: "San Jos√© State",
+    "San José State": {
+        name: "San José State",
         logo_id: "23",
     },
     "Santa Clara": {
