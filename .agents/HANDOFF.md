@@ -31,9 +31,7 @@
 - Coolify service UUID: `ncs84sgckcs08c4wsc0ogwwo`
 - Image: `infisical/infisical:v0.158.6` (NOT `-postgres` suffix — that tag doesn't exist anymore)
 - Admin account: `david@drose.io` (password in macOS Keychain: `infisical-admin-march-madness`)
-- **CRITICAL KEYS** (losing these = losing all encrypted secrets):
-  - `ENCRYPTION_KEY=REDACTED_ENCRYPTION_KEY`
-  - `AUTH_SECRET=REDACTED_AUTH_SECRET`
+- **CRITICAL KEYS** stored in Coolify service env only — never put in docs or code
 - Postgres/Redis passwords in Coolify DB for service `ncs84sgckcs08c4wsc0ogwwo`
 
 ### Infisical Project Setup (session 4)
