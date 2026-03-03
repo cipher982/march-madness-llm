@@ -13,91 +13,92 @@
 | Backend tests | ✅ 23 passing, 90% coverage |
 | Backend hardening | ✅ race condition, rate limiting, sanitization, retries, health endpoint |
 | Frontend TSX migration | ✅ all active files .tsx, WS error handling |
-| Production Dockerfiles | ✅ nginx multi-stage, no dev servers |
+| Production Dockerfiles | ✅ nginx multi-stage, Infisical CLI installed via direct binary |
 | GitHub Actions CI | ✅ lint + pytest + tsc + build + Playwright |
 | Playwright E2E + visual | ✅ 13 tests passing, baselines committed |
-| Secrets → Infisical | ✅ migrated (see below) |
-| **9 commits not pushed** | ❌ nothing has shipped to prod yet |
-| Coolify not updated | ❌ still running old config, no Infisical |
-| docker-compose.yml broken | ❌ references deleted .env file |
-| Umami analytics | ❌ needs website ID |
+| Secrets → Infisical | ✅ migrated and working in prod |
+| docker-compose.yml | ✅ no more env_file: .env, passes INFISICAL_TOKEN |
+| Umami analytics | ✅ snippet live on marchmadness.drose.io |
+| Coolify deployed | ✅ both containers healthy, commit a1adf9a |
 | 2026 bracket data | ❌ blocked until March 15 |
 
 ---
 
 ## Key Discoveries
 
-### Infisical Migration (done this session)
+### Infisical Migration (done session 2)
 - Secrets moved from macOS Keychain + `.env` to **Infisical Cloud**
 - Project: `march-madness-llm` (workspace ID: `6a99288c-3250-4c7f-8bf7-f58bbcbd64e9`)
-- Org ID: `f87e812d-4955-4372-9d12-381f2eb7a5db`
 - Two environments: `dev` (localhost config) and `prod` (marchmadness.drose.io config)
 - CI service token stored in: macOS Keychain as `infisical-march-madness-ci` AND GitHub secret `INFISICAL_TOKEN`
-- Token is read-only, never-expiring, covers dev + prod
 - **Local dev:** `infisical run --env dev -- <command>` — no `.env`, no `.envrc`, no direnv needed
-- **`.env` files deleted.** `docker-compose.yml` still references `env_file: .env` — this will break `docker compose up` locally until fixed
+
+### Infisical CLI in Docker (session 3)
+- The APT setup.deb.sh fails on Debian 13 (trixie) — package not found
+- The CLI lives in a **separate GitHub repo**: `https://github.com/Infisical/cli`
+- Binary URL format: `https://github.com/Infisical/cli/releases/download/v{VERSION}/cli_{VERSION}_linux_amd64.tar.gz`
+- Currently pinned to v0.43.58 in backend/Dockerfile
+- **To upgrade**: update the version in backend/Dockerfile
+
+### Umami Analytics (session 3)
+- Umami is deployed on clifford at container `umami-es84cow0os8kc80wgkg0g408`
+- URL: `analytics.drose.io` (Caddy label-based routing)
+- A stale Caddy route for `analytics.drose.io → 172.18.0.1:3000` (Grafana's host port) was overriding Umami
+- Fixed by deleting route index 13 via Caddy Admin API: `DELETE http://localhost:2019/config/apps/http/servers/srv0/routes/13`
+- **NOTE**: This Caddy fix is in-memory only — if Coolify regenerates the proxy config, the stale route may return
+  - Root cause: some historical Coolify app had analytics.drose.io as FQDN and was deleted; the route persisted in autosave.json
+  - If it breaks again: SSH to clifford → `docker exec coolify-proxy curl -s DELETE http://localhost:2019/config/apps/http/servers/srv0/routes/INDEX`
+  - Find the index: check which route has `upstreams.dial = 172.18.0.1:3000` for host analytics.drose.io
+- **Website ID**: `680a2d09-14dd-45d7-8b03-32cbcf459d12` (created directly in Umami DB)
+- **Access Umami admin**: `analytics.drose.io` (login: admin, password: unknown — check Coolify Umami service for APP_SECRET/DB creds; password bcrypt is `$2a$10$KQFL...`)
+
+### Coolify App Config (r0w0c0s)
+- App UUID: `r0w0c0s`
+- Env vars currently set:
+  - `BACKEND_URL`: https://api.marchmadness.drose.io (build-time, used as REACT_APP_BACKEND_URL)
+  - `BACKEND_PORT`: 50000 (host port mapping)
+  - `FRONTEND_PORT`: empty (uses default 3000)
+  - `INFISICAL_TOKEN`: set (runtime, fetches prod secrets from Infisical)
+- Removed stale `OPENAI_API_KEY` from Coolify (now in Infisical prod)
 
 ### Minio "credentials in git history" — FALSE ALARM
 - Prior HANDOFF.md claimed hardcoded Minio creds were in git history — **verified this is wrong**
 - `backend/scripts/` is in `.gitignore` and was never committed
-- The creds are in `backend/scripts/upload_logos.py` on disk only (local file, never pushed)
-- The Minio instance at `minio-nwcs0c4g0w8gcgow0gscgckg.5.161.97.53.sslip.io` IS live and the creds DO work — but this is a local-file-only situation, same as any `.env` file
 
 ### Playwright WS Mocking
 - `page.routeWebSocket()` requires Playwright 1.48+; we have 1.58.2
 - WS URL is `ws://localhost:8000/ws/simulate` (derived from `REACT_APP_BACKEND_URL`)
-- Mock fires synchronously — simulation completes before intermediate state assertions run; scope assertions to `.simulating-box` container to avoid bracketry viz conflicts
 - Visual regression baselines at `frontend/e2e/visual.spec.ts-snapshots/` (darwin/chromium)
-
-### docker-compose.yml / Infisical gap
-- `docker-compose.yml` has `env_file: .env` for both services — `.env` is now deleted
-- Backend Dockerfile does NOT install Infisical CLI
-- Fix needed before `docker compose up` works again
 
 ---
 
 ## Decisions Made
 
-- **Infisical Cloud** (not self-hosted) for now. Lock-in risk acknowledged but acceptable for hobby project. Self-host on clifford is the escape hatch if needed.
-- **No `.envrc` / direnv** — replaced entirely with `infisical run --` prefix. Not a partial migration.
+- **Infisical Cloud** (not self-hosted) for now.
+- **No `.envrc` / direnv** — replaced entirely with `infisical run --` prefix.
 - **Keep CRA** — don't migrate to Vite/Next.js with 12 days to tournament.
 - **Playwright over Cypress** — first-class `routeWebSocket()` support.
 - **No features for 2026** — polish and reliability only.
+- **Skip 2026 bracket update** — stick with 2024 data until after Selection Sunday (March 15).
 
 ---
 
 ## Next Steps (priority order)
 
-### 1. Fix docker-compose + Dockerfile for Infisical (blocking deploy)
-In `docker-compose.yml`: remove `env_file: .env` from both services. Add `INFISICAL_TOKEN` as the only env var needed at runtime.
-
-In `backend/Dockerfile`: install Infisical CLI and wrap the start command:
-```dockerfile
-RUN curl -1sLf 'https://artifacts.infisical.com/setup.deb.sh' | bash \
-    && apt-get install -y infisical
-CMD ["infisical", "run", "--env", "prod", "--", "uv", "run", "uvicorn", "mm_ai.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-### 2. Push 9 commits to origin
-```bash
-git push origin main
-```
-(branch is ahead by 9 commits, nothing has shipped yet)
-
-### 3. Update Coolify
-- Add env var `INFISICAL_TOKEN` = value from `security find-generic-password -a "$USER" -s "infisical-march-madness-ci" -w`
-- Update backend start command to use `infisical run --env prod --`
-- Redeploy
-
-### 4. Umami analytics
-- Get website ID from `analytics.drose.io` for `marchmadness.drose.io`
-- Add snippet to `frontend/public/index.html` before `</head>`
-
-### 5. After March 15: bracket data
+### 1. After March 15: bracket data
 - Replace `backend/data/bracket_2024.json` with 2026 field
 - Update `frontend/src/team_mappings.ts` for any new teams
 - Verify logos exist for all 64 teams in `frontend/public/logos/optimized/50x50/`
 - Full E2E test run with real data
+
+### 2. Monitor Caddy routing for analytics.drose.io
+- If Grafana starts showing at analytics.drose.io again, re-run the Caddy API delete fix
+- Long-term: find the stale route's origin in Coolify and remove it cleanly
+
+### 3. Umami admin password
+- Unknown. Can reset via: update bcrypt hash in Umami postgres DB
+  - DB: `docker exec postgresql-es84cow0os8kc80wgkg0g408 sh -c "PGPASSWORD=A9SKCxZUstzVQOgJTlRy05wyzQaUuyQx psql -U 4rfR7GJFefbxMc8j -d umami"`
+  - Reset: `UPDATE "user" SET password = '<new-bcrypt-hash>' WHERE username = 'admin';`
 
 ---
 
@@ -117,3 +118,5 @@ git push origin main
 | Run backend tests | `infisical run --env dev -- uv run pytest` |
 | Regen visual baselines | `bunx playwright test --update-snapshots` (requires running dev server) |
 | Uptime monitor | https://stats.uptimerobot.com/Jlo4zDIBm8 |
+| Umami website ID | `680a2d09-14dd-45d7-8b03-32cbcf459d12` |
+| Infisical CLI repo | https://github.com/Infisical/cli |
