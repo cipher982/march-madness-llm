@@ -7,11 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl bash \
-    && curl -1sLf 'https://artifacts.infisical.com/setup.deb.sh' | bash \
-    && apt-get update \
-    && apt-get install -y infisical \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -L "https://github.com/Infisical/cli/releases/download/v0.43.58/cli_0.43.58_linux_amd64.tar.gz" \
+       | tar xz -C /usr/local/bin infisical
 
 RUN pip install --no-cache-dir uv
 
