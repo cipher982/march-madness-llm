@@ -188,3 +188,7 @@ yarn-error.log*
 .flake8
 poetry.lock
 backend/scripts/
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
