@@ -42,3 +42,13 @@ line-ending = "lf"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v --cov" 
+
+[dependency-groups]
+dev = [
+    "asgi-lifespan>=2.1.0",
+    "httpx>=0.28.1",
+    "pytest>=9.0.2",
+    "pytest-asyncio>=1.3.0",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.15.4",
+]
