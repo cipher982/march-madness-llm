@@ -313,12 +313,13 @@ const App = (): JSX.Element => {
             <p>Error: {errorMessage}</p>
           </div>
         )}
-
-        <div style={{ marginTop: "40px", width: "100%" }}>
-          {initialBracket && <BracketryTest bracket={initialBracket} />}
-        </div>
-        {simulationComplete && <Confetti width={windowSize.width} height={windowSize.height} recycle={false} />}
       </div>
+
+      <div style={{ width: "100%", padding: "0 20px 40px", boxSizing: "border-box" }}>
+        {initialBracket && <BracketryTest bracket={initialBracket} />}
+      </div>
+
+      {simulationComplete && <Confetti width={windowSize.width} height={windowSize.height} recycle={false} />}
       <Footer />
     </div>
   );

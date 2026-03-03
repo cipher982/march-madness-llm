@@ -181,9 +181,8 @@ const BracketryTest: React.FC<BracketryTestProps> = ({ bracket }) => {
 
   const bracketPanelStyle: React.CSSProperties = {
     minHeight: "420px",
-    height: "min(65vw, 700px)",
+    height: "min(45vw, 700px)",
     width: "100%",
-    maxWidth: "700px",
   };
 
   return (
