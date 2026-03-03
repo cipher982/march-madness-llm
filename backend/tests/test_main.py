@@ -63,7 +63,6 @@ def test_generic_exception_handler_hides_internal_details(client: TestClient, mo
 
 def test_websocket_seed_simulation_completes(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("mm_ai.deciders.asyncio.sleep", no_sleep)
-    monkeypatch.setattr("mm_ai.simulator.asyncio.sleep", no_sleep)
 
     with client.websocket_connect("/ws/simulate") as websocket:
         websocket.send_json({"decider": "seed", "use_current_state": False, "user_preferences": ""})

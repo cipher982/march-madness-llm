@@ -5,10 +5,6 @@ from mm_ai.bracket import Team
 from mm_ai.simulator import Simulator
 
 
-async def no_sleep(*args, **kwargs) -> None:  # noqa: ANN002, ANN003
-    _ = args, kwargs
-
-
 async def lower_seed(team1: Team, team2: Team) -> Team:
     if team1.seed <= team2.seed:
         return team1
@@ -17,14 +13,11 @@ async def lower_seed(team1: Team, team2: Team) -> Team:
 
 @pytest.mark.asyncio
 async def test_simulate_round_updates_matchups_and_emits_messages(
-    monkeypatch: pytest.MonkeyPatch,
     initialized_bracket: Bracket,
     fake_websocket,
 ) -> None:
-    monkeypatch.setattr("mm_ai.simulator.asyncio.sleep", no_sleep)
-
     simulator = Simulator(bracket=initialized_bracket, user_preferences="", websocket=fake_websocket)
-    results = await simulator.simulate_round(lower_seed, "east", "round_of_64")
+    results = await simulator._simulate_round("east", "round_of_64", lower_seed)
 
     assert len(results) == 8
     current_round = initialized_bracket.get_round_by_name("east", "round_of_64")
@@ -40,12 +33,9 @@ async def test_simulate_round_updates_matchups_and_emits_messages(
 
 @pytest.mark.asyncio
 async def test_simulate_tournament_completes_and_sends_completion(
-    monkeypatch: pytest.MonkeyPatch,
     initialized_bracket: Bracket,
     fake_websocket,
 ) -> None:
-    monkeypatch.setattr("mm_ai.simulator.asyncio.sleep", no_sleep)
-
     simulator = Simulator(bracket=initialized_bracket, user_preferences="", websocket=fake_websocket)
     results, bracket = await simulator.simulate_tournament(lower_seed)
 
@@ -61,9 +51,8 @@ async def test_simulator_without_openai_key_still_supports_non_ai_deciders(
     fake_websocket,
 ) -> None:
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    monkeypatch.setattr("mm_ai.simulator.asyncio.sleep", no_sleep)
 
     simulator = Simulator(bracket=initialized_bracket, user_preferences="", websocket=fake_websocket)
-    results = await simulator.simulate_round(lower_seed, "east", "round_of_64")
+    results = await simulator._simulate_round("east", "round_of_64", lower_seed)
 
     assert len(results) == 8
