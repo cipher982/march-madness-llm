@@ -15,9 +15,10 @@ while [ "$attempt" -le "$INFISICAL_AUTH_MAX_ATTEMPTS" ]; do
   response=""
   token=""
 
-  if response=$(curl -fsS -X POST "$INFISICAL_DOMAIN/api/v1/auth/universal-auth/login" \
-    -H "Content-Type: application/json" \
-    -d "{\"clientId\":\"${INFISICAL_CLIENT_ID}\",\"clientSecret\":\"${INFISICAL_CLIENT_SECRET}\"}"); then
+  if response=$(python3 -c 'import json,os; print(json.dumps({"clientId": os.environ["INFISICAL_CLIENT_ID"], "clientSecret": os.environ["INFISICAL_CLIENT_SECRET"]}))' | \
+    curl -fsS -X POST "$INFISICAL_DOMAIN/api/v1/auth/universal-auth/login" \
+      -H "Content-Type: application/json" \
+      --data-binary @-); then
     token=$(printf "%s" "$response" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("accessToken", ""))' 2>/dev/null || true)
   fi
 
