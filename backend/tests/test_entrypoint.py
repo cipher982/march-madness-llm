@@ -10,6 +10,7 @@ def _write_executable(path: Path, body: str) -> None:
 
 def test_entrypoint_retries_infisical_without_leaking_response(tmp_path: Path) -> None:
     attempts = tmp_path / "attempts"
+    curl_argv = tmp_path / "curl-argv"
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
 
@@ -19,6 +20,7 @@ def test_entrypoint_retries_infisical_without_leaking_response(tmp_path: Path) -
 count=$(cat {attempts} 2>/dev/null || echo 0)
 count=$((count + 1))
 printf '%s' "$count" > {attempts}
+printf '%s\n' "$*" >> {curl_argv}
 if [ "$count" -lt 3 ]; then
   exit 22
 fi
@@ -51,6 +53,8 @@ printf '%s' '{{"accessToken":"test-token"}}'
     )
 
     assert attempts.read_text() == "3"
+    assert "client-secret" not in curl_argv.read_text()
+    assert "--data-binary @-" in curl_argv.read_text()
     assert "token=test-token" in result.stdout
     assert "test-command" in result.stdout
     assert "client-secret" not in result.stdout
