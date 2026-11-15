@@ -38,8 +38,10 @@ while [ "$attempt" -le "$INFISICAL_AUTH_MAX_ATTEMPTS" ]; do
   sleep "$INFISICAL_AUTH_RETRY_SECONDS"
 done
 
+unset INFISICAL_CLIENT_ID INFISICAL_CLIENT_SECRET
+
 exec infisical run \
   --env "${INFISICAL_ENV:-prod}" \
   --domain "$INFISICAL_DOMAIN" \
   --projectId "fdc5cddf-0304-448e-ba40-7cace6062dab" \
-  -- "$@"
+  -- env -u INFISICAL_TOKEN -u INFISICAL_CLIENT_ID -u INFISICAL_CLIENT_SECRET "$@"

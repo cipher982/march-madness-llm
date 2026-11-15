@@ -60,3 +60,62 @@ printf '%s' '{{"accessToken":"test-token"}}'
     assert "client-secret" not in result.stdout
     assert "client-secret" not in result.stderr
     assert result.stderr.count("retrying") == 2
+
+
+def test_entrypoint_unsets_infisical_credentials_before_exec(tmp_path: Path) -> None:
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    child_env_dump = tmp_path / "child-env"
+
+    _write_executable(
+        bin_dir / "curl",
+        "#!/bin/sh\nprintf '%s' '{\"accessToken\":\"secret-token\"}'\n",
+    )
+    _write_executable(bin_dir / "sleep", "#!/bin/sh\nexit 0\n")
+    _write_executable(
+        bin_dir / "infisical",
+        """#!/bin/sh
+if [ -n "${INFISICAL_CLIENT_ID:-}" ] || [ -n "${INFISICAL_CLIENT_SECRET:-}" ]; then
+  echo "client creds leaked to infisical" >&2
+  exit 1
+fi
+while [ "$#" -gt 0 ]; do
+  if [ "$1" = "--" ]; then
+    shift
+    break
+  fi
+  shift
+done
+exec "$@"
+""",
+    )
+    _write_executable(
+        bin_dir / "check-app",
+        f"""#!/bin/sh
+env > {child_env_dump}
+""",
+    )
+
+    env = os.environ.copy()
+    env.update(
+        {
+            "PATH": f"{bin_dir}:{env['PATH']}",
+            "INFISICAL_CLIENT_ID": "client-id",
+            "INFISICAL_CLIENT_SECRET": "client-secret",
+            "INFISICAL_AUTH_MAX_ATTEMPTS": "1",
+            "INFISICAL_AUTH_RETRY_SECONDS": "0",
+        }
+    )
+
+    subprocess.run(
+        ["sh", str(Path(__file__).parents[1] / "entrypoint.sh"), "check-app"],
+        check=True,
+        capture_output=True,
+        env=env,
+        text=True,
+    )
+
+    dumped = child_env_dump.read_text()
+    assert "INFISICAL_CLIENT_ID=" not in dumped
+    assert "INFISICAL_CLIENT_SECRET=" not in dumped
+    assert "INFISICAL_TOKEN=" not in dumped
